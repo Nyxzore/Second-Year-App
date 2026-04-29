@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/pale_green"
+    android:layout_margin="12dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="6dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="18dp">
+    <TextView
+        android:id="@+id/textViewGoalName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="20dp"
+        android:text="My Goal"
+        android:textSize="18sp"
+        android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/textViewGoalDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="20dp"
+            android:text="My Goal Description"
+            android:textColor="@android:color/black"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/textViewGoalDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="20dp"
+            android:text="Due x days on yyyy/mm/dd"
+            android:textColor="@android:color/black"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>
