@@ -1,14 +1,20 @@
 package com.example.gon;
 
+
+/*
+    This is the generic goal object equipped fully with accesser and mutator methods
+ */
 public class Goal {
     private String description, title, due_date;
+    //if new attributes are added make sure this is reflected in the goals table as well as ln63 of GoalList.java
 
     public Goal() {
         this.description = "What exactly is my goal?";
         this.title = "My Goal";
-        this.due_date = "2024-06-21";
+        this.due_date = "2026-06-21";
     }
 
+    //Generic instantiation would look like Goal("Finish Docs", "Finish writing documentation for this project", "2027-02-03")
     public Goal(String title, String description, String due_date) {
         this.title = title;
         this.description = description;
@@ -23,7 +29,5 @@ public class Goal {
     public void setDescription(String description) { this.description = description; }
     public void setDueDate(String dueDate) { this.due_date = dueDate; }
 
-    public String toString() {
-        return "Goal{" + "title='" + title + '\'' + '}';
-    }
+    public String toString() {return null; }
 }

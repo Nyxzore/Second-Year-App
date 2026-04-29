@@ -11,9 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+This class is need to call recyclerView.setAdapter(adapter); in GoalList.java
+This class tells the RecyclerView how to handle generating our goal cards
+ */
 public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder> {
 
-    private List<Goal> goal_list; //to be refactored to use goal object
+    private List<Goal> goal_list; //goals you wish to load
 
     public List<Goal> getGoal_list() {
         return goal_list;
@@ -28,9 +32,11 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
         this.goal_list.add(new Goal());
     }
 
+    //The following functions need to be overriden for RecyclerView.Adapter to work with our goal_card.xml
     @NonNull
     @Override
     public GoalViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        //Overrides onCreateViewHolder to use our goal_card XML layout which consists of 3 textviews
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.goal_card, parent, false);
         return new GoalViewHolder(view);
     }
@@ -49,6 +55,8 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
     }
 
     public static class GoalViewHolder extends RecyclerView.ViewHolder {
+        //This "holds" our goals its essentially just what is inside the card
+        //Used 3 textviews to store simple data but plan to maybe include images and a few more icons to edit, delete the goal
         TextView textViewGoalName;
         TextView textViewGoalDescription;
         TextView textViewGoalDate;

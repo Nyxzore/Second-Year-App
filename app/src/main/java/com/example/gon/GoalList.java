@@ -27,17 +27,18 @@ public class GoalList extends AppCompatActivity {
     private GoalAdapter adapter;
     private ArrayList<Goal> myGoals;
 
+    final String hosted_server = "https://wmc.ms.wits.ac.za/students/s2950668/";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_list);
 
-        myGoals = new ArrayList<>();
-        String userUuid = getIntent().getStringExtra("USER_UUID");
+        myGoals = new ArrayList<>(); //Users fetched goals
+        String userUuid = getIntent().getStringExtra("USER_UUID"); //UUID from login page
         new Thread(() -> {
             try {
-                final String TAG = "GoalTrackerDebug";
-                Log.d(TAG, "Attempting to fetch goals for UUID: " + userUuid);
+                //Making an https request to fetch goals
                 OkHttpClient client = new OkHttpClient();
 
                 RequestBody formBody = new FormBody.Builder()
@@ -45,12 +46,13 @@ public class GoalList extends AppCompatActivity {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url("http://192.168.68.131:8000/get_goals.php")
+                        .url(hosted_server + "get_goals.php") 
                         .post(formBody)
                         .build();
 
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
+                        //parse the JSON sent by the php containing rows of goal object related to this user
                         String responseData = response.body().string();
                         JSONObject jsonResponse = new JSONObject(responseData);
                         JSONArray goalsArray = jsonResponse.getJSONArray("goals");
@@ -60,6 +62,7 @@ public class GoalList extends AppCompatActivity {
                             String title = goal.getString("title");
                             String description = goal.getString("description");
                             String due_date = goal.getString("due_date");
+                            //any other attributes added to Goal object will follow here
                             myGoals.add(new Goal(title, description, due_date));
                         }
 
@@ -77,14 +80,12 @@ public class GoalList extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recyclerViewGoals);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new GoalAdapter(myGoals);
-        recyclerView.setAdapter(adapter);
+        adapter = new GoalAdapter(myGoals); //instantiate the GoalAdapter with goals
+        recyclerView.setAdapter(adapter); //The reason we coded GoalAdapter fr
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            //myGoals.add("New Goal #" + (myGoals.size() + 1));
-            //adapter.notifyItemInserted(myGoals.size() - 1);
-            //recyclerView.scrollToPosition(myGoals.size() - 1);
+            //On click listener for adding a new goal when + button is clicked
         });
     }
 }
