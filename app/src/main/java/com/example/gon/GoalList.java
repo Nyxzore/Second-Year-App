@@ -27,7 +27,7 @@ public class GoalList extends AppCompatActivity {
     private GoalAdapter adapter;
     private ArrayList<Goal> myGoals;
 
-    final String hosted_server = "https://wmc.ms.wits.ac.za/students/s2950668/";
+    final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +83,11 @@ public class GoalList extends AppCompatActivity {
         adapter = new GoalAdapter(myGoals); //instantiate the GoalAdapter with goals
         recyclerView.setAdapter(adapter); //The reason we coded GoalAdapter fr
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            //On click listener for adding a new goal when + button is clicked
+        FloatingActionButton btn_add_goal = findViewById(R.id.fab);
+        btn_add_goal.setOnClickListener(view -> {
+            Intent intent = new Intent(GoalList.this, AddGoal.class); //changing to the AddGoal menu
+            intent.putExtra("USER_UUID", userUuid);
+            startActivity(intent);
         });
     }
 }

@@ -27,7 +27,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    final String hosted_server = "https://wmc.ms.wits.ac.za/students/s2950668/";
+    final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
     //normal stuff android studio does to make the project
     @Override
     protected void onCreate(Bundle savedInstanceState) {
