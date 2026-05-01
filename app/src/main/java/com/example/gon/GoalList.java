@@ -3,7 +3,9 @@ package com.example.gon;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,9 +14,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.UUID;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -26,23 +27,24 @@ public class GoalList extends AppCompatActivity {
 
     private GoalAdapter adapter;
     private ArrayList<Goal> myGoals;
-
+    String userUuid;
     final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_list);
+        userUuid = getIntent().getStringExtra("USER_UUID"); //UUID from login page
 
         myGoals = new ArrayList<>(); //Users fetched goals
-        String userUuid = getIntent().getStringExtra("USER_UUID"); //UUID from login page
+
         new Thread(() -> {
             try {
                 //Making an https request to fetch goals
                 OkHttpClient client = new OkHttpClient();
 
                 RequestBody formBody = new FormBody.Builder()
-                        .add("UUID", userUuid)
+                        .add("uuid", userUuid)
                         .build();
 
                 Request request = new Request.Builder()
@@ -62,8 +64,9 @@ public class GoalList extends AppCompatActivity {
                             String title = goal.getString("title");
                             String description = goal.getString("description");
                             String due_date = goal.getString("due_date");
+                            String id = goal.getString("id");
                             //any other attributes added to Goal object will follow here
-                            myGoals.add(new Goal(title, description, due_date));
+                            myGoals.add(new Goal(title, description, due_date, id));
                         }
 
                         runOnUiThread(() -> {
@@ -85,9 +88,75 @@ public class GoalList extends AppCompatActivity {
 
         FloatingActionButton btn_add_goal = findViewById(R.id.fab);
         btn_add_goal.setOnClickListener(view -> {
-            Intent intent = new Intent(GoalList.this, AddGoal.class); //changing to the AddGoal menu
+            Intent intent = new Intent(GoalList.this, AddEditGoal.class); //changing to the AddGoal menu
             intent.putExtra("USER_UUID", userUuid);
             startActivity(intent);
         });
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull android.view.MenuItem item){
+        int position = item.getGroupId();
+        Goal selectedGoal = myGoals.get(position);
+        if (item.getItemId() == 101){//edit
+            Intent intent = new Intent(GoalList.this, AddEditGoal.class);
+            intent.putExtra("USER_UUID", getIntent().getStringExtra("USER_UUID"));
+            intent.putExtra("EDIT_MODE", true);
+            intent.putExtra("goal_id", selectedGoal.getId());
+            intent.putExtra("title", selectedGoal.getTitle());
+            intent.putExtra("description", selectedGoal.getDescription());
+            intent.putExtra("due_date", selectedGoal.getDueDate());
+            startActivity(intent);
+            return true;
+        }
+        else if (item.getItemId() == 102){//delete
+            //remove goal from UI
+            myGoals.remove(position);
+            adapter.notifyItemRemoved(position);
+            delete_goal_post(selectedGoal.getId()); //remove goal from database
+            return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    public void delete_goal_post(String goal_id){
+        new Thread(() -> {
+            OkHttpClient client = new OkHttpClient();
+
+            RequestBody formBody = new FormBody.Builder()
+                    .add("goal_id", goal_id)
+                    .add("mode", "delete")
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(hosted_server + "mutate_goal.php")
+                    .post(formBody)
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                final String responseData = response.body().string();
+
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject json = new JSONObject(responseData);
+                        String status = json.getString("status");
+                        String message = json.getString("message");
+
+                        if (status.equals("success")) {
+                            Toast.makeText(GoalList.this, message, Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(GoalList.this, "Server: " + message, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        // 3. If it's not valid JSON, show the raw error (helps find PHP bugs ong)
+                        Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
+                        Toast.makeText(GoalList.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
+                    }
+                });
+            } catch (IOException e) {
+                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Network Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                e.printStackTrace(); //no internet or server down
+            }
+        }).start();
     }
 }

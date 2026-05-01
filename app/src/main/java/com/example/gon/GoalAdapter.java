@@ -1,5 +1,6 @@
 package com.example.gon;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,7 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
         return goal_list.size();
     }
 
-    public static class GoalViewHolder extends RecyclerView.ViewHolder {
+    public static class GoalViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         //This "holds" our goals its essentially just what is inside the card
         //Used 3 textviews to store simple data but plan to maybe include images and a few more icons to edit, delete the goal
         TextView textViewGoalName;
@@ -66,6 +67,15 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
             textViewGoalName = itemView.findViewById(R.id.textViewGoalName);
             textViewGoalDescription = itemView.findViewById(R.id.textViewGoalDescription);
             textViewGoalDate = itemView.findViewById(R.id.textViewGoalDate);
+
+            itemView.setOnCreateContextMenuListener(this);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.setHeaderTitle("Manage Goal");
+            menu.add(this.getBindingAdapterPosition(), 101, 0, "Edit");
+            menu.add(this.getBindingAdapterPosition(), 102, 1, "Delete");
         }
     }
 }

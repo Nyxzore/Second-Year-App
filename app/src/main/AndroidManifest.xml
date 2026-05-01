@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddGoal" />
+            android:name=".AddEditGoal" />
     </application>
 
 </manifest>
