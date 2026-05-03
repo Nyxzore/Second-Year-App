@@ -1,6 +1,7 @@
 package com.example.gon;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -105,6 +106,10 @@ public class GoalList extends AppCompatActivity {
                 myGoals.remove(position);
                 adapter.notifyItemRemoved(position);
                 complete_goal_post(selectedGoal.getId());
+
+                //play chime from https://pixabay.com/sound-effects/search/positive/
+                MediaPlayer mediaPlayer = MediaPlayer.create(GoalList.this, R.raw.goal_complete);
+                mediaPlayer.start();
             }
         };
         new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerView);
