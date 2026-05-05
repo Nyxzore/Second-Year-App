@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
     String uuid, hash;
     EditText username_edit, password_edit;
+    CheckBox chkRememberMe;
+    TextView textViewDebug;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+        username_edit = findViewById(R.id.edtUsername);
+        password_edit = findViewById(R.id.edtPassword);
+        chkRememberMe = findViewById(R.id.chkRememberMe);
+        textViewDebug = findViewById(R.id.textViewDebug);
 
         uuid = PreferenceManager.getUUID(this);
         hash = PreferenceManager.getHashString(this);
@@ -149,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, GoalList.class);
                 intent.putExtra("USER_UUID", uuid);
                 startActivity(intent);
-                finish();
             } else {
                 statusText.setText(message);
                 // If automatic login fails (e.g. password changed), clear preferences

@@ -79,10 +79,12 @@
         android:layout_marginTop="255dp"
         android:layout_marginEnd="89dp"
         android:indeterminate="true"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/btnLogIn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textViewUsername"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="invisible" />
 
     <Button
         android:id="@+id/btnLogIn"
