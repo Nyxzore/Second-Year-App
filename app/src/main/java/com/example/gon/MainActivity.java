@@ -124,4 +124,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return hexString.toString();
     }
+
+    public static class test {
+    }
 }
