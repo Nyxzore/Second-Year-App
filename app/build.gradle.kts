@@ -4,9 +4,7 @@ plugins {
 
 android {
     namespace = "com.example.gon"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36;
 
     defaultConfig {
         applicationId = "com.example.gon"
@@ -45,5 +43,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("com.squareup.okhttp3:okhttp:5.3.2")
+    implementation("com.squareup.okhttp3:okhttp:5.3.2");
 }

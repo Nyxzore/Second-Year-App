@@ -1,11 +1,17 @@
 package com.example.gon;
 
+import static android.app.PendingIntent.getActivity;
+
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +20,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import org.json.JSONException;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -29,6 +34,8 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
+    String uuid, hash;
+    EditText username_edit, password_edit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,37 +47,58 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        username_edit = findViewById(R.id.edtUsername);
+        password_edit = findViewById(R.id.edtPassword);
+
+        uuid = PreferenceManager.getUUID(this);
+        hash = PreferenceManager.getHashString(this);
+        
+        if (uuid != null && hash != null) {
+            authenticateUser("login", true);
+        }
     }
 
     public void handleLogin(View v) {
-        authenticateUser("login");
+        authenticateUser("login", false);
     }
 
     public void handleCreateAccount(View v) {
-        authenticateUser("create_account");
+        authenticateUser("create_account", false);
     }
 
-    private void authenticateUser(String mode) {
-        EditText username_edit = findViewById(R.id.edtUsername);
-        EditText password_edit = findViewById(R.id.edtPassword);
+    private void authenticateUser(String mode, boolean automatic_login) {
         TextView statusText = findViewById(R.id.textViewDebug);
+        final String username;
+        final String currentHash;
 
-        String username = username_edit.getText().toString();
-        String password = password_edit.getText().toString();
+        if (automatic_login) {
+            username = PreferenceManager.getUsername(this);
+            currentHash = hash;
+            if (username == null) return;
+        } else {
+            username = username_edit.getText().toString();
+            String password = password_edit.getText().toString();
 
-        if (username.isEmpty() || password.isEmpty()) {
-            statusText.setText("Please enter both username and password");
-            return;
+            if (username.isEmpty() || password.isEmpty()) {
+                statusText.setText("Please enter both username and password");
+                return;
+            }
+            try {
+                currentHash = sha256(password);
+            } catch (NoSuchAlgorithmException e) {
+                statusText.setText("Hashing Error");
+                return;
+            }
         }
 
         new Thread(() -> {
             try {
-                String hashed_password = sha256(password);
                 OkHttpClient client = new OkHttpClient();
 
                 RequestBody formBody = new FormBody.Builder()
                         .add("username", username)
-                        .add("hash", hashed_password)
+                        .add("hash", currentHash)
                         .add("mode", mode)
                         .build();
 
@@ -82,31 +110,45 @@ public class MainActivity extends AppCompatActivity {
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
                         String responseData = response.body().string();
-                        runOnUiThread(() -> handleAuthResponse(responseData, statusText));
+                        runOnUiThread(() -> handleAuthResponse(responseData, statusText, username, currentHash));
+                    } else {
+                        runOnUiThread(() -> statusText.setText("Server returned error: " + response.code()));
                     }
                 }
-            } catch (NoSuchAlgorithmException e) {
-                runOnUiThread(() -> statusText.setText("Hashing Error"));
             } catch (IOException e) {
                 runOnUiThread(() -> statusText.setText("Connection failed. Check internet."));
             }
         }).start();
     }
 
-    private void handleAuthResponse(String responseData, TextView statusText) {
+    private void handleAuthResponse(String responseData, TextView statusText, String username, String currentHash) {
         try {
             org.json.JSONObject json = new org.json.JSONObject(responseData);
             String status = json.getString("status");
             String message = json.getString("message");
 
             if (status.equals("success")) {
-                String uuid = json.getString("uuid");
+                uuid = json.getString("uuid");
+                
+                // Only save if it's a manual login and checkbox is checked, 
+                // OR if it's already an automatic login (to keep it refreshed)
+                CheckBox chkRemember = findViewById(R.id.chkRememberMe);
+                if (chkRemember.isChecked()) {
+                    PreferenceManager.saveUUID(this, uuid);
+                    PreferenceManager.saveHash(this, currentHash);
+                    PreferenceManager.saveUsername(this, username);
+                }
+
                 Intent intent = new Intent(MainActivity.this, GoalList.class);
                 intent.putExtra("USER_UUID", uuid);
                 startActivity(intent);
-                finish(); // Close login screen
+                finish();
+            } else {
+                statusText.setText(message);
+                // If automatic login fails (e.g. password changed), clear preferences
+                PreferenceManager.saveUUID(this, null);
+                PreferenceManager.saveHash(this, null);
             }
-            statusText.setText(message);
         } catch (JSONException e) {
             statusText.setText("Server Error: Invalid Response");
             Log.e("AUTH_ERROR", responseData);
@@ -123,8 +165,5 @@ public class MainActivity extends AppCompatActivity {
             hexString.append(hex);
         }
         return hexString.toString();
-    }
-
-    public static class test {
     }
 }

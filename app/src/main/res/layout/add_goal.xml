@@ -42,7 +42,7 @@
             android:hint="Goal Name"
             android:inputType="text"
             android:padding="15dp"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="18sp" />
 
         <EditText
@@ -52,20 +52,20 @@
             android:hint="Description"
             android:inputType="textMultiLine"
             android:padding="15dp"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="12sp" />
 
         <TextView
             android:id="@+id/lblDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnSurface" />
     </LinearLayout>
 
     <CalendarView
         android:id="@+id/calendarView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="323dp"
+        android:layout_height="347dp"
         android:layout_marginStart="45dp"
         android:layout_marginEnd="45dp"
         android:layout_marginBottom="226dp"
