@@ -48,13 +48,20 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        username_edit = findViewById(R.id.edtUsername);
-        password_edit = findViewById(R.id.edtPassword);
-
         uuid = PreferenceManager.getUUID(this);
         hash = PreferenceManager.getHashString(this);
-        
+
         if (uuid != null && hash != null) {
+            findViewById(R.id.textViewTitle).setVisibility(View.INVISIBLE);
+            findViewById(R.id.imageViewLogo).setVisibility(View.INVISIBLE);
+            findViewById(R.id.textViewUsername).setVisibility(View.INVISIBLE);
+            findViewById(R.id.edtUsername).setVisibility(View.INVISIBLE);
+            findViewById(R.id.textViewPassword).setVisibility(View.INVISIBLE);
+            findViewById(R.id.edtPassword).setVisibility(View.INVISIBLE);
+            findViewById(R.id.btnLogIn).setVisibility(View.INVISIBLE);
+            findViewById(R.id.btnCreateAccount).setVisibility(View.INVISIBLE);
+            findViewById(R.id.chkRememberMe).setVisibility(View.INVISIBLE);
+            findViewById(R.id.loading).setVisibility(View.VISIBLE);
             authenticateUser("login", true);
         }
     }
