@@ -1,5 +1,5 @@
 package com.example.gon;
-
+//hello
 
 /*
     This is the generic goal object equipped fully with accesser and mutator methods
