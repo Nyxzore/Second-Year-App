@@ -34,9 +34,12 @@
         android:id="@+id/textViewUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="17dp"
         android:text="Username:"
-        app:layout_constraintStart_toStartOf="@+id/edtUsername"
+        app:layout_constraintEnd_toStartOf="@+id/loading"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewLogo" />
 
     <EditText
@@ -68,25 +71,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewPassword" />
 
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="221dp"
+        android:layout_height="185dp"
+        android:layout_marginTop="255dp"
+        android:layout_marginEnd="89dp"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogIn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewUsername"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="invisible" />
+
     <Button
         android:id="@+id/btnLogIn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
+        android:layout_marginBottom="198dp"
         android:onClick="handleLogin"
         android:text="Log in"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/loading" />
 
     <Button
         android:id="@+id/btnCreateAccount"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:onClick="handleCreateAccount"
         android:text="Create Account"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnLogIn" />
@@ -101,5 +121,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnCreateAccount" />
+
+    <CheckBox
+        android:id="@+id/chkRememberMe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="27dp"
+        android:text="Remember Me"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

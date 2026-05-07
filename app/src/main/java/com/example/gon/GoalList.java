@@ -119,6 +119,7 @@ public class GoalList extends AppCompatActivity {
             Intent intent = new Intent(GoalList.this, AddEditGoal.class); //changing to the AddGoal menu
             intent.putExtra("USER_UUID", userUuid);
             startActivity(intent);
+            finish();
         });
     }
 
