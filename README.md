@@ -9,20 +9,19 @@
 * Raymond Gordon
 
 ## Theme
-Personal productivity and goal tracking. The app provides a centralized platform for users to define, track, and manage their objectives.
+Personal productivity and goal tracking. The app provides a centralized platform for users to define, track, and manage their objectives along with friends!
 
 ## Features
 * **Secure Authentication**: User login system featuring SHA-256 password hashing for secure data transmission.
-* **Goal Dashboard**: A clean interface to view all active goals, including titles, descriptions, and target dates.
-* **Goal Creation**: Integrated `CalendarView` for selecting deadlines when creating new tasks.
-* **Cloud Sync**: Real-time interaction with a remote PHP/MySQL backend via `OkHttp` to ensure data is stored safely off-device.
+* **Goal Dashboard**: A clean interface to view all active goals, milestones and maybe a chance to interact with friends
+* **Cloud Sync**: Real-time interaction with a remote PHP/PostgreSQL backend via `OkHttp` to ensure data is stored safely off-device this does unfortunately require the user to be offline.
 
 ## Tech Stack
 * **Frontend**: Java (Android SDK)
 * **UI/UX**: Material Components (RecyclerView, FloatingActionButton, CardView)
 * **Networking**: OkHttp 3
-* **Backend**: PHP / MySQL
+* **Backend**: PHP, PostrgreSQL
 * **Security**: SHA-256 Hashing
 
-## Approach
-The project follows a client-server architecture. The Android client handles the user interface and local logic, while a remote PHP server manages the database interactions (CRUD operations for goals and user validation). This ensures that user data is accessible across different devices upon login.
+## Database Design
+![alt text](uml_structure.svg)
