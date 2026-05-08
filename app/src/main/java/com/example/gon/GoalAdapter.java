@@ -7,10 +7,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 
 /*
 This class is need to call recyclerView.setAdapter(adapter); in GoalList.java
@@ -48,6 +55,21 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
         holder.textViewGoalName.setText(currentGoal.getTitle());
         holder.textViewGoalDescription.setText(currentGoal.getDescription());
         holder.textViewGoalDate.setText("Plan to do by " + currentGoal.getDueDate());
+
+        try {
+            Date due_date = currentGoal.getDueDateAsDate();
+            Date today = new Date();
+            if (today.after(due_date)) {
+                holder.textViewStatus.setText("Overdue");
+                holder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.overdue_date));
+            } else {
+                holder.textViewStatus.setText("Active");
+                holder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.ontrack_date));
+            }
+        } catch (ParseException e) {
+            holder.textViewStatus.setText("Active");
+            holder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.ontrack_date));
+        }
     }
 
     @Override
@@ -61,19 +83,20 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
         TextView textViewGoalName;
         TextView textViewGoalDescription;
         TextView textViewGoalDate;
+        TextView textViewStatus;
 
         public GoalViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewGoalName = itemView.findViewById(R.id.textViewGoalName);
             textViewGoalDescription = itemView.findViewById(R.id.textViewGoalDescription);
             textViewGoalDate = itemView.findViewById(R.id.textViewGoalDate);
+            textViewStatus = itemView.findViewById(R.id.textViewStatus);
 
             itemView.setOnCreateContextMenuListener(this);
         }
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.setHeaderTitle("Manage Goal");
             menu.add(this.getBindingAdapterPosition(), 101, 0, "Edit");
             menu.add(this.getBindingAdapterPosition(), 102, 1, "Delete");
         }

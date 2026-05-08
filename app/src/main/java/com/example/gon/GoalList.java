@@ -19,13 +19,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import java.util.Random;
 
 public class GoalList extends AppCompatActivity {
 
@@ -35,62 +35,26 @@ public class GoalList extends AppCompatActivity {
     final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        fetchGoalsFromServer(); // Refresh list every time activity becomes visible
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_list);
-        userUuid = getIntent().getStringExtra("USER_UUID"); //UUID from login page
 
-        myGoals = new ArrayList<>(); //Users fetched goals
-
-        new Thread(() -> {
-            try {
-                //Making an https request to fetch goals
-                OkHttpClient client = new OkHttpClient();
-
-                RequestBody formBody = new FormBody.Builder()
-                        .add("uuid", userUuid)
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(hosted_server + "get_goals.php") 
-                        .post(formBody)
-                        .build();
-
-                try (Response response = client.newCall(request).execute()) {
-                    if (response.isSuccessful()) {
-                        //parse the JSON sent by the php containing rows of goal object related to this user
-                        String responseData = response.body().string();
-                        JSONObject jsonResponse = new JSONObject(responseData);
-                        JSONArray goalsArray = jsonResponse.getJSONArray("goals");
-
-                        for (int i = 0; i < goalsArray.length(); i++) {
-                            JSONObject goal = goalsArray.getJSONObject(i);
-                            String title = goal.getString("title");
-                            String description = goal.getString("description");
-                            String due_date = goal.getString("due_date");
-                            String id = goal.getString("id");
-                            //any other attributes added to Goal object will follow here
-                            myGoals.add(new Goal(title, description, due_date, id));
-                        }
-
-                        runOnUiThread(() -> {
-                            adapter.notifyDataSetChanged();
-                        });
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-
+        userUuid = getIntent().getStringExtra("USER_UUID");
+        myGoals = new ArrayList<>();
 
         RecyclerView recyclerView = findViewById(R.id.recyclerViewGoals);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new GoalAdapter(myGoals); //instantiate the GoalAdapter with goals
-        recyclerView.setAdapter(adapter); //The reason we coded GoalAdapter fr
+        adapter = new GoalAdapter(myGoals);
+        recyclerView.setAdapter(adapter);
 
-        // Swipe right-to-left listener
+        // Swipe left to complete
         ItemTouchHelper.SimpleCallback swipeCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -102,12 +66,10 @@ public class GoalList extends AppCompatActivity {
                 int position = viewHolder.getBindingAdapterPosition();
                 Goal selectedGoal = myGoals.get(position);
 
-                // Remove goal from UI and change goal to complete
                 myGoals.remove(position);
                 adapter.notifyItemRemoved(position);
                 complete_goal_post(selectedGoal.getId());
 
-                //play chime from https://pixabay.com/sound-effects/search/positive/
                 MediaPlayer mediaPlayer = MediaPlayer.create(GoalList.this, R.raw.goal_complete);
                 mediaPlayer.start();
             }
@@ -116,18 +78,57 @@ public class GoalList extends AppCompatActivity {
 
         FloatingActionButton btn_add_goal = findViewById(R.id.fab);
         btn_add_goal.setOnClickListener(view -> {
-            Intent intent = new Intent(GoalList.this, AddEditGoal.class); //changing to the AddGoal menu
+            Intent intent = new Intent(GoalList.this, AddEditGoal.class);
             intent.putExtra("USER_UUID", userUuid);
             startActivity(intent);
-            finish();
         });
     }
 
+    public void fetchGoalsFromServer() {
+        myGoals.clear();
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient();
+
+                RequestBody formBody = new FormBody.Builder()
+                        .add("uuid", userUuid)
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(hosted_server + "get_goals.php")
+                        .post(formBody)
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful()) {
+                        String responseData = response.body().string();
+                        JSONObject jsonResponse = new JSONObject(responseData);
+                        JSONArray goalsArray = jsonResponse.getJSONArray("goals");
+
+                        for (int i = 0; i < goalsArray.length(); i++) {
+                            JSONObject goal = goalsArray.getJSONObject(i);
+                            String title = goal.getString("title");
+                            String description = goal.getString("description");
+                            String due_date = goal.getString("due_date");
+                            String id = goal.getString("id");
+                            myGoals.add(new Goal(title, description, due_date, id));
+                        }
+
+                        runOnUiThread(() -> adapter.notifyDataSetChanged());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     @Override
-    public boolean onContextItemSelected(@NonNull android.view.MenuItem item){
+    public boolean onContextItemSelected(@NonNull android.view.MenuItem item) {
         int position = item.getGroupId();
         Goal selectedGoal = myGoals.get(position);
-        if (item.getItemId() == 101){//edit
+
+        if (item.getItemId() == 101) { // Edit
             Intent intent = new Intent(GoalList.this, AddEditGoal.class);
             intent.putExtra("USER_UUID", getIntent().getStringExtra("USER_UUID"));
             intent.putExtra("EDIT_MODE", true);
@@ -137,18 +138,16 @@ public class GoalList extends AppCompatActivity {
             intent.putExtra("due_date", selectedGoal.getDueDate());
             startActivity(intent);
             return true;
-        }
-        else if (item.getItemId() == 102){//delete
-            //remove goal from UI
+        } else if (item.getItemId() == 102) { // Delete
             myGoals.remove(position);
             adapter.notifyItemRemoved(position);
-            delete_goal_post(selectedGoal.getId()); //remove goal from database
+            delete_goal_post(selectedGoal.getId());
             return true;
         }
         return super.onContextItemSelected(item);
     }
 
-    public void delete_goal_post(String goal_id){
+    public void delete_goal_post(String goal_id) {
         new Thread(() -> {
             OkHttpClient client = new OkHttpClient();
 
@@ -164,32 +163,27 @@ public class GoalList extends AppCompatActivity {
 
             try (Response response = client.newCall(request).execute()) {
                 final String responseData = response.body().string();
-
                 runOnUiThread(() -> {
                     try {
                         JSONObject json = new JSONObject(responseData);
                         String status = json.getString("status");
                         String message = json.getString("message");
-
-                        if (status.equals("success")) {
-                            Toast.makeText(GoalList.this, message, Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(GoalList.this, "Server" + message , Toast.LENGTH_LONG).show();
-                        }
+                        Toast.makeText(GoalList.this,
+                                status.equals("success") ? message : "Server: " + message,
+                                Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
-                        // 3. If it's not valid JSON, show the raw error (helps find PHP bugs ong)
                         Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
                         Toast.makeText(GoalList.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
                     }
                 });
             } catch (IOException e) {
                 runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Network Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                e.printStackTrace(); //no internet or server down
+                e.printStackTrace();
             }
         }).start();
     }
 
-    public void complete_goal_post(String goal_id){
+    public void complete_goal_post(String goal_id) {
         new Thread(() -> {
             OkHttpClient client = new OkHttpClient();
 
@@ -204,7 +198,6 @@ public class GoalList extends AppCompatActivity {
 
             try (Response response = client.newCall(request).execute()) {
                 final String responseData = response.body().string();
-
                 runOnUiThread(() -> {
                     try {
                         JSONObject json = new JSONObject(responseData);
@@ -219,15 +212,20 @@ public class GoalList extends AppCompatActivity {
                             Toast.makeText(GoalList.this, "Server: " + message, Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception e) {
-                        // 3. If it's not valid JSON, show the raw error (helps find PHP bugs ong)
                         Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
                         Toast.makeText(GoalList.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
                     }
                 });
             } catch (IOException e) {
                 runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Network Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                e.printStackTrace(); //no internet or server down
+                e.printStackTrace();
             }
         }).start();
+    }
+
+    public void show_profile(android.view.MenuItem item){
+        Intent intent = new Intent(GoalList.this, Profile.class);
+        intent.putExtra("USER_UUID", userUuid);
+        startActivity(intent);
     }
 }

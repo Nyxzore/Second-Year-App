@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, GoalList.class);
                 intent.putExtra("USER_UUID", uuid);
                 startActivity(intent);
+                finish();
             } else {
                 statusText.setText(message);
                 // If automatic login fails (e.g. password changed), clear preferences

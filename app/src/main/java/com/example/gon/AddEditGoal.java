@@ -76,6 +76,11 @@ public class AddEditGoal extends AppCompatActivity {
         });
 
         btnAdd.setOnClickListener(v -> {
+            if (edtTitle.getText().toString().trim().isEmpty()){
+                Toast.makeText(this, "A goal must have a title", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             btnAdd.setEnabled(false);
             btnAdd.setText("...");
             post_goal(edit_mode);
@@ -121,9 +126,6 @@ public class AddEditGoal extends AppCompatActivity {
 
                         if (status.equals("success")) {
                             Toast.makeText(AddEditGoal.this, message, Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(AddEditGoal.this, GoalList.class);
-                            intent.putExtra("USER_UUID", userUuid);
-                            startActivity(intent);
                             finish();
                         } else {
                             Toast.makeText(AddEditGoal.this, "Server: " + message, Toast.LENGTH_LONG).show();
