@@ -6,6 +6,10 @@
         android:title="Goals" />
 
     <item
+        android:id="@+id/nav_friends"
+        android:title="Friends" />
+
+    <item
         android:id="@+id/nav_profile"
         android:onClick="show_profile"
         android:title="You" />
