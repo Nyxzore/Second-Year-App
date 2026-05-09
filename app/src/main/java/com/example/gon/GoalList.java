@@ -40,6 +40,8 @@ public class GoalList extends AppCompatActivity {
         fetchGoalsFromServer();
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setSelectedItemId(R.id.nav_home);
+
+        PreferenceManager.updateNavIcon(this, bottomNav);
     }
 
     @Override
@@ -84,6 +86,7 @@ public class GoalList extends AppCompatActivity {
 
         // Setup Bottom Navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        bottomNav.setItemIconTintList(null);
         bottomNav.setSelectedItemId(R.id.nav_home);
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();

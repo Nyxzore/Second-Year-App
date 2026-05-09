@@ -19,7 +19,6 @@ import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import com.example.gon.GoalList;
 
 public class Profile extends AppCompatActivity {
 
@@ -31,9 +30,17 @@ public class Profile extends AppCompatActivity {
     };
 
     @Override
+    protected void onStart(){
+        super.onStart();
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        bottomNav.setSelectedItemId(R.id.nav_profile);
+
+        PreferenceManager.updateNavIcon(this, bottomNav);
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile_page);
+        setContentView(R.layout.activity_profile_page);
 
         imgProfile = findViewById(R.id.imgProfilePicture);
         TextView txtUsername = findViewById(R.id.txtUsername);
@@ -56,6 +63,7 @@ public class Profile extends AppCompatActivity {
 
         // Setup Bottom Navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        bottomNav.setItemIconTintList(null); // Fixes the white/green square issue
         bottomNav.setSelectedItemId(R.id.nav_profile);
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -72,7 +80,13 @@ public class Profile extends AppCompatActivity {
             }
             return false;
         });
-        
+
+
+        //preupdate
+        TextView txtCompleted = findViewById(R.id.txtGoalsCompleted);
+        TextView txtActive = findViewById(R.id.txtActiveGoals);
+        txtCompleted.setText(String.valueOf(PreferenceManager.getCompletedGoalCount(this)));
+        txtActive.setText(String.valueOf(PreferenceManager.getActiveGoalCount(this)));
         updateStatsFromServer();
     }
 
@@ -107,6 +121,11 @@ public class Profile extends AppCompatActivity {
         gridView.setOnItemClickListener((parent, view, position, id) -> {
             imgProfile.setImageResource(profilePhotos[position]);
             PreferenceManager.saveProfilePic(this, position);
+
+            BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+            bottomNav.setSelectedItemId(R.id.nav_profile);
+            PreferenceManager.updateNavIcon(this, bottomNav);
+            
             updateProfilePicOnServer(position);
             dialog.dismiss();
         });
@@ -162,6 +181,8 @@ public class Profile extends AppCompatActivity {
                             TextView txtActive = findViewById(R.id.txtActiveGoals);
                             txtCompleted.setText(String.valueOf(completed));
                             txtActive.setText(String.valueOf(active));
+
+                            PreferenceManager.save_stats(this, completed,active);
                         });
                     }
                 }

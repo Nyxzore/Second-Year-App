@@ -1,6 +1,5 @@
 package com.example.gon;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -29,7 +28,7 @@ public class AddEditGoal extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_goal);
+        setContentView(R.layout.activity_add_edit_goal);
 
         boolean edit_mode = getIntent().getBooleanExtra("EDIT_MODE", false);
 
