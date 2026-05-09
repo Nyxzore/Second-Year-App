@@ -10,6 +10,7 @@ public class PreferenceManager {
     private static final String KEY_UUID = "uuid";
     private static final String KEY_HASH = "hash";
     private static final String KEY_USERNAME = "username";
+    private static final String KEY_PROFILE_PIC = "profile_pic";
 
     // Save UUID
     public static void saveUUID(Context context, String uuid) {
@@ -26,6 +27,21 @@ public class PreferenceManager {
                 context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
 
         return prefs.getString(KEY_UUID, null);
+    }
+
+    public static void saveProfilePic(Context context, int index) {
+        SharedPreferences prefs =
+                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
+        prefs.edit()
+                .putInt(KEY_PROFILE_PIC, index)
+                .apply();
+    }
+    public static int getProfilePic(Context context) {
+        SharedPreferences prefs =
+                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
+        return prefs.getInt(KEY_PROFILE_PIC, 0); // Default to pp0
     }
 
     // Save hash
