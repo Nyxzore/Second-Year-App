@@ -6,5 +6,5 @@
     android:numColumns="3"
     android:padding="16dp"
     android:horizontalSpacing="8dp"
-    android:verticalSpacing="8dp"
+    android:verticalSpacing="4dp"
     android:gravity="center" />

@@ -107,7 +107,7 @@ public class Profile extends AppCompatActivity {
         gridView.setOnItemClickListener((parent, view, position, id) -> {
             imgProfile.setImageResource(profilePhotos[position]);
             PreferenceManager.saveProfilePic(this, position);
-            //updateProfilePicOnServer(position);
+            updateProfilePicOnServer(position);
             dialog.dismiss();
         });
         dialog.show();
