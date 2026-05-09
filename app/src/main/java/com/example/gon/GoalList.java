@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -31,21 +33,19 @@ public class GoalList extends AppCompatActivity {
 
     private GoalAdapter adapter;
     private ArrayList<Goal> myGoals;
-    String userUuid;
-    final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
 
     @Override
     protected void onStart() {
         super.onStart();
-        fetchGoalsFromServer(); // Refresh list every time activity becomes visible
+        fetchGoalsFromServer();
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        bottomNav.setSelectedItemId(R.id.nav_home);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_list);
-
-        userUuid = getIntent().getStringExtra("USER_UUID");
         myGoals = new ArrayList<>();
 
         RecyclerView recyclerView = findViewById(R.id.recyclerViewGoals);
@@ -79,8 +79,25 @@ public class GoalList extends AppCompatActivity {
         FloatingActionButton btn_add_goal = findViewById(R.id.fab);
         btn_add_goal.setOnClickListener(view -> {
             Intent intent = new Intent(GoalList.this, AddEditGoal.class);
-            intent.putExtra("USER_UUID", userUuid);
             startActivity(intent);
+        });
+
+        // Setup Bottom Navigation
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        bottomNav.setSelectedItemId(R.id.nav_home);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                return true;
+            } else if (itemId == R.id.nav_friends) {
+                Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                Intent intent = new Intent(GoalList.this, Profile.class);
+                startActivity(intent);
+                return true;
+            }
+            return false;
         });
     }
 
@@ -91,11 +108,11 @@ public class GoalList extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
 
                 RequestBody formBody = new FormBody.Builder()
-                        .add("uuid", userUuid)
+                        .add("uuid", PreferenceManager.getUUID(this))
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(hosted_server + "get_goals.php")
+                        .url(PreferenceManager.HOSTED_SERVER + "get_goals.php")
                         .post(formBody)
                         .build();
 
@@ -130,7 +147,6 @@ public class GoalList extends AppCompatActivity {
 
         if (item.getItemId() == 101) { // Edit
             Intent intent = new Intent(GoalList.this, AddEditGoal.class);
-            intent.putExtra("USER_UUID", getIntent().getStringExtra("USER_UUID"));
             intent.putExtra("EDIT_MODE", true);
             intent.putExtra("goal_id", selectedGoal.getId());
             intent.putExtra("title", selectedGoal.getTitle());
@@ -157,7 +173,7 @@ public class GoalList extends AppCompatActivity {
                     .build();
 
             Request request = new Request.Builder()
-                    .url(hosted_server + "mutate_goal.php")
+                    .url(PreferenceManager.HOSTED_SERVER + "mutate_goal.php")
                     .post(formBody)
                     .build();
 
@@ -192,7 +208,7 @@ public class GoalList extends AppCompatActivity {
                     .build();
 
             Request request = new Request.Builder()
-                    .url(hosted_server + "complete_goal.php")
+                    .url(PreferenceManager.HOSTED_SERVER + "complete_goal.php")
                     .post(formBody)
                     .build();
 
@@ -221,11 +237,5 @@ public class GoalList extends AppCompatActivity {
                 e.printStackTrace();
             }
         }).start();
-    }
-
-    public void show_profile(android.view.MenuItem item){
-        Intent intent = new Intent(GoalList.this, Profile.class);
-        intent.putExtra("USER_UUID", userUuid);
-        startActivity(intent);
     }
 }

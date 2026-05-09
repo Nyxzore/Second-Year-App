@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 public class PreferenceManager {
 
+    public static final String HOSTED_SERVER = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
     private static final String PREF_NAME = "my_prefs";
     private static final String KEY_UUID = "uuid";
     private static final String KEY_HASH = "hash";

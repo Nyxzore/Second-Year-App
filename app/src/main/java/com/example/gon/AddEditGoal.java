@@ -26,17 +26,11 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class AddEditGoal extends AppCompatActivity {
-
-    private String userUuid;
-    final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_goal);
 
-        userUuid = getIntent().getStringExtra("USER_UUID");
         boolean edit_mode = getIntent().getBooleanExtra("EDIT_MODE", false);
 
         TextView lblDate = (TextView) findViewById(R.id.lblDate);
@@ -102,7 +96,7 @@ public class AddEditGoal extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
 
             RequestBody formBody = new FormBody.Builder()
-                    .add("uuid", userUuid != null ? userUuid : "")
+                    .add("uuid", PreferenceManager.getUUID(this) != null ? PreferenceManager.getUUID(this) : "")
                     .add("description", description)
                     .add("title", title)
                     .add("due_date", due_date)
@@ -111,7 +105,7 @@ public class AddEditGoal extends AppCompatActivity {
                     .build();
 
             Request request = new Request.Builder()
-                    .url(hosted_server + "mutate_goal.php")
+                    .url(PreferenceManager.HOSTED_SERVER + "mutate_goal.php")
                     .post(formBody)
                     .build();
 

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -32,6 +31,8 @@
         <activity android:name=".Profile" />
         <activity
             android:name=".AddEditGoal" />
+        <activity
+            android:name=".CreateAccount" />
     </application>
 
 </manifest>

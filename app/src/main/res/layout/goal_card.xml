@@ -17,6 +17,17 @@
         android:background="@color/pale_green"
         android:padding="16dp">
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="290dp"
+            android:text="Catagory"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/statusIndicator"
+            tools:layout_editor_absoluteY="102dp" />
+
         <View
             android:id="@+id/statusIndicator"
             android:layout_width="4dp"
@@ -96,16 +107,6 @@
             android:progress="30"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="128dp" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="290dp"
-            android:text="Catagory"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/statusIndicator"
-            tools:layout_editor_absoluteY="102dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
