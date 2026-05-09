@@ -32,8 +32,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
-
-    final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
     String uuid, hash;
     EditText username_edit, password_edit;
     CheckBox chkRememberMe;
@@ -79,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleCreateAccount(View v) {
-        authenticateUser("create_account", false);
+        Intent intent = new Intent(this, CreateAccount.class);
+        startActivity(intent);
     }
 
     private void authenticateUser(String mode, boolean automatic_login) {
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(hosted_server + "login.php")
+                        .url(PreferenceManager.HOSTED_SERVER + "login.php")
                         .post(formBody)
                         .build();
 
@@ -144,22 +143,24 @@ public class MainActivity extends AppCompatActivity {
 
             if (status.equals("success")) {
                 uuid = json.getString("uuid");
-                
-                // Only save if it's a manual login and checkbox is checked, 
-                // OR if it's already an automatic login (to keep it refreshed)
-                CheckBox chkRemember = findViewById(R.id.chkRememberMe);
-                if (chkRemember.isChecked()) {
-                    PreferenceManager.saveUUID(this, uuid);
+
+                PreferenceManager.saveUUID(this, uuid);
+                PreferenceManager.saveUsername(this, username);
+
+                if (chkRememberMe != null && chkRememberMe.isChecked()) {
                     PreferenceManager.saveHash(this, currentHash);
-                    PreferenceManager.saveUsername(this, username);
+                } else {
+                    // If not checked, clear any previously saved hash
+                    PreferenceManager.saveHash(this, null);
                 }
 
                 Intent intent = new Intent(MainActivity.this, GoalList.class);
-                intent.putExtra("USER_UUID", uuid);
                 startActivity(intent);
-            } else {
+                finish();
+            }
+        else {
                 statusText.setText(message);
-                // If automatic login fails (e.g. password changed), clear preferences
+                // If automatic login fails
                 PreferenceManager.saveUUID(this, null);
                 PreferenceManager.saveHash(this, null);
             }

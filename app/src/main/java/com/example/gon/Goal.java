@@ -1,5 +1,12 @@
 package com.example.gon;
 
+import android.database.DatabaseErrorHandler;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /*
     This is the generic goal object equipped fully with accesser and mutator methods
  */
@@ -23,7 +30,13 @@ public class Goal {
 
     public String getTitle() { return title; }
     public String getDescription() { return description; }
-    public String getDueDate() { return due_date; }
+    public Date getDueDateAsDate() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.parse(this.due_date);
+    }
+    public String getDueDate() {
+        return this.due_date;
+    }
     public String getId() { return id; }
 
     public void setTitle(String title) { this.title = title; }

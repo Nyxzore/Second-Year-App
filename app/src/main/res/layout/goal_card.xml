@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
@@ -12,9 +13,20 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background= "@color/pale_green"
+        android:layout_height="match_parent"
+        android:background="@color/pale_green"
         android:padding="16dp">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="290dp"
+            android:text="Catagory"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/statusIndicator"
+            tools:layout_editor_absoluteY="102dp" />
 
         <View
             android:id="@+id/statusIndicator"
@@ -86,6 +98,15 @@
             app:layout_constraintBottom_toBottomOf="@+id/imageViewCalendar"
             app:layout_constraintStart_toEndOf="@+id/imageViewCalendar"
             app:layout_constraintTop_toTopOf="@+id/imageViewCalendar" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="329dp"
+            android:layout_height="16dp"
+            android:progress="30"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="128dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

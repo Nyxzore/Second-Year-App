@@ -1,6 +1,5 @@
 package com.example.gon;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -26,17 +25,11 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class AddEditGoal extends AppCompatActivity {
-
-    private String userUuid;
-    final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_goal);
+        setContentView(R.layout.activity_add_edit_goal);
 
-        userUuid = getIntent().getStringExtra("USER_UUID");
         boolean edit_mode = getIntent().getBooleanExtra("EDIT_MODE", false);
 
         TextView lblDate = (TextView) findViewById(R.id.lblDate);
@@ -76,6 +69,11 @@ public class AddEditGoal extends AppCompatActivity {
         });
 
         btnAdd.setOnClickListener(v -> {
+            if (edtTitle.getText().toString().trim().isEmpty()){
+                Toast.makeText(this, "A goal must have a title", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             btnAdd.setEnabled(false);
             btnAdd.setText("...");
             post_goal(edit_mode);
@@ -97,7 +95,7 @@ public class AddEditGoal extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
 
             RequestBody formBody = new FormBody.Builder()
-                    .add("uuid", userUuid != null ? userUuid : "")
+                    .add("uuid", PreferenceManager.getUUID(this) != null ? PreferenceManager.getUUID(this) : "")
                     .add("description", description)
                     .add("title", title)
                     .add("due_date", due_date)
@@ -106,7 +104,7 @@ public class AddEditGoal extends AppCompatActivity {
                     .build();
 
             Request request = new Request.Builder()
-                    .url(hosted_server + "mutate_goal.php")
+                    .url(PreferenceManager.HOSTED_SERVER + "mutate_goal.php")
                     .post(formBody)
                     .build();
 
@@ -121,9 +119,6 @@ public class AddEditGoal extends AppCompatActivity {
 
                         if (status.equals("success")) {
                             Toast.makeText(AddEditGoal.this, message, Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(AddEditGoal.this, GoalList.class);
-                            intent.putExtra("USER_UUID", userUuid);
-                            startActivity(intent);
                             finish();
                         } else {
                             Toast.makeText(AddEditGoal.this, "Server: " + message, Toast.LENGTH_LONG).show();

@@ -3,12 +3,19 @@ package com.example.gon;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 public class PreferenceManager {
 
+    public static final String HOSTED_SERVER = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
     private static final String PREF_NAME = "my_prefs";
     private static final String KEY_UUID = "uuid";
     private static final String KEY_HASH = "hash";
     private static final String KEY_USERNAME = "username";
+    private static final String KEY_PROFILE_PIC = "profile_pic";
+
+    private static final String KEY_COMPLETED_COUNT = "completed_goal_count";
+    private static final String KEY_ACTIVE_COUNT = "active_goal_count";
 
     // Save UUID
     public static void saveUUID(Context context, String uuid) {
@@ -25,6 +32,21 @@ public class PreferenceManager {
                 context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
 
         return prefs.getString(KEY_UUID, null);
+    }
+
+    public static void saveProfilePic(Context context, int index) {
+        SharedPreferences prefs =
+                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
+        prefs.edit()
+                .putInt(KEY_PROFILE_PIC, index)
+                .apply();
+    }
+    public static int getProfilePic(Context context) {
+        SharedPreferences prefs =
+                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
+        return prefs.getInt(KEY_PROFILE_PIC, 0); // Default to pp0
     }
 
     // Save hash
@@ -61,4 +83,35 @@ public class PreferenceManager {
 
         return prefs.getString(KEY_USERNAME, null);
     }
+
+    public static int getCompletedGoalCount(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(KEY_COMPLETED_COUNT, 0);
+    }
+
+    public static int getActiveGoalCount(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(KEY_ACTIVE_COUNT, 0);
+    }
+
+    public static void save_stats(Context context, int completed, int active){
+        SharedPreferences prefs =
+                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
+        prefs.edit()
+                .putInt(KEY_ACTIVE_COUNT, active)
+                .putInt(KEY_COMPLETED_COUNT, completed)
+                .apply();
+    }
+
+    public static final int[] PROFILE_PHOTOS = {
+            R.drawable.pp0, R.drawable.pp1, R.drawable.pp2,
+            R.drawable.pp3, R.drawable.pp4, R.drawable.pp5,
+            R.drawable.pp6, R.drawable.pp7, R.drawable.pp8
+    };
+    public static void updateNavIcon(Context context, BottomNavigationView navView) {
+        int currentPicIndex = getProfilePic(context);
+        navView.getMenu().findItem(R.id.nav_profile).setIcon(PROFILE_PHOTOS[currentPicIndex]);
+    }
+
 }
