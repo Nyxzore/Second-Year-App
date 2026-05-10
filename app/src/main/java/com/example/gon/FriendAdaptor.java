@@ -26,7 +26,7 @@ public class FriendAdaptor extends RecyclerView.Adapter<FriendAdaptor.FriendView
     @Override
     public FriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //Overrides onCreateViewHolder to use our friend_card XML layout
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.goal_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.friend_card, parent, false);
         return new FriendViewHolder(view);
     }
 

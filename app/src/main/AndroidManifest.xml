@@ -33,6 +33,9 @@
             android:name=".AddEditGoal" />
         <activity
             android:name=".CreateAccount" />
+
+        <activity
+            android:name=".FriendsList" />
     </application>
 
 </manifest>

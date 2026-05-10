@@ -58,7 +58,8 @@ public class Profile extends AppCompatActivity {
 
         Button btnFriends = findViewById(R.id.btnFriends);
         btnFriends.setOnClickListener(v -> {
-            Toast.makeText(this, "Friends List coming soon!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Profile.this,FriendsList.class);
+            startActivity(intent);
         });
 
         // Setup Bottom Navigation
@@ -73,7 +74,9 @@ public class Profile extends AppCompatActivity {
                 finish();
                 return true;
             } else if (itemId == R.id.nav_friends) {
-                Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Profile.this,FriendsList.class);
+                startActivity(intent);
+                finish();
                 return true;
             } else if (itemId == R.id.nav_profile) {
                 return true;
