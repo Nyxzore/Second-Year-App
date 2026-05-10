@@ -93,7 +93,8 @@ public class GoalList extends AppCompatActivity {
             if (itemId == R.id.nav_home) {
                 return true;
             } else if (itemId == R.id.nav_friends) {
-                Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(GoalList.this, FriendsList.class);
+                startActivity(intent);
                 return true;
             } else if (itemId == R.id.nav_profile) {
                 Intent intent = new Intent(GoalList.this, Profile.class);
