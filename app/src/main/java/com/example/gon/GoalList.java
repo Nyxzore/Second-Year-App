@@ -3,7 +3,10 @@ package com.example.gon;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,21 +16,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class GoalList extends AppCompatActivity {
 
@@ -84,6 +84,28 @@ public class GoalList extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // Catrgory
+        TextView textViewCategory = findViewById(R.id.btnAddCategory);
+        textViewCategory.setOnClickListener(view -> {
+            EditText input = new EditText(this);
+            input.setHint("Category name");
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+            int padding = (int) (16 * getResources().getDisplayMetrics().density);
+            input.setPadding(padding, padding, padding, padding);
+
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("New Category")
+                    .setView(input)
+                    .setPositiveButton("Add", (dialog, which) -> {
+                        String categoryName = input.getText().toString().trim();
+                        if (!categoryName.isEmpty()) {
+                            add_category_post(categoryName);
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+
         // Setup Bottom Navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setItemIconTintList(null);
@@ -106,41 +128,27 @@ public class GoalList extends AppCompatActivity {
 
     public void fetchGoalsFromServer() {
         myGoals.clear();
-        new Thread(() -> {
+        Map<String, String> params = new HashMap<>();
+        params.put("uuid", PreferenceManager.getUUID(this));
+
+        PreferenceManager.post("get_goals.php", params, responseData -> {
             try {
-                OkHttpClient client = new OkHttpClient();
+                JSONObject jsonResponse = new JSONObject(responseData);
+                JSONArray goalsArray = jsonResponse.getJSONArray("goals");
 
-                RequestBody formBody = new FormBody.Builder()
-                        .add("uuid", PreferenceManager.getUUID(this))
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(PreferenceManager.HOSTED_SERVER + "get_goals.php")
-                        .post(formBody)
-                        .build();
-
-                try (Response response = client.newCall(request).execute()) {
-                    if (response.isSuccessful()) {
-                        String responseData = response.body().string();
-                        JSONObject jsonResponse = new JSONObject(responseData);
-                        JSONArray goalsArray = jsonResponse.getJSONArray("goals");
-
-                        for (int i = 0; i < goalsArray.length(); i++) {
-                            JSONObject goal = goalsArray.getJSONObject(i);
-                            String title = goal.getString("title");
-                            String description = goal.getString("description");
-                            String due_date = goal.getString("due_date");
-                            String id = goal.getString("id");
-                            myGoals.add(new Goal(title, description, due_date, id));
-                        }
-
-                        runOnUiThread(() -> adapter.notifyDataSetChanged());
-                    }
+                for (int i = 0; i < goalsArray.length(); i++) {
+                    JSONObject goal = goalsArray.getJSONObject(i);
+                    String title = goal.getString("title");
+                    String description = goal.getString("description");
+                    String due_date = goal.getString("due_date");
+                    String id = goal.getString("id");
+                    myGoals.add(new Goal(title, description, due_date, id));
                 }
-            } catch (Exception e) {
+                adapter.notifyDataSetChanged();
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
 
     @Override
@@ -167,78 +175,64 @@ public class GoalList extends AppCompatActivity {
     }
 
     public void delete_goal_post(String goal_id) {
-        new Thread(() -> {
-            OkHttpClient client = new OkHttpClient();
+        Map<String, String> params = new HashMap<>();
+        params.put("goal_id", goal_id);
+        params.put("mode", "delete");
 
-            RequestBody formBody = new FormBody.Builder()
-                    .add("goal_id", goal_id)
-                    .add("mode", "delete")
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url(PreferenceManager.HOSTED_SERVER + "mutate_goal.php")
-                    .post(formBody)
-                    .build();
-
-            try (Response response = client.newCall(request).execute()) {
-                final String responseData = response.body().string();
-                runOnUiThread(() -> {
-                    try {
-                        JSONObject json = new JSONObject(responseData);
-                        String status = json.getString("status");
-                        String message = json.getString("message");
-                        Toast.makeText(GoalList.this,
-                                status.equals("success") ? message : "Server: " + message,
-                                Toast.LENGTH_LONG).show();
-                    } catch (Exception e) {
-                        Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
-                        Toast.makeText(GoalList.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
-                    }
-                });
-            } catch (IOException e) {
-                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Network Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                e.printStackTrace();
+        PreferenceManager.post("mutate_goal.php", params, responseData -> {
+            try {
+                JSONObject json = new JSONObject(responseData);
+                String status = json.getString("status");
+                String message = json.getString("message");
+                Toast.makeText(GoalList.this,
+                        status.equals("success") ? message : "Server: " + message,
+                        Toast.LENGTH_LONG).show();
+            } catch (JSONException e) {
+                Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
+                Toast.makeText(GoalList.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
             }
-        }).start();
+        });
     }
 
     public void complete_goal_post(String goal_id) {
-        new Thread(() -> {
-            OkHttpClient client = new OkHttpClient();
+        Map<String, String> params = new HashMap<>();
+        params.put("goal_id", goal_id);
 
-            RequestBody formBody = new FormBody.Builder()
-                    .add("goal_id", goal_id)
-                    .build();
+        PreferenceManager.post("complete_goal.php", params, responseData -> {
+            try {
+                JSONObject json = new JSONObject(responseData);
+                String status = json.getString("status");
+                String message = json.getString("message");
 
-            Request request = new Request.Builder()
-                    .url(PreferenceManager.HOSTED_SERVER + "complete_goal.php")
-                    .post(formBody)
-                    .build();
-
-            try (Response response = client.newCall(request).execute()) {
-                final String responseData = response.body().string();
-                runOnUiThread(() -> {
-                    try {
-                        JSONObject json = new JSONObject(responseData);
-                        String status = json.getString("status");
-                        String message = json.getString("message");
-
-                        if (status.equals("success")) {
-                            List<String> affirmations = List.of("Goal Crushed", "1 More Down", "Keep Going", "Completed");
-                            String randomAffirmation = affirmations.get(new Random().nextInt(affirmations.size()));
-                            Toast.makeText(GoalList.this, randomAffirmation, Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(GoalList.this, "Server: " + message, Toast.LENGTH_LONG).show();
-                        }
-                    } catch (Exception e) {
-                        Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
-                        Toast.makeText(GoalList.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
-                    }
-                });
-            } catch (IOException e) {
-                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Network Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                e.printStackTrace();
+                if (status.equals("success")) {
+                    List<String> affirmations = List.of("Goal Crushed", "1 More Down", "Keep Going", "Completed");
+                    String randomAffirmation = affirmations.get(new Random().nextInt(affirmations.size()));
+                    Toast.makeText(GoalList.this, randomAffirmation, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(GoalList.this, "Server: " + message, Toast.LENGTH_LONG).show();
+                }
+            } catch (JSONException e) {
+                Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
+                Toast.makeText(GoalList.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
             }
-        }).start();
+        });
+    }
+
+    public void add_category_post(String categoryName) {
+        Map<String, String> params = new HashMap<>();
+        params.put("uuid", PreferenceManager.getUUID(this));
+        params.put("category_name", categoryName);
+
+        PreferenceManager.post("add_category.php", params, responseData -> {
+            try {
+                JSONObject json = new JSONObject(responseData);
+                String status = json.getString("status");
+                String message = json.getString("message");
+                Toast.makeText(GoalList.this, message, Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+                Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
+                Toast.makeText(GoalList.this, "Error: " + responseData, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

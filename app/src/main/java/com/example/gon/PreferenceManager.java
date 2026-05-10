@@ -2,8 +2,18 @@ package com.example.gon;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.Map;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class PreferenceManager {
 
@@ -112,6 +122,38 @@ public class PreferenceManager {
     public static void updateNavIcon(Context context, BottomNavigationView navView) {
         int currentPicIndex = getProfilePic(context);
         navView.getMenu().findItem(R.id.nav_profile).setIcon(PROFILE_PHOTOS[currentPicIndex]);
+    }
+
+    public interface NetworkCallback {
+        void onResponse(String response);
+    }
+
+    public static void post(String phpFile, Map<String, String> params, NetworkCallback callback) {
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                FormBody.Builder builder = new FormBody.Builder();
+                for (Map.Entry<String, String> entry : params.entrySet()) {
+                    builder.add(entry.getKey(), entry.getValue());
+                }
+
+                Request request = new Request.Builder()
+                        .url(HOSTED_SERVER + phpFile)
+                        .post(builder.build())
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful()) {
+                        String responseData = response.body().string();
+                        new Handler(Looper.getMainLooper()).post(() -> callback.onResponse(responseData));
+                    } else {
+                        Log.e("Network", "Failed: " + response.code());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 }
