@@ -6,4 +6,5 @@
     <color name="forest_green">#2b5c38</color>
     <color name="overdue_date">#ff0000</color>
     <color name="ontrack_date">#2b5c38</color>
+    <color name="progress_bar">#FF000000</color>color>
 </resources>

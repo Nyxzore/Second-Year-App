@@ -17,17 +17,6 @@
         android:background="@color/pale_green"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="290dp"
-            android:text="Catagory"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/statusIndicator"
-            tools:layout_editor_absoluteY="102dp" />
-
         <View
             android:id="@+id/statusIndicator"
             android:layout_width="4dp"
@@ -79,7 +68,7 @@
             android:id="@+id/imageViewCalendar"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:alpha="0.5"
             app:layout_constraintStart_toStartOf="@+id/textViewGoalName"
             app:layout_constraintTop_toBottomOf="@+id/textViewGoalDescription"
@@ -99,14 +88,29 @@
             app:layout_constraintStart_toEndOf="@+id/imageViewCalendar"
             app:layout_constraintTop_toTopOf="@+id/imageViewCalendar" />
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Category"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="@+id/textViewGoalName"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewCalendar" />
+
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="329dp"
-            android:layout_height="16dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:progress="30"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="128dp" />
+            android:progressTint="@color/progress_bar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/textViewGoalName"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

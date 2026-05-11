@@ -1,10 +1,6 @@
 package com.example.gon;
 
-import static android.app.PendingIntent.getActivity;
-
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,16 +15,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import org.json.JSONException;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     String uuid, hash;
@@ -90,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
             currentHash = hash;
             if (username == null) return;
         } else {
-            username = username_edit.getText().toString();
-            String password = password_edit.getText().toString();
+            username = username_edit.getText().toString().trim();
+            String password = password_edit.getText().toString().trim();
 
             if (username.isEmpty() || password.isEmpty()) {
                 statusText.setText("Please enter both username and password");
@@ -105,33 +96,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        new Thread(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient();
+        Map<String, String> params = new HashMap<>();
+        params.put("username", username);
+        params.put("hash", currentHash);
+        params.put("mode", mode);
 
-                RequestBody formBody = new FormBody.Builder()
-                        .add("username", username)
-                        .add("hash", currentHash)
-                        .add("mode", mode)
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(PreferenceManager.HOSTED_SERVER + "login.php")
-                        .post(formBody)
-                        .build();
-
-                try (Response response = client.newCall(request).execute()) {
-                    if (response.isSuccessful()) {
-                        String responseData = response.body().string();
-                        runOnUiThread(() -> handleAuthResponse(responseData, statusText, username, currentHash));
-                    } else {
-                        runOnUiThread(() -> statusText.setText("Server returned error: " + response.code()));
-                    }
-                }
-            } catch (IOException e) {
-                runOnUiThread(() -> statusText.setText("Connection failed. Check internet."));
-            }
-        }).start();
+        PreferenceManager.post("login.php", params, responseData -> {
+            handleAuthResponse(responseData, statusText, username, currentHash);
+        });
     }
 
     private void handleAuthResponse(String responseData, TextView statusText, String username, String currentHash) {
