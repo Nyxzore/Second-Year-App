@@ -162,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 // If automatic login fails (e.g. password changed), clear preferences
                 PreferenceManager.saveUUID(this, null);
                 PreferenceManager.saveHash(this, null);
+                PreferenceManager.saveUsername(this, null);
             }
         } catch (JSONException e) {
             statusText.setText("Server Error: Invalid Response");
