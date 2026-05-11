@@ -34,8 +34,9 @@
             android:layout_marginTop="30dp"
             android:text="Good Morning,"
             android:textColor="#173D2A"
-            android:textSize="34sp"
-            android:textStyle="bold" />
+            android:textSize="37sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_bold"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -43,7 +44,8 @@
             android:text="Gabriela 🌱"
             android:textColor="#4B8A5B"
             android:textSize="40sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_bold"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -51,7 +53,8 @@
             android:layout_marginTop="8dp"
             android:text="Small steps today, big changes tomorrow."
             android:textColor="#555555"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins_italic"/>
 
         <!-- OVERVIEW TITLE -->
         <TextView
@@ -61,7 +64,8 @@
             android:text="Overview"
             android:textColor="#173D2A"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
 
         <!-- OVERVIEW CARDS -->
         <HorizontalScrollView
@@ -190,7 +194,8 @@
             android:text="My Goals"
             android:textColor="#173D2A"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
 
         <!-- GOAL CARD -->
         <LinearLayout
@@ -207,7 +212,8 @@
                 android:text="🏋️ Get Fit &amp; Healthy"
                 android:textColor="#173D2A"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins_regular"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -215,7 +221,8 @@
                 android:layout_marginTop="5dp"
                 android:text="Workout 4x per week"
                 android:textColor="#666666"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:fontFamily="@font/poppins_light"/>
 
             <ProgressBar
                 android:layout_width="match_parent"
@@ -234,7 +241,8 @@
                 android:text="75%"
                 android:textColor="#4B8A5B"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins_regular"/>
         </LinearLayout>
 
         <!-- HABIT TRACKER -->
@@ -245,7 +253,8 @@
             android:text="Habit Tracker"
             android:textColor="#173D2A"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -260,21 +269,24 @@
                 android:layout_height="wrap_content"
                 android:text="Drink Water"
                 android:textColor="#173D2A"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_light"/>
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Workout"
                 android:textColor="#173D2A"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_light"/>
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Read"
                 android:textColor="#173D2A"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_light"/>
         </LinearLayout>
 
         <!-- MOTIVATION -->
@@ -294,7 +306,8 @@
                 android:text='"Discipline today creates freedom tomorrow."'
                 android:textColor="@color/white"
                 android:textSize="24sp"
-                android:textStyle="bold|italic" />
+                android:textStyle="bold|italic"
+                android:fontFamily="@font/poppins_regular"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -302,7 +315,8 @@
                 android:layout_marginTop="15dp"
                 android:text="You've got this 💚"
                 android:textColor="@color/pale_green"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_regular"/>
         </LinearLayout>
 
     </LinearLayout>

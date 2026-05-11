@@ -40,6 +40,7 @@
         android:id="@+id/textSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_regular"
         android:text="Track goals. Build habits. Grow daily."
         android:textColor="#B7E4C7"
         android:textSize="14sp"
@@ -79,7 +80,8 @@
                 android:textColor="#FFFFFF"
                 android:textColorHint="#B7E4C7"
                 android:backgroundTint="#95D5B2"
-                android:inputType="text"/>
+                android:inputType="text"
+                android:fontFamily="@font/poppins_extra_light"/>
 
             <!-- Password -->
 
@@ -92,7 +94,8 @@
                 android:textColor="#FFFFFF"
                 android:textColorHint="#B7E4C7"
                 android:backgroundTint="#95D5B2"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:fontFamily="@font/poppins_extra_light"/>
 
             <!-- Remember Me -->
 
@@ -103,7 +106,8 @@
                 android:layout_marginTop="10dp"
                 android:text="Remember Me"
                 android:textColor="#FFFFFF"
-                android:buttonTint="#95D5B2"/>
+                android:buttonTint="#95D5B2"
+                android:fontFamily="@font/poppins_regular"/>
 
             <!-- Login Button -->
 
@@ -118,7 +122,8 @@
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:backgroundTint="#2D6A4F"/>
+                android:backgroundTint="#2D6A4F"
+                android:fontFamily="@font/poppins_bold"/>
 
             <!-- Create Account -->
 
@@ -132,7 +137,8 @@
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                android:backgroundTint="#40916C"/>
+                android:backgroundTint="#40916C"
+                android:fontFamily="@font/poppins_regular"/>
 
             <!-- Loading -->
 

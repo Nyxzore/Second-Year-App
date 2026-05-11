@@ -25,41 +25,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Subtitle -->
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppins_bold"
         android:text="Welcome"
         android:textColor="#1B4332"
-        android:textSize="34sp"
+        android:textSize="43dp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/imgLogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/imgLogo" />
 
-    <!-- Subtitle -->
+    <!-- Username -->
+
+    <!-- Email -->
+
     <TextView
         android:id="@+id/textViewSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppins_regular"
         android:text="Create your account to get started"
         android:textColor="#52796F"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
 
-    <!-- Username -->
-
-    <!-- Email -->
     <EditText
         android:id="@+id/edtCreateUsername"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/edittext_bg"
+        android:fontFamily="@font/poppins_extra_light"
         android:hint="Full Name"
         android:hintTextColor="#84A98C"
         android:paddingStart="20dp"
@@ -84,7 +90,8 @@
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/edtCreateUsername"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:fontFamily="@font/poppins_extra_light"/>
 
     <!-- Password -->
     <EditText
@@ -101,14 +108,22 @@
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/edtCreateEmail"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:fontFamily="@font/poppins_extra_light"/>
 
     <!-- Confirm Password -->
+
+    <!-- Admin Checkbox -->
+
+    <!-- Create Account Button -->
+
+    <!-- Status Text -->
+
     <EditText
         android:id="@+id/edtConfirmPassword"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/edittext_bg"
         android:hint="Confirm Password"
         android:hintTextColor="#84A98C"
@@ -116,15 +131,11 @@
         android:paddingStart="20dp"
         android:textColor="#1B4332"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/edtCreatePassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- Admin Checkbox -->
-
-    <!-- Create Account Button -->
-
-    <!-- Status Text -->
+        app:layout_constraintTop_toBottomOf="@id/edtCreatePassword"
+        android:fontFamily="@font/poppins_extra_light"/>
 
     <Button
         android:id="@+id/btnRegister"
@@ -141,7 +152,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="586dp" />
+        tools:layout_editor_absoluteY="586dp"
+        android:fontFamily="@font/poppins_bold"/>
 
     <TextView
         android:id="@+id/textViewStatus"
@@ -165,6 +177,7 @@
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:fontFamily="@font/poppins_regular"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

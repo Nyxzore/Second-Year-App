@@ -13,14 +13,16 @@
         android:padding="24dp">
 
         <!-- TITLE -->
+
         <TextView
             android:id="@+id/txtTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:fontFamily="@font/poppins_bold"
             android:text="Add Goal"
             android:textColor="#1E1B39"
-            android:textSize="30sp"
+            android:textSize="40sp"
             android:textStyle="bold" />
 
         <TextView
@@ -29,6 +31,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="30dp"
+            android:fontFamily="@font/poppins_light_italic"
             android:text="Create a goal that matters to you"
             android:textColor="#7E7E93"
             android:textSize="15sp" />
@@ -40,7 +43,8 @@
             android:text="Goal Title"
             android:textColor="#1E1B39"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
 
         <EditText
             android:id="@+id/edtGoalTitle"
@@ -53,7 +57,8 @@
             android:textColor="#1E1B39"
             android:textColorHint="#A0A0B2"
             android:textSize="16sp"
-            android:textCursorDrawable="@null"/>
+            android:textCursorDrawable="@null"
+            android:fontFamily="@font/poppins_extra_light"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -62,7 +67,8 @@
             android:layout_marginBottom="24dp"
             android:text="Give your goal a clear and motivating title."
             android:textColor="#8E8EA0"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            android:fontFamily="@font/poppins_regular"/>
 
         <!-- CATEGORY -->
         <TextView
@@ -71,7 +77,8 @@
             android:text="Goal Category"
             android:textColor="#1E1B39"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
 
         <HorizontalScrollView
             android:layout_width="match_parent"
@@ -107,7 +114,8 @@
                         android:layout_marginTop="10dp"
                         android:text="Fitness"
                         android:textColor="#1B5E20"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_light"/>
                 </LinearLayout>
 
                 <!-- HEALTH -->
@@ -131,7 +139,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="Health"
-                        android:textColor="#1E1B39" />
+                        android:textColor="#1E1B39"
+                        android:fontFamily="@font/poppins_regular"/>
                 </LinearLayout>
 
                 <!-- LEARNING -->
@@ -154,7 +163,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="Learning"
-                        android:textColor="#1E1B39" />
+                        android:textColor="#1E1B39"
+                        android:fontFamily="@font/poppins_regular"/>
                 </LinearLayout>
 
                 <!-- OTHER -->
@@ -178,7 +188,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Other"
-                        android:textColor="#1E1B39" />
+                        android:textColor="#1E1B39"
+                        android:fontFamily="@font/poppins_regular"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -192,14 +203,16 @@
             android:text="Target Date"
             android:textColor="#1E1B39"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
 
         <CalendarView
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_marginTop="15dp"
-            android:background="@drawable/edittext_background" />
+            android:background="@drawable/edittext_background"
+            android:fontFamily="@font/poppins_light" />
 
         <!-- DESCRIPTION -->
         <TextView
@@ -209,7 +222,8 @@
             android:text="Notes"
             android:textColor="#1E1B39"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
 
         <EditText
             android:id="@+id/edtGoalDescription"
@@ -225,6 +239,7 @@
             android:textColorHint="#A0A0B2"
             android:textSize="15sp"
             android:textCursorDrawable="@null"
+            android:fontFamily="@font/poppins_extra_light"
             />
 
         <!-- BUTTON -->
@@ -235,11 +250,12 @@
             android:layout_marginTop="35dp"
             android:layout_marginBottom="40dp"
             android:backgroundTint="#3CB371"
-            android:text="Create Goal"
+            android:text="CREATE GOAL"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_bold"/>
 
     </LinearLayout>
 
