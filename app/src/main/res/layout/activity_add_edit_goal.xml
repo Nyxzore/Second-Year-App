@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F4FBF6">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- TITLE -->
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Add Goal"
+            android:textColor="#1E1B39"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="30dp"
+            android:text="Create a goal that matters to you"
+            android:textColor="#7E7E93"
+            android:textSize="15sp" />
+
+        <!-- GOAL TITLE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Goal Title"
+            android:textColor="#1E1B39"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtGoalTitle"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edittext_background"
+            android:hint="e.g. Run 5KM in under 30 minutes"
+            android:padding="15dp"
+            android:textColor="#1E1B39"
+            android:textColorHint="#A0A0B2"
+            android:textSize="16sp"
+            android:textCursorDrawable="@null"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:text="Give your goal a clear and motivating title."
+            android:textColor="#8E8EA0"
+            android:textSize="13sp" />
+
+        <!-- CATEGORY -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Goal Category"
+            android:textColor="#1E1B39"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- FITNESS -->
+                <LinearLayout
+                    android:id="@+id/layoutFitness"
+                    android:layout_width="100dp"
+                    android:layout_height="110dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/category_selected"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🏃"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Fitness"
+                        android:textColor="#1B5E20"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- HEALTH -->
+                <LinearLayout
+                    android:id="@+id/layoutHealth"
+                    android:layout_width="100dp"
+                    android:layout_height="110dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/category_unselected"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💚"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Health"
+                        android:textColor="#1E1B39" />
+                </LinearLayout>
+
+                <!-- LEARNING -->
+                <LinearLayout
+                    android:id="@+id/layoutLearning"
+                    android:layout_width="100dp"
+                    android:layout_height="110dp"
+                    android:background="@drawable/category_unselected"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📚"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Learning"
+                        android:textColor="#1E1B39" />
+                </LinearLayout>
+
+                <!-- OTHER -->
+                <LinearLayout
+                    android:id="@+id/layoutOther"
+                    android:layout_width="96dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/category_unselected"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="..."
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Other"
+                        android:textColor="#1E1B39" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- TARGET DATE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Target Date"
+            android:textColor="#1E1B39"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/edittext_background" />
+
+        <!-- DESCRIPTION -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Notes"
+            android:textColor="#1E1B39"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtGoalDescription"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edittext_background"
+            android:gravity="top"
+            android:hint="Why is this goal important to you?"
+            android:inputType="textMultiLine"
+            android:padding="15dp"
+            android:textColor="#1E1B39"
+            android:textColorHint="#A0A0B2"
+            android:textSize="15sp"
+            android:textCursorDrawable="@null"
+            />
+
+        <!-- BUTTON -->
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginBottom="40dp"
+            android:backgroundTint="#3CB371"
+            android:text="Create Goal"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</ScrollView>
