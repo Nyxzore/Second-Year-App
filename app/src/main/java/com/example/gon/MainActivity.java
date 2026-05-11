@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -163,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 // If automatic login fails
                 PreferenceManager.saveUUID(this, null);
                 PreferenceManager.saveHash(this, null);
+                PreferenceManager.saveUsername(this, null);
             }
         } catch (JSONException e) {
             statusText.setText("Server Error: Invalid Response");

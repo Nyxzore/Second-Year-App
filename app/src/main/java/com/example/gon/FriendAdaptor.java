@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -36,9 +37,9 @@ public class FriendAdaptor extends RecyclerView.Adapter<FriendAdaptor.FriendView
       holder.tvFriendUsername.setText(friend.getUsername());
 
 
-//      holder.btnViewGoals.setOnClickListener(v -> {
-//          // do later
-//      });
+      holder.btnViewGoals.setOnClickListener(v -> {
+          Toast.makeText(v.getContext(), "hello", Toast.LENGTH_LONG).show();
+      });
 //
 //        holder.btnNudge.setOnClickListener(v -> {
 //            // do later
