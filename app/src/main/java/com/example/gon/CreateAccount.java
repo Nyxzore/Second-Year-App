@@ -13,16 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class CreateAccount extends AppCompatActivity {
 
@@ -62,34 +57,16 @@ public class CreateAccount extends AppCompatActivity {
     }
 
     private void registerUserOnServer(String username, String email, String hash, boolean is_admin) {
-        new Thread(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient();
+        Map<String, String> params = new HashMap<>();
+        params.put("username", username);
+        params.put("email", email);
+        params.put("hash", hash);
+        params.put("is_admin", is_admin ? "1" : "0");
+        params.put("mode", "create_account");
 
-                // Sending both keys just in case the server expects one or the other
-                RequestBody formBody = new FormBody.Builder()
-                        .add("username", username)
-                        .add("email", email)
-                        .add("hash", hash)
-                        .add("is_admin", is_admin ? "1" : "0")
-                        .add("mode", "create_account")
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(PreferenceManager.HOSTED_SERVER + "login.php")
-                        .post(formBody)
-                        .build();
-
-                try (Response response = client.newCall(request).execute()) {
-                    if (response.body() != null) {
-                        String responseData = response.body().string();
-                        runOnUiThread(() -> handleServerResponse(responseData));
-                    }
-                }
-            } catch (IOException e) {
-                runOnUiThread(() -> txtStatus.setText("Network error"));
-            }
-        }).start();
+        PreferenceManager.post("login.php", params, responseData -> {
+            handleServerResponse(responseData);
+        });
     }
 
     private void handleServerResponse(String responseData) {

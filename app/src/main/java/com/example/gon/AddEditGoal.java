@@ -10,19 +10,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
-
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import java.util.Map;
 
 public class AddEditGoal extends AppCompatActivity {
     @Override
@@ -90,49 +85,30 @@ public class AddEditGoal extends AppCompatActivity {
         final String due_date = lblDate.getText().toString();
         final String goal_id = getIntent().getStringExtra("goal_id") != null ? getIntent().getStringExtra("goal_id") : "-1";
 
-        //sending post request to server to add goal into goals database
-        new Thread(() -> {
-            OkHttpClient client = new OkHttpClient();
+        Map<String, String> params = new HashMap<>();
+        params.put("uuid", PreferenceManager.getUUID(this) != null ? PreferenceManager.getUUID(this) : "");
+        params.put("description", description);
+        params.put("title", title);
+        params.put("due_date", due_date);
+        params.put("mode", edit_mode ? "edit" : "add");
+        params.put("goal_id", goal_id);
 
-            RequestBody formBody = new FormBody.Builder()
-                    .add("uuid", PreferenceManager.getUUID(this) != null ? PreferenceManager.getUUID(this) : "")
-                    .add("description", description)
-                    .add("title", title)
-                    .add("due_date", due_date)
-                    .add("mode", edit_mode ? "edit" : "add") //true if edit mode false if add mode
-                    .add("goal_id", goal_id)
-                    .build();
+            PreferenceManager.post("mutate_goal.php", params, responseData -> {
+            try {
+                JSONObject json = new JSONObject(responseData);
+                String status = json.getString("status");
+                String message = json.getString("message");
 
-            Request request = new Request.Builder()
-                    .url(PreferenceManager.HOSTED_SERVER + "mutate_goal.php")
-                    .post(formBody)
-                    .build();
-
-            try (Response response = client.newCall(request).execute()) {
-                final String responseData = response.body().string();
-
-                runOnUiThread(() -> {
-                    try {
-                        JSONObject json = new JSONObject(responseData);
-                        String status = json.getString("status");
-                        String message = json.getString("message");
-
-                        if (status.equals("success")) {
-                            Toast.makeText(AddEditGoal.this, message, Toast.LENGTH_LONG).show();
-                            finish();
-                        } else {
-                            Toast.makeText(AddEditGoal.this, "Server: " + message, Toast.LENGTH_LONG).show();
-                        }
-                    } catch (Exception e) {
-                        // 3. If it's not valid JSON, show the raw error (helps find PHP bugs)
-                        Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
-                        Toast.makeText(AddEditGoal.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
-                    }
-                });
-            } catch (IOException e) {
-                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Network Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                e.printStackTrace(); //no internet or server down
+                if (status.equals("success")) {
+                    Toast.makeText(AddEditGoal.this, message, Toast.LENGTH_LONG).show();
+                    finish();
+                } else {
+                    Toast.makeText(AddEditGoal.this, "Server: " + message, Toast.LENGTH_LONG).show();
+                }
+            } catch (JSONException e) {
+                Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
+                Toast.makeText(AddEditGoal.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
             }
-        }).start();
+        });
     }
 }

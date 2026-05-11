@@ -15,10 +15,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Profile extends AppCompatActivity {
 
@@ -36,6 +37,7 @@ public class Profile extends AppCompatActivity {
         bottomNav.setSelectedItemId(R.id.nav_profile);
 
         PreferenceManager.updateNavIcon(this, bottomNav);
+        updateStatsFromServer();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +92,6 @@ public class Profile extends AppCompatActivity {
         TextView txtActive = findViewById(R.id.txtActiveGoals);
         txtCompleted.setText(String.valueOf(PreferenceManager.getCompletedGoalCount(this)));
         txtActive.setText(String.valueOf(PreferenceManager.getActiveGoalCount(this)));
-        updateStatsFromServer();
     }
 
     private void showProfilePicker() {
@@ -136,62 +137,35 @@ public class Profile extends AppCompatActivity {
     }
 
     private void updateProfilePicOnServer(int index) {
-        new Thread(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody formBody = new FormBody.Builder()
-                        .add("uuid", PreferenceManager.getUUID(this))
-                        .add("profile_pic", String.valueOf(index))
-                        .add("mode", "update_profile_pic")
-                        .build();
+        Map<String, String> params = new HashMap<>();
+        params.put("uuid", PreferenceManager.getUUID(this));
+        params.put("profile_pic", String.valueOf(index));
+        params.put("mode", "update_profile_pic");
 
-                Request request = new Request.Builder()
-                        .url(PreferenceManager.HOSTED_SERVER + "mutate_user.php")
-                        .post(formBody)
-                        .build();
-
-                client.newCall(request).execute();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+        PreferenceManager.post("mutate_user.php", params, responseData -> {
+            // Success
+        });
     }
 
-    public void updateStatsFromServer() {
-        new Thread(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient();
+        public void updateStatsFromServer(){
+            TextView txtCompleted = findViewById(R.id.txtGoalsCompleted);
+            TextView txtActive = findViewById(R.id.txtActiveGoals);
 
-                RequestBody formBody = new FormBody.Builder()
-                        .add("uuid", PreferenceManager.getUUID(this))
-                        .build();
+            Map<String, String> params = new HashMap<>();
+            params.put("uuid", PreferenceManager.getUUID(this));
+            PreferenceManager.post("get_stats.php", params, responseData -> {
+                try {
+                    JSONObject json = new JSONObject(responseData);
+                    int completed = json.getInt("completed_count");
+                    int active = json.getInt("active_count");
 
-                Request request = new Request.Builder()
-                        .url(PreferenceManager.HOSTED_SERVER + "get_stats.php")
-                        .post(formBody)
-                        .build();
+                    txtCompleted.setText(String.valueOf(completed));
+                    txtActive.setText(String.valueOf(active));
 
-                try (okhttp3.Response response = client.newCall(request).execute()) {
-                    if (response.isSuccessful()) {
-                        String responseData = response.body().string();
-                        org.json.JSONObject json = new org.json.JSONObject(responseData);
-
-                        int completed = json.getInt("completed_count");
-                        int active = json.getInt("active_count");
-
-                        runOnUiThread(() -> {
-                            TextView txtCompleted = findViewById(R.id.txtGoalsCompleted);
-                            TextView txtActive = findViewById(R.id.txtActiveGoals);
-                            txtCompleted.setText(String.valueOf(completed));
-                            txtActive.setText(String.valueOf(active));
-
-                            PreferenceManager.save_stats(this, completed,active);
-                        });
-                    }
+                    PreferenceManager.save_stats(this, completed, active);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
+            });
+        }
 }
