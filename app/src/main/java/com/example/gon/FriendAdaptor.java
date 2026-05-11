@@ -40,7 +40,7 @@ public class FriendAdaptor extends RecyclerView.Adapter<FriendAdaptor.FriendView
       holder.btnViewGoals.setOnClickListener(v -> {
           Toast.makeText(v.getContext(), "hello", Toast.LENGTH_LONG).show();
       });
-//
+
 //        holder.btnNudge.setOnClickListener(v -> {
 //            // do later
 //        });
