@@ -2,6 +2,7 @@ package com.example.gon;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,12 +57,6 @@ public class Profile extends AppCompatActivity {
         }
 
         imgProfile.setOnClickListener(v -> showProfilePicker());
-
-
-        Button btnFriends = findViewById(R.id.btnFriends);
-        btnFriends.setOnClickListener(v -> {
-            Toast.makeText(this, "Friends List coming soon!", Toast.LENGTH_SHORT).show();
-        });
 
         // Setup Bottom Navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
@@ -158,6 +153,9 @@ public class Profile extends AppCompatActivity {
 
                     txtCompleted.setText(String.valueOf(completed));
                     txtActive.setText(String.valueOf(active));
+
+                    Log.e("GON_DEBUG : fetch_stats", "lifetime goals completed: " + String.valueOf(completed));
+                    Log.e("GON_DEBUG : fetch_stats", "active goals: " + String.valueOf(active));
 
                     PreferenceManager.save_stats(this, completed, active);
                 } catch (JSONException e) {

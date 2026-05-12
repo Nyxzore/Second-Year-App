@@ -40,13 +40,14 @@
         android:id="@+id/textSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/poppins_regular"
         android:text="Track goals. Build habits. Grow daily."
         android:textColor="#B7E4C7"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="219dp" />
+        app:layout_constraintTop_toBottomOf="@id/imageViewLogo" />
 
     <!-- Login Card -->
 
@@ -55,14 +56,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
-        android:layout_marginEnd="28dp"
         android:layout_marginTop="35dp"
+        android:layout_marginEnd="28dp"
+        app:cardBackgroundColor="#1B4332"
         app:cardCornerRadius="24dp"
         app:cardElevation="8dp"
-        app:cardBackgroundColor="#1B4332"
-        app:layout_constraintTop_toBottomOf="@id/textSubtitle"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/textSubtitle">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -76,12 +77,12 @@
                 android:id="@+id/edtUsername"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:hint="Username"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#B7E4C7"
                 android:backgroundTint="#95D5B2"
+                android:fontFamily="@font/poppins_extra_light"
+                android:hint="Username"
                 android:inputType="text"
-                android:fontFamily="@font/poppins_extra_light"/>
+                android:textColor="#FFFFFF"
+                android:textColorHint="#B7E4C7" />
 
             <!-- Password -->
 
@@ -90,12 +91,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:layout_marginTop="18dp"
-                android:hint="Password"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#B7E4C7"
                 android:backgroundTint="#95D5B2"
+                android:fontFamily="@font/poppins_extra_light"
+                android:hint="Password"
                 android:inputType="textPassword"
-                android:fontFamily="@font/poppins_extra_light"/>
+                android:textColor="#FFFFFF"
+                android:textColorHint="#B7E4C7" />
 
             <!-- Remember Me -->
 
@@ -104,10 +105,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Remember Me"
-                android:textColor="#FFFFFF"
                 android:buttonTint="#95D5B2"
-                android:fontFamily="@font/poppins_regular"/>
+                android:fontFamily="@font/poppins_regular"
+                android:text="Remember Me"
+                android:textColor="#FFFFFF" />
 
             <!-- Login Button -->
 
@@ -116,14 +117,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:layout_marginTop="20dp"
+                android:backgroundTint="#2D6A4F"
+                android:fontFamily="@font/poppins_bold"
                 android:onClick="handleLogin"
                 android:text="LOG IN"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:backgroundTint="#2D6A4F"
-                android:fontFamily="@font/poppins_bold"/>
+                android:textStyle="bold" />
 
             <!-- Create Account -->
 
@@ -132,13 +133,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:layout_marginTop="14dp"
+                android:backgroundTint="#40916C"
+                android:fontFamily="@font/poppins_regular"
                 android:onClick="handleCreateAccount"
                 android:text="Create Account"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:backgroundTint="#40916C"
-                android:fontFamily="@font/poppins_regular"/>
+                android:textStyle="bold" />
 
             <!-- Loading -->
 
@@ -149,7 +150,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:indeterminateTint="#95D5B2"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
 
             <!-- Debug -->
 
@@ -159,11 +160,22 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
-                android:textColor="#FFB4B4"
-                android:textAlignment="center"/>
+                android:textAlignment="center"
+                android:textColor="#FFB4B4" />
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
+    <ProgressBar
+        android:id="@+id/autoLoading"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:indeterminateTint="#B7E4C7"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

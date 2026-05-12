@@ -1,324 +1,281 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_bg">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
-
-        <!-- TOP BAR -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imgLogo"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:src="@drawable/logo" />
-
-        </LinearLayout>
-
-        <!-- WELCOME -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="Good Morning,"
-            android:textColor="#173D2A"
-            android:textSize="37sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Gabriela 🌱"
-            android:textColor="#4B8A5B"
-            android:textSize="40sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Small steps today, big changes tomorrow."
-            android:textColor="#555555"
-            android:textSize="16sp"
-            android:fontFamily="@font/poppins_italic"/>
-
-        <!-- OVERVIEW TITLE -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:text="Overview"
-            android:textColor="#173D2A"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_regular"/>
-
-        <!-- OVERVIEW CARDS -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <!-- CARD 1 -->
-                <LinearLayout
-                    android:layout_width="150dp"
-                    android:layout_height="170dp"
-                    android:layout_marginEnd="15dp"
-                    android:background="@drawable/card_bg"
-                    android:elevation="3dp"
-                    android:orientation="vertical"
-                    android:padding="18dp">
-
-                    <TextView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:background="#CDE7D0"
-                        android:gravity="center"
-                        android:text="🎯"
-                        android:textSize="22sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
-                        android:text="3"
-                        android:textColor="#173D2A"
-                        android:textSize="34sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Active Goals"
-                        android:textColor="#444444"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-                <!-- CARD 2 -->
-                <LinearLayout
-                    android:layout_width="150dp"
-                    android:layout_height="170dp"
-                    android:layout_marginEnd="15dp"
-                    android:background="@drawable/card_bg"
-                    android:elevation="3dp"
-                    android:orientation="vertical"
-                    android:padding="18dp">
-
-                    <TextView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:background="#D9ECCC"
-                        android:gravity="center"
-                        android:text="📈"
-                        android:textSize="22sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
-                        android:text="72%"
-                        android:textColor="#173D2A"
-                        android:textSize="34sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Overall Progress"
-                        android:textColor="#444444"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-                <!-- CARD 3 -->
-                <LinearLayout
-                    android:layout_width="150dp"
-                    android:layout_height="170dp"
-                    android:background="@drawable/card_bg"
-                    android:elevation="3dp"
-                    android:orientation="vertical"
-                    android:padding="18dp">
-
-                    <TextView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:background="#F7E5B7"
-                        android:gravity="center"
-                        android:text="🔥"
-                        android:textSize="22sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
-                        android:text="12"
-                        android:textColor="#173D2A"
-                        android:textSize="34sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Day Streak"
-                        android:textColor="#444444"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <!-- GOALS -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:text="My Goals"
-            android:textColor="#173D2A"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_regular"/>
-
-        <!-- GOAL CARD -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:background="@drawable/card_bg"
-            android:orientation="vertical"
-            android:padding="18dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🏋️ Get Fit &amp; Healthy"
-                android:textColor="#173D2A"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/poppins_regular"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="Workout 4x per week"
-                android:textColor="#666666"
-                android:textSize="15sp"
-                android:fontFamily="@font/poppins_light"/>
-
-            <ProgressBar
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:layout_marginTop="15dp"
-                android:max="100"
-                android:progress="75"
-                android:progressTint="#4B8A5B"
-                style="?android:attr/progressBarStyleHorizontal" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="8dp"
-                android:text="75%"
-                android:textColor="#4B8A5B"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/poppins_regular"/>
-        </LinearLayout>
-
-        <!-- HABIT TRACKER -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:text="Habit Tracker"
-            android:textColor="#173D2A"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_regular"/>
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomNavigationView"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:background="@drawable/card_bg"
-            android:orientation="vertical"
-            android:padding="18dp">
-
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Drink Water"
-                android:textColor="#173D2A"
-                android:textSize="16sp"
-                android:fontFamily="@font/poppins_light"/>
-
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Workout"
-                android:textColor="#173D2A"
-                android:textSize="16sp"
-                android:fontFamily="@font/poppins_light"/>
-
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Read"
-                android:textColor="#173D2A"
-                android:textSize="16sp"
-                android:fontFamily="@font/poppins_light"/>
-        </LinearLayout>
-
-        <!-- MOTIVATION -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/motivation_bg"
-            android:gravity="center"
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- TOP BAR -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imgLogo"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/logo" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/btnAddCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+"
+                    android:textSize="30sp"
+                    android:padding="8dp"
+                    android:textColor="#173D2A" />
+
+            </LinearLayout>
+
+            <!-- WELCOME -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text='"Discipline today creates freedom tomorrow."'
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:textStyle="bold|italic"
-                android:fontFamily="@font/poppins_regular"/>
+                android:layout_marginTop="30dp"
+                android:text="Good Morning,"
+                android:textColor="#173D2A"
+                android:textSize="37sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"/>
 
             <TextView
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gabriela 🌱"
+                android:textColor="#4B8A5B"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Small steps today, big changes tomorrow."
+                android:textColor="#555555"
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_italic"/>
+
+            <!-- OVERVIEW TITLE -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:text="Overview"
+                android:textColor="#173D2A"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins_regular"/>
+
+            <!-- OVERVIEW CARDS -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="You've got this 💚"
-                android:textColor="@color/pale_green"
-                android:textSize="16sp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- CARD 1 -->
+                    <LinearLayout
+                        android:layout_width="150dp"
+                        android:layout_height="170dp"
+                        android:layout_marginEnd="15dp"
+                        android:background="@drawable/card_bg"
+                        android:elevation="3dp"
+                        android:orientation="vertical"
+                        android:padding="18dp">
+
+                        <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:background="#CDE7D0"
+                            android:gravity="center"
+                            android:text="🎯"
+                            android:textSize="22sp" />
+
+                        <TextView
+                            android:id="@+id/lblActiveGoals"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="18dp"
+                            android:text="0"
+                            android:textColor="#173D2A"
+                            android:textSize="34sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Active Goals"
+                            android:textColor="#444444"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                    <!-- CARD 2 -->
+                    <LinearLayout
+                        android:layout_width="150dp"
+                        android:layout_height="170dp"
+                        android:layout_marginEnd="15dp"
+                        android:background="@drawable/card_bg"
+                        android:elevation="3dp"
+                        android:orientation="vertical"
+                        android:padding="18dp">
+
+                        <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:background="#D9ECCC"
+                            android:gravity="center"
+                            android:text="📈"
+                            android:textSize="22sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="18dp"
+                            android:text="72%"
+                            android:textColor="#173D2A"
+                            android:textSize="34sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Overall Progress"
+                            android:textColor="#444444"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                    <!-- CARD 3 -->
+                    <LinearLayout
+                        android:layout_width="150dp"
+                        android:layout_height="170dp"
+                        android:background="@drawable/card_bg"
+                        android:elevation="3dp"
+                        android:orientation="vertical"
+                        android:padding="18dp">
+
+                        <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:background="#F7E5B7"
+                            android:gravity="center"
+                            android:text="🔥"
+                            android:textSize="22sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="18dp"
+                            android:text="12"
+                            android:textColor="#173D2A"
+                            android:textSize="34sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Day Streak"
+                            android:textColor="#444444"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- GOALS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:text="My Goals"
+                android:textColor="#173D2A"
+                android:textSize="24sp"
+                android:textStyle="bold"
                 android:fontFamily="@font/poppins_regular"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewGoals"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:nestedScrollingEnabled="false" />
+
+            <!-- MOTIVATION -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/motivation_bg"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text='"Discipline today creates freedom tomorrow."'
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold|italic"
+                    android:fontFamily="@font/poppins_regular"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="You've got this 💚"
+                    android:textColor="@color/pale_green"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/poppins_regular"/>
+            </LinearLayout>
+
         </LinearLayout>
 
-    </LinearLayout>
+    </ScrollView>
 
-</ScrollView>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottomNavigationView"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#4B8A5B"
+        app:tint="@color/white" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="?attr/colorSurface"
+        app:menu="@menu/bottom_nav_menu" />
+
+</RelativeLayout>

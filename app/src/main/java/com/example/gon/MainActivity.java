@@ -46,27 +46,25 @@ public class MainActivity extends AppCompatActivity {
 
         uuid = PreferenceManager.getUUID(this);
         hash = PreferenceManager.getHashString(this);
+        String savedUsername = PreferenceManager.getUsername(this);
 
-        if (uuid != null && hash != null) {
-            findViewById(R.id.textViewTitle).setVisibility(View.INVISIBLE);
+        if (uuid != null && hash != null && savedUsername != null) {
             findViewById(R.id.imageViewLogo).setVisibility(View.INVISIBLE);
-            findViewById(R.id.textViewUsername).setVisibility(View.INVISIBLE);
-            findViewById(R.id.edtUsername).setVisibility(View.INVISIBLE);
-            findViewById(R.id.textViewPassword).setVisibility(View.INVISIBLE);
-            findViewById(R.id.edtPassword).setVisibility(View.INVISIBLE);
-            findViewById(R.id.btnLogIn).setVisibility(View.INVISIBLE);
-            findViewById(R.id.btnCreateAccount).setVisibility(View.INVISIBLE);
-            findViewById(R.id.chkRememberMe).setVisibility(View.INVISIBLE);
-            findViewById(R.id.loading).setVisibility(View.VISIBLE);
+            findViewById(R.id.textSubtitle).setVisibility(View.INVISIBLE);
+            findViewById(R.id.loginCard).setVisibility(View.INVISIBLE);
+            findViewById(R.id.autoLoading).setVisibility(View.VISIBLE);
+            Log.d("GON_DEBUG : AUTH", "Starting automatic login for: " + savedUsername);
             authenticateUser("login", true);
         }
     }
 
     public void handleLogin(View v) {
+        Log.d("GON_DEBUG : AUTH", "Login button clicked");
         authenticateUser("login", false);
     }
 
     public void handleCreateAccount(View v) {
+        Log.d("GON_DEBUG : AUTH", "Create Account button clicked");
         Intent intent = new Intent(this, CreateAccount.class);
         startActivity(intent);
     }
@@ -79,7 +77,14 @@ public class MainActivity extends AppCompatActivity {
         if (automatic_login) {
             username = PreferenceManager.getUsername(this);
             currentHash = hash;
-            if (username == null) return;
+            if (username == null) {
+                // Should not happen with new check in onCreate, but for safety:
+                findViewById(R.id.imageViewLogo).setVisibility(View.VISIBLE);
+                findViewById(R.id.textSubtitle).setVisibility(View.VISIBLE);
+                findViewById(R.id.loginCard).setVisibility(View.VISIBLE);
+                findViewById(R.id.autoLoading).setVisibility(View.GONE);
+                return;
+            }
         } else {
             username = username_edit.getText().toString().trim();
             String password = password_edit.getText().toString().trim();
@@ -96,12 +101,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        Log.d("GON_DEBUG : AUTH", "Sending request for mode: " + mode);
         Map<String, String> params = new HashMap<>();
         params.put("username", username);
         params.put("hash", currentHash);
         params.put("mode", mode);
 
         PreferenceManager.post("login.php", params, responseData -> {
+            Log.d("GON_DEBUG : AUTH", "Response received for user: " + username);
             handleAuthResponse(responseData, statusText, username, currentHash);
         });
     }
@@ -130,14 +137,22 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         else {
+                android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_LONG).show();
                 statusText.setText(message);
-                // If automatic login fails
+                
+                // Reset UI if automatic login failed
+                findViewById(R.id.imageViewLogo).setVisibility(View.VISIBLE);
+                findViewById(R.id.textSubtitle).setVisibility(View.VISIBLE);
+                findViewById(R.id.loginCard).setVisibility(View.VISIBLE);
+                findViewById(R.id.autoLoading).setVisibility(View.GONE);
+
                 PreferenceManager.saveUUID(this, null);
                 PreferenceManager.saveHash(this, null);
             }
         } catch (JSONException e) {
+            android.widget.Toast.makeText(this, "Server Error: Invalid Response", android.widget.Toast.LENGTH_LONG).show();
             statusText.setText("Server Error: Invalid Response");
-            Log.e("AUTH_ERROR", responseData);
+            Log.e("GON_DEBUG : AUTH", responseData);
         }
     }
 

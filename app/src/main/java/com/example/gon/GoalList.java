@@ -72,8 +72,12 @@ public class GoalList extends AppCompatActivity {
                 adapter.notifyItemRemoved(position);
                 complete_goal_post(selectedGoal.getId());
 
+                //play charm
                 MediaPlayer mediaPlayer = MediaPlayer.create(GoalList.this, R.raw.goal_complete);
                 mediaPlayer.start();
+
+                TextView lblActiveGoals = findViewById(R.id.lblActiveGoals);
+                lblActiveGoals.setText(String.valueOf(adapter.getItemCount()));
             }
         };
         new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerView);
