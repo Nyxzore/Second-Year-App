@@ -3,6 +3,8 @@ import android.content.Intent;
 import androidx.core.graphics.Insets;
 
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -16,12 +18,18 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.*;
 public class FriendsList extends AppCompatActivity {
-
+private boolean showReq = false;                //FOR MODE OF RECYCLER VIEW STARTS WITH ALL FRIENDS
 private RecyclerView rvFriends;
 private FriendAdaptor friendAdaptor;
-private ArrayList<Friend> friendsList;
+private ArrayList<Friend> friendsList;   //general friend list
 
+private ArrayList<Friend> pendingRequestsList;   //pending requests
 
+private ArrayList<Friend> acceptedFriendsList;  //accepted req i.e actuall friends  could probably do more efficient
+private Button btnToggleRequests;
+
+private EditText etFriendUsername;
+     Button btnAddFriend;
 @Override
     protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -35,19 +43,89 @@ private ArrayList<Friend> friendsList;
     });
 
     rvFriends = findViewById(R.id.rvFriends);
-
+    btnToggleRequests = findViewById(R.id.btnToggleRequests);
+    etFriendUsername = findViewById(R.id.etFriendUsername);
+    btnAddFriend = findViewById(R.id.btnAddFriend);
     friendsList = new ArrayList<>();
+    acceptedFriendsList = new ArrayList<>();
+    pendingRequestsList = new ArrayList<>();
 
-
-    friendsList.add(new Friend("1", "RayTest"));
-    friendsList.add(new Friend("2", "DamoTest"));
-    friendsList.add(new Friend("3", "NicksonTest"));
 
     friendAdaptor = new FriendAdaptor(friendsList);
 
     rvFriends.setLayoutManager(new LinearLayoutManager(this));
     rvFriends.setAdapter(friendAdaptor);
+
+
+    // Fake test data
+    friendsList.add(new Friend("Accepted", "1", "RayTest"));
+    friendsList.add(new Friend("Pending", "2", "DamoTest"));
+    friendsList.add(new Friend("Pending", "3", "NicksonTest"));
+
+    // Split into accepted friends and pending requests
+    for (Friend friend : friendsList) {
+        if (friend.getStatus().equalsIgnoreCase("Accepted")) {
+            acceptedFriendsList.add(friend);
+        } else if (friend.getStatus().equalsIgnoreCase("Pending")) {
+            pendingRequestsList.add(friend);
+        }
+    }
+
+    // Start by showing normal friends
+    friendAdaptor = new FriendAdaptor(acceptedFriendsList);
+
+    rvFriends.setLayoutManager(new LinearLayoutManager(this));
+    rvFriends.setAdapter(friendAdaptor);
+
+    btnToggleRequests.setOnClickListener(v -> {
+        showReq = !showReq;
+
+        if (showReq) {
+            // Show friend requests
+
+            btnToggleRequests.setText("Friends");
+
+            friendAdaptor = new FriendAdaptor(pendingRequestsList);
+            rvFriends.setAdapter(friendAdaptor);
+
+        } else {
+            // Show normal friends
+
+            btnToggleRequests.setText("Requests");
+
+            friendAdaptor = new FriendAdaptor(acceptedFriendsList);
+            rvFriends.setAdapter(friendAdaptor);
+        }
+    });
+
+    btnAddFriend.setOnClickListener(v -> { //MAKING FRIENDS
+        String friendUsername = etFriendUsername.getText().toString().trim();
+
+        if (friendUsername.isEmpty()) {
+            Toast.makeText(this, "Enter a username", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        addFriend(friendUsername);
+    });
 }
+
+
+    private void addFriend(String friendUsername) {   //FUNCTION TO ADD A FRIEND
+        String currentUserId = PreferenceManager.getUUID(this);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("user_id", currentUserId);
+        params.put("friend_username", friendUsername);
+
+        PreferenceManager.post("add_friend.php", params, responseData -> {
+            runOnUiThread(() -> {
+                Toast.makeText(this, responseData, Toast.LENGTH_LONG).show();
+                etFriendUsername.setText("");
+            });
+        });
+    }
+
 
     @Override
     protected void onStart() {
