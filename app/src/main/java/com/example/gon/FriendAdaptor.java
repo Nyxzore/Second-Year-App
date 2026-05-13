@@ -61,13 +61,13 @@ public class FriendAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             friendHolder.tvFriendUsername.setText(friend.getUsername());
 
             friendHolder.btnViewGoals.setOnClickListener(v -> {
-                Toast.makeText(v.getContext(), "View goals for " + friend.getUsername(), Toast.LENGTH_LONG).show();
-                // TO DO OPEN THE GOALS PAGE OF OTHER PERSON
+                viewFriendGoals(v,friend);
             });
 
             friendHolder.btnNudge.setOnClickListener(v -> {
-                Toast.makeText(v.getContext(), "Nudged " + friend.getUsername(), Toast.LENGTH_LONG).show();
+
                 //TO DO LAST
+                nudgeFriend(v,friend);
             });
 
         } else if (holder instanceof FriendReqViewHolder) {
@@ -76,26 +76,85 @@ public class FriendAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             requestHolder.tvUsername.setText(friend.getUsername());
 
             requestHolder.btnAccept.setOnClickListener(v -> {
-                Toast.makeText(v.getContext(), "Accepted " + friend.getUsername(), Toast.LENGTH_LONG).show();
-
-                //TO DO link db
+                acceptFriendRequest(v,friend,holder.getAdapterPosition());  //send holder postition to change the recycler view
             });
 
             requestHolder.btnIgnore.setOnClickListener(v -> {
-                int curPos = holder.getAdapterPosition();  //gets current card clicked
+                ignoreFriendRequest(v,friend,holder.getAdapterPosition());
+//                int curPos = holder.getAdapterPosition();  //gets current card clicked
+//
+//                if (curPos != RecyclerView.NO_POSITION){
+//                    Toast.makeText(v.getContext(), "Ignored " + friend.getUsername(), Toast.LENGTH_LONG).show(); //checks trhat it exists
+//THIS CODE IS COMMENTED OUT AS ITS PUT LATER IN THE FUCNTION
+//                    friendsList.remove(curPos); //removes from friendslist
+//                    notifyItemRemoved(curPos);  //removes from recycler view
+//                    notifyItemRangeChanged(curPos,friendsList.size()); //refreshes other cards
 
-                if (curPos != RecyclerView.NO_POSITION){
-                    Toast.makeText(v.getContext(), "Ignored " + friend.getUsername(), Toast.LENGTH_LONG).show(); //checks trhat it exists
-
-                    friendsList.remove(curPos); //removes from friendslist
-                    notifyItemRemoved(curPos);  //removes from recycler view
-                    notifyItemRangeChanged(curPos,friendsList.size()); //refreshes other cards
-                }
             });
         }
     }
+   //START OF FUNCTIONS FOR FRIENDS   STILL THE SHELL TO DO!!!!
+    private void viewFriendGoals(View v, Friend friend) {
+        // TO DO:
+        // Later this should open a FriendGoalsList activity
+        // and pass friend.getUserID() to load that friend's goals.
 
+        Toast.makeText(
+                v.getContext(),
+                "View goals for " + friend.getUsername(),
+                Toast.LENGTH_SHORT
+        ).show();
+    }
 
+    private void nudgeFriend(View v, Friend friend) {
+        // TO DO:
+        // Later this should call nudge_friend.php
+        // with the logged-in user's ID and this friend's userID.
+
+        Toast.makeText(
+                v.getContext(),
+                "Nudged " + friend.getUsername(),
+                Toast.LENGTH_SHORT
+        ).show();
+    }
+
+    private void acceptFriendRequest(View v, Friend friend, int position) {
+        // TO DO:
+        // Later this should call accept_friend.php
+        // and update the request's status to Accepted in the database.
+
+        if (position != RecyclerView.NO_POSITION) {
+            Toast.makeText(
+                    v.getContext(),
+                    "Accepted " + friend.getUsername(),
+                    Toast.LENGTH_SHORT
+            ).show();
+
+            // For now, remove request locally from RecyclerView
+            friendsList.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, friendsList.size());
+        }
+    }
+
+    private void ignoreFriendRequest(View v, Friend friend, int position) {
+        // TO DO:
+        // Later this should call ignore_friend.php
+        // and either delete the request or mark it as Ignored in the database.
+
+        if (position != RecyclerView.NO_POSITION) {
+            Toast.makeText(
+                    v.getContext(),
+                    "Ignored " + friend.getUsername(),
+                    Toast.LENGTH_SHORT
+            ).show();
+
+            // For now, remove request locally from RecyclerView
+            friendsList.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, friendsList.size());
+        }
+    }
 
     @Override
     public int getItemCount() {

@@ -111,7 +111,7 @@ private EditText etFriendUsername;
 }
 
 
-    private void addFriend(String friendUsername) {   //FUNCTION TO ADD A FRIEND
+    private void addFriend(String friendUsername) {   //FUNCTION TO ADD A FRIEND  TO DO
         String currentUserId = PreferenceManager.getUUID(this);
 
         Map<String, String> params = new HashMap<>();
@@ -126,6 +126,56 @@ private EditText etFriendUsername;
         });
     }
 
+    private void loadFriends() {   // FUNCTION TO LOAD ACCEPTED FRIENDS - TO DO
+        String currentUserId = PreferenceManager.getUUID(this);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("user_id", currentUserId);
+
+        PreferenceManager.post("get_friends.php", params, responseData -> {
+            runOnUiThread(() -> {
+                try {
+                    acceptedFriendsList.clear();
+
+                    // TO DO:
+                    // Parse JSON response from get_friends.php
+
+                    // After adding friends:
+                    friendAdaptor = new FriendAdaptor(acceptedFriendsList);
+                    rvFriends.setAdapter(friendAdaptor);
+
+                } catch (Exception e) {
+                    Toast.makeText(this, "Error loading friends", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
+
+    private void loadFriendRequests() {   // FUNCTION TO LOAD FRIEND REQUESTS - TO DO
+        String currentUserId = PreferenceManager.getUUID(this);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("user_id", currentUserId);
+
+        PreferenceManager.post("get_friend_requests.php", params, responseData -> {
+            runOnUiThread(() -> {
+                try {
+                    pendingRequestsList.clear();
+
+                    // TO DO:
+                    // Parse JSON response from get_friend_requests.php
+
+                    // After adding pending requests:
+                    friendAdaptor = new FriendAdaptor(pendingRequestsList);
+                    rvFriends.setAdapter(friendAdaptor);
+
+                } catch (Exception e) {
+                    Toast.makeText(this, "Error loading friend requests", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
 
     @Override
     protected void onStart() {
@@ -156,6 +206,9 @@ private EditText etFriendUsername;
             return false;
         });
     }
+
+
+
 
 }
 
