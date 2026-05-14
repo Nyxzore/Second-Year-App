@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         String savedUsername = PreferenceManager.getUsername(this);
 
         if (uuid != null && hash != null && savedUsername != null) {
+            chkRememberMe.setChecked(true);
             findViewById(R.id.imageViewLogo).setVisibility(View.INVISIBLE);
             findViewById(R.id.textSubtitle).setVisibility(View.INVISIBLE);
             findViewById(R.id.loginCard).setVisibility(View.INVISIBLE);
