@@ -7,14 +7,53 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textViewFriendsTitle"
+
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="My Friends"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:padding="16dp" />
+        android:orientation="horizontal"
+        android:padding="16dp">
+        <!--text view stuff -->
+        <TextView
+            android:id="@+id/textViewFriendsTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="My Friends"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+        <!-- toggle button -->
+        <Button
+            android:id="@+id/btnToggleRequests"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Requests" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="8dp">
+
+        <EditText
+            android:id="@+id/etFriendUsername"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Enter username" />
+
+        <Button
+            android:id="@+id/btnAddFriend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add" />
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFriends"
