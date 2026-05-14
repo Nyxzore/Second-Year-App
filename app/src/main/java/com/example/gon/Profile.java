@@ -2,6 +2,7 @@ package com.example.gon;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,12 +58,6 @@ public class Profile extends AppCompatActivity {
 
         imgProfile.setOnClickListener(v -> showProfilePicker());
 
-
-        Button btnFriends = findViewById(R.id.btnFriends);
-        btnFriends.setOnClickListener(v -> {
-            Toast.makeText(this, "Friends List coming soon!", Toast.LENGTH_SHORT).show();
-        });
-
         // Setup Bottom Navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setItemIconTintList(null); // Fixes the white/green square issue
@@ -77,9 +72,15 @@ public class Profile extends AppCompatActivity {
             } else if (itemId == R.id.nav_friends) {
                 Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
                 return true;
+            } else if (itemId == R.id.nav_habits) {
+                Intent intent = new Intent(this, HabitList.class);
+                startActivity(intent);
+                finish();
+                return true;
             } else if (itemId == R.id.nav_profile) {
                 return true;
             }
+
             return false;
         });
 
@@ -158,6 +159,9 @@ public class Profile extends AppCompatActivity {
 
                     txtCompleted.setText(String.valueOf(completed));
                     txtActive.setText(String.valueOf(active));
+
+                    Log.d("GON_DEBUG : fetch_stats", "lifetime goals completed: " + String.valueOf(completed));
+                    Log.d("GON_DEBUG : fetch_stats", "active goals: " + String.valueOf(active));
 
                     PreferenceManager.save_stats(this, completed, active);
                 } catch (JSONException e) {

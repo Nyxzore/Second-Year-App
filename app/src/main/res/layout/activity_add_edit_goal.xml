@@ -1,88 +1,271 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/goalCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="313dp"
-        app:cardBackgroundColor="@color/pale_green"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="6dp"
-        app:layout_constraintBottom_toTopOf="@+id/calendarView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:layout_height="match_parent"
+    android:background="#F4FBF6">
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:layout_marginBottom="33dp"
         android:orientation="vertical"
-        android:padding="18dp"
-        app:layout_constraintBottom_toTopOf="@+id/calendarView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="24dp">
+
+        <!-- TITLE -->
+
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/poppins_bold"
+            android:text="Add Goal"
+            android:textColor="#1E1B39"
+            android:textSize="40sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="30dp"
+            android:fontFamily="@font/poppins_light_italic"
+            android:text="Create a goal that matters to you"
+            android:textColor="#7E7E93"
+            android:textSize="15sp" />
+
+        <!-- GOAL TITLE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Goal Title"
+            android:textColor="#1E1B39"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
 
         <EditText
             android:id="@+id/edtGoalTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Goal Name"
-            android:inputType="text"
+            android:layout_height="55dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edittext_background"
+            android:hint="e.g. Run 5KM in under 30 minutes"
             android:padding="15dp"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="18sp" />
+            android:textColor="#1E1B39"
+            android:textColorHint="#A0A0B2"
+            android:textSize="16sp"
+            android:textCursorDrawable="@null"
+            android:fontFamily="@font/poppins_extra_light"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:text="Give your goal a clear and motivating title."
+            android:textColor="#8E8EA0"
+            android:textSize="13sp"
+            android:fontFamily="@font/poppins_regular"/>
+
+        <!-- CATEGORY -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Goal Category"
+            android:textColor="#1E1B39"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- FITNESS -->
+                <LinearLayout
+                    android:id="@+id/layoutFitness"
+                    android:layout_width="100dp"
+                    android:layout_height="110dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/category_selected"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🏃"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Fitness"
+                        android:textColor="#1B5E20"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_light"/>
+                </LinearLayout>
+
+                <!-- HEALTH -->
+                <LinearLayout
+                    android:id="@+id/layoutHealth"
+                    android:layout_width="100dp"
+                    android:layout_height="110dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/category_unselected"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💚"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Health"
+                        android:textColor="#1E1B39"
+                        android:fontFamily="@font/poppins_regular"/>
+                </LinearLayout>
+
+                <!-- LEARNING -->
+                <LinearLayout
+                    android:id="@+id/layoutLearning"
+                    android:layout_width="100dp"
+                    android:layout_height="110dp"
+                    android:background="@drawable/category_unselected"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📚"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Learning"
+                        android:textColor="#1E1B39"
+                        android:fontFamily="@font/poppins_regular"/>
+                </LinearLayout>
+
+                <!-- OTHER -->
+                <LinearLayout
+                    android:id="@+id/layoutOther"
+                    android:layout_width="96dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/category_unselected"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="..."
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Other"
+                        android:textColor="#1E1B39"
+                        android:fontFamily="@font/poppins_regular"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- TARGET DATE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Target Date"
+            android:textColor="#1E1B39"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
+        <TextView
+            android:id="@+id/lblDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="yyyy/mm//dd"
+            android:textColor="#1E1B39"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/edittext_background"
+            android:fontFamily="@font/poppins_light" />
+
+        <!-- DESCRIPTION -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Notes"
+            android:textColor="#1E1B39"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"/>
 
         <EditText
             android:id="@+id/edtGoalDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Description"
+            android:layout_height="130dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edittext_background"
+            android:gravity="top"
+            android:hint="Why is this goal important to you?"
             android:inputType="textMultiLine"
             android:padding="15dp"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="12sp" />
+            android:textColor="#1E1B39"
+            android:textColorHint="#A0A0B2"
+            android:textSize="15sp"
+            android:textCursorDrawable="@null"
+            android:fontFamily="@font/poppins_extra_light"
+            />
 
-        <TextView
-            android:id="@+id/lblDate"
-            android:layout_width="260dp"
-            android:layout_height="wrap_content"
-            android:textColor="?attr/colorOnSurface" />
+        <!-- BUTTON -->
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginBottom="40dp"
+            android:backgroundTint="#3CB371"
+            android:text="CREATE GOAL"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_bold"/>
+
     </LinearLayout>
 
-    <CalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="323dp"
-        android:layout_height="347dp"
-        android:layout_marginStart="45dp"
-        android:layout_marginEnd="45dp"
-        android:layout_marginBottom="226dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
-
-    <Button
-        android:id="@+id/btnAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="69dp"
-        android:text="Add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendarView" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

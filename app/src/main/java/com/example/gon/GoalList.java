@@ -64,16 +64,27 @@ public class GoalList extends AppCompatActivity {
             }
 
             @Override
+            public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                int position = viewHolder.getBindingAdapterPosition();
+                if (position == 0 || position > myGoals.size()) return 0; // Disable swipe for header/footer
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getBindingAdapterPosition();
-                Goal selectedGoal = myGoals.get(position);
+                
+                Goal selectedGoal = myGoals.get(position - 1);
 
-                myGoals.remove(position);
+                myGoals.remove(position - 1);
                 adapter.notifyItemRemoved(position);
                 complete_goal_post(selectedGoal.getId());
 
                 MediaPlayer mediaPlayer = MediaPlayer.create(GoalList.this, R.raw.goal_complete);
                 mediaPlayer.start();
+
+                updateHeaderStats();
+                Log.e("GON_DEBUG : goal_list", "goal completed post succesful");
             }
         };
         new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerView);
@@ -82,28 +93,6 @@ public class GoalList extends AppCompatActivity {
         btn_add_goal.setOnClickListener(view -> {
             Intent intent = new Intent(GoalList.this, AddEditGoal.class);
             startActivity(intent);
-        });
-
-        // Catrgory
-        TextView textViewCategory = findViewById(R.id.btnAddCategory);
-        textViewCategory.setOnClickListener(view -> {
-            EditText input = new EditText(this);
-            input.setHint("Category name");
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-            int padding = (int) (16 * getResources().getDisplayMetrics().density);
-            input.setPadding(padding, padding, padding, padding);
-
-            new MaterialAlertDialogBuilder(this)
-                    .setTitle("New Category")
-                    .setView(input)
-                    .setPositiveButton("Add", (dialog, which) -> {
-                        String categoryName = input.getText().toString().trim();
-                        if (!categoryName.isEmpty()) {
-                            add_category_post(categoryName);
-                        }
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
         });
 
         // Setup Bottom Navigation
@@ -122,8 +111,44 @@ public class GoalList extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
+            else if (itemId == R.id.nav_habits) {
+                Intent intent = new Intent(GoalList.this, HabitList.class);
+                startActivity(intent);
+                return true;
+            }
             return false;
         });
+    }
+
+    private void updateHeaderStats() {
+        GoalAdapter.HeaderViewHolder header = adapter.getHeaderViewHolder();
+        if (header != null) {
+            header.lblActiveGoals.setText(String.valueOf(myGoals.size()));
+            
+            // Set username and click listener
+            header.txtUserName.setText(PreferenceManager.getUsername(this) + " 🌱");
+            header.btnAddCategory.setOnClickListener(view -> showAddCategoryDialog());
+        }
+    }
+
+    private void showAddCategoryDialog() {
+        EditText input = new EditText(this);
+        input.setHint("Category name");
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        int padding = (int) (16 * getResources().getDisplayMetrics().density);
+        input.setPadding(padding, padding, padding, padding);
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("New Category")
+                .setView(input)
+                .setPositiveButton("Add", (dialog, which) -> {
+                    String categoryName = input.getText().toString().trim();
+                    if (!categoryName.isEmpty()) {
+                        add_category_post(categoryName);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     public void fetchGoalsFromServer() {
@@ -143,8 +168,10 @@ public class GoalList extends AppCompatActivity {
                     String due_date = goal.getString("due_date");
                     String id = goal.getString("id");
                     myGoals.add(new Goal(title, description, due_date, id));
+                    Log.d("GON_DEBUG : Goal fetched:", myGoals.get(i).toString());
                 }
                 adapter.notifyDataSetChanged();
+                updateHeaderStats();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -154,7 +181,9 @@ public class GoalList extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(@NonNull android.view.MenuItem item) {
         int position = item.getGroupId();
-        Goal selectedGoal = myGoals.get(position);
+        if (position == 0 || position > myGoals.size()) return false;
+        
+        Goal selectedGoal = myGoals.get(position - 1);
 
         if (item.getItemId() == 101) { // Edit
             Intent intent = new Intent(GoalList.this, AddEditGoal.class);
@@ -166,9 +195,10 @@ public class GoalList extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (item.getItemId() == 102) { // Delete
-            myGoals.remove(position);
+            myGoals.remove(position - 1);
             adapter.notifyItemRemoved(position);
             delete_goal_post(selectedGoal.getId());
+            updateHeaderStats();
             return true;
         }
         return super.onContextItemSelected(item);

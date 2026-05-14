@@ -2,9 +2,11 @@ package com.example.gon;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,30 @@ public class AddEditGoal extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_goal);
+
+        //Category Selection
+        LinearLayout fitness = findViewById(R.id.layoutFitness);
+        LinearLayout health = findViewById(R.id.layoutHealth);
+        LinearLayout learning = findViewById(R.id.layoutLearning);
+        LinearLayout other = findViewById(R.id.layoutOther);
+
+        LinearLayout[] categories = {fitness, health, learning, other};
+
+        View.OnClickListener categoryClickListener = v -> {
+
+            //Reset all categories
+            for (LinearLayout category : categories) {
+                category.setBackgroundResource(R.drawable.category_unselected);
+            }
+
+            //Highlight selected category
+            v.setBackgroundResource(R.drawable.category_selected);
+        };
+
+        fitness.setOnClickListener(categoryClickListener);
+        health.setOnClickListener(categoryClickListener);
+        learning.setOnClickListener(categoryClickListener);
+        other.setOnClickListener(categoryClickListener);
 
         boolean edit_mode = getIntent().getBooleanExtra("EDIT_MODE", false);
 

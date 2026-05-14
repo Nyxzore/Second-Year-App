@@ -147,7 +147,7 @@ public class PreferenceManager {
                         String responseData = response.body().string();
                         new Handler(Looper.getMainLooper()).post(() -> callback.onResponse(responseData));
                     } else {
-                        Log.e("Network", "Failed: " + response.code());
+                        Log.e("GON_DEBUG", "HTTP ERROR:"  + response.code() +  " for "  + phpFile);
                     }
                 }
             } catch (Exception e) {
@@ -155,4 +155,5 @@ public class PreferenceManager {
             }
         }).start();
     }
+
 }

@@ -35,6 +35,8 @@ public class CreateAccount extends AppCompatActivity {
         edtPassword = findViewById(R.id.edtCreatePassword);
         txtStatus = findViewById(R.id.textViewStatus);
         chkIsAdmin = findViewById(R.id.chk_idAdmin);
+
+        findViewById(R.id.txtLogin).setOnClickListener(v -> finish());
     }
 
     public void handleRegister(View v) {

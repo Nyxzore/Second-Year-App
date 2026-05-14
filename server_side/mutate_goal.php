@@ -23,9 +23,11 @@ if ($mode === "edit") {
     $params = array($title, $descrip, $due_date, (int)$goal_id);
 }
 else if ($mode === "add") {
-    $SQL_query = "INSERT INTO goals (description, title, due_date, user_uuid) VALUES ($1, $2, $3, $4);";
+    $SQL_query = "INSERT INTO goals (description,title, due_date, user_uuid) VALUES ($1, $2, $3, $4);";
     $params = array($descrip, $title, $due_date, $uuid);
 }
+
+
 else {
     $SQL_query = "DELETE FROM goals WHERE id = $1;";
     $params = array((int)$goal_id);
