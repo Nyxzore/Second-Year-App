@@ -1,5 +1,6 @@
 package com.example.gon;
 
+import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,15 +59,6 @@ public class FriendAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (holder instanceof FriendViewHolder) {
             FriendViewHolder friendHolder = (FriendViewHolder) holder;
 
-<<<<<<< HEAD
-      holder.btnViewGoals.setOnClickListener(v -> {
-          Toast.makeText(v.getContext(), "hello", Toast.LENGTH_LONG).show();
-      });
-
-//        holder.btnNudge.setOnClickListener(v -> {
-//            // do later
-//        });
-=======
             friendHolder.tvFriendUsername.setText(friend.getUsername());
 
             friendHolder.btnViewGoals.setOnClickListener(v -> {
@@ -108,6 +100,14 @@ public class FriendAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         // Later this should open a FriendGoalsList activity
         // and pass friend.getUserID() to load that friend's goals.
 
+        // Nickson's changes
+        Intent intent = new Intent(v.getContext(), FriendGoalsActivity.class);
+        intent.putExtra("FRIEND_ID", friend.getUserID());
+        intent.putExtra("FRIEND_NAME", friend.getUsername());
+        v.getContext().startActivity(intent);
+
+
+        //
         Toast.makeText(
                 v.getContext(),
                 "View goals for " + friend.getUsername(),
@@ -163,7 +163,6 @@ public class FriendAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, friendsList.size());
         }
->>>>>>> b32a0f23470f0db21f025ae812af11527652d311
     }
 
     @Override
