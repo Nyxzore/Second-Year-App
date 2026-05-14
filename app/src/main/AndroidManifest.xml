@@ -33,6 +33,12 @@
             android:name=".AddEditGoal" />
         <activity
             android:name=".CreateAccount" />
+        <activity
+            android:name=".HabitList"
+            android:exported="false"
+            android:theme="@style/Theme.Gon.NoActionBar" />
+        <activity android:name=".AddEditHabit" />
+
     </application>
 
 </manifest>

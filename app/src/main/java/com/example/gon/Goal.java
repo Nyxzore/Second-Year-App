@@ -43,5 +43,7 @@ public class Goal {
     public void setDescription(String description) { this.description = description; }
     public void setDueDate(String dueDate) { this.due_date = dueDate; }
 
-    public String toString() {return null; }
+    public String toString() {
+        return "ID: " + this.id + " Title: " + this.title + " Description: " + this.description + " Due Date: " + this.due_date;
+    }
 }

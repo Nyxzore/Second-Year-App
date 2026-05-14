@@ -3,11 +3,13 @@ $host = "localhost";
 $port = "5432";
 $dbname = "dgroup2689";
 $user = "sgroup2689";
-$password_db = "c434b13a28cd859c169a"; // Renamed to avoid confusion with user passwords
+$password_db = "c434b13a28cd859c169a"; 
 
-$username = $_POST['username'] ?? null;
-$hash = $_POST['hash'] ?? null; // The hashed password from Android
+$username = $_POST['username'];
+$hash = $_POST['hash']; 
 $mode = $_POST['mode'] ?? "login";
+$email = $_POST['email'];
+$is_admin = $_POST['is_admin'];
 
 $conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password_db";
 $dbconn = pg_connect($conn_string);
@@ -35,7 +37,7 @@ function login() {
 }
 
 function create_account() {
-    global $dbconn, $username, $hash;
+    global $dbconn, $username, $hash, $email, $is_admin;
     if (empty($username) || empty($hash)) {
         return ["status" => "failure", "message" => "Username/Password cannot be empty"];
     }
@@ -47,8 +49,8 @@ function create_account() {
     }
 
     // 2. Insert new user
-    $SQL_query = "INSERT INTO accounts (username, password) VALUES ($1, $2) RETURNING userid";
-    $result = pg_query_params($dbconn, $SQL_query, array($username, $hash));
+    $SQL_query = "INSERT INTO accounts (username, password, email, admin) VALUES ($1, $2, $3, $4) RETURNING userid";
+    $result = pg_query_params($dbconn, $SQL_query, array($username, $hash, $email, $is_admin));
     
     
     if ($result) {

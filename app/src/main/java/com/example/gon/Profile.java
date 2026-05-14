@@ -72,9 +72,15 @@ public class Profile extends AppCompatActivity {
             } else if (itemId == R.id.nav_friends) {
                 Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
                 return true;
+            } else if (itemId == R.id.nav_habits) {
+                Intent intent = new Intent(this, HabitList.class);
+                startActivity(intent);
+                finish();
+                return true;
             } else if (itemId == R.id.nav_profile) {
                 return true;
             }
+
             return false;
         });
 
@@ -154,8 +160,8 @@ public class Profile extends AppCompatActivity {
                     txtCompleted.setText(String.valueOf(completed));
                     txtActive.setText(String.valueOf(active));
 
-                    Log.e("GON_DEBUG : fetch_stats", "lifetime goals completed: " + String.valueOf(completed));
-                    Log.e("GON_DEBUG : fetch_stats", "active goals: " + String.valueOf(active));
+                    Log.d("GON_DEBUG : fetch_stats", "lifetime goals completed: " + String.valueOf(completed));
+                    Log.d("GON_DEBUG : fetch_stats", "active goals: " + String.valueOf(active));
 
                     PreferenceManager.save_stats(this, completed, active);
                 } catch (JSONException e) {
