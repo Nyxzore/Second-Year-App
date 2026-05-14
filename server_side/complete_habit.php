@@ -8,51 +8,39 @@ $user = "sgroup2689";
 $password = "c434b13a28cd859c169a";
 
 $habit_id = $_POST['habit_id'] ?? null;
-$uuid = $_POST['uuid'] ?? null;
+$uuid = $_POST['uuid'] ?? null; // user_uuid
 
 $conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password";
 $dbconn = pg_connect($conn_string);
 
 if (!$dbconn) {
-    echo json_encode(["status" => "error", "message" => "Unable to open database"]);
+    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
     exit;
 }
+
 if (empty($habit_id) || empty($uuid)) {
     echo json_encode(["status" => "error", "message" => "Missing habit_id or uuid"]);
     exit;
 }
 
-$check = pg_query_params(
-    $dbconn,
-    "SELECT completion_date FROM habits WHERE id = $1 AND user_uuid = $2",
-    array((int)$habit_id, $uuid)
-);
-if (!$check || pg_num_rows($check) === 0) {
-    echo json_encode(["status" => "error", "message" => "Habit not found"]);
-    exit;
-}
-$row = pg_fetch_assoc($check);
-$today = date('Y-m-d');
-if ($row['completion_date'] !== null && substr($row['completion_date'], 0, 10) === $today) {
+// 1. Check if a completion already exists for today 
+$check_sql = "SELECT 1 FROM habit_completions WHERE habit_id = $1 AND completion_date = CURRENT_DATE";
+$check_res = pg_query_params($dbconn, $check_sql, array($habit_id));
+
+if ($check_res && pg_num_rows($check_res) > 0) {
     echo json_encode(["status" => "already_completed_today", "message" => "Already completed today"]);
     exit;
 }
 
-$upd = pg_query_params(
-    $dbconn,
-    "UPDATE habits SET completion_date = CURRENT_DATE WHERE id = $1 AND user_uuid = $2
-     AND (completion_date IS NULL OR completion_date < CURRENT_DATE)",
-    array((int)$habit_id, $uuid)
-);
+// 2. Insert the new completion 
+$insert_sql = "INSERT INTO habit_completions (habit_id, user_uuid, completion_date) VALUES ($1, $2, CURRENT_DATE)";
+$insert_res = pg_query_params($dbconn, $insert_sql, array($habit_id, $uuid));
 
-if (!$upd) {
+if ($insert_res) {
+    echo json_encode(["status" => "success", "message" => "Completed for today"]);
+} else {
     echo json_encode(["status" => "error", "message" => pg_last_error($dbconn)]);
-    exit;
-}
-if (pg_affected_rows($dbconn) === 0) {
-    echo json_encode(["status" => "already_completed_today", "message" => "Already completed today"]);
-    exit;
 }
 
-echo json_encode(["status" => "success", "message" => "Completed for today"]);
 pg_close($dbconn);
+?>

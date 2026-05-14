@@ -4,7 +4,7 @@ public class Habit {
     private final String name;
     private final String description;
     private final String id;
-    private final boolean completedToday;
+    private boolean completedToday;
 
     public Habit(String name, String description, String id, boolean completedToday) {
         this.name = name;
@@ -13,23 +13,17 @@ public class Habit {
         this.completedToday = completedToday;
     }
 
-    public String getName() {
-        return name;
+    public String getName() { return name; }
+    public String getDescription() { return description; }
+    public String getId() { return id; }
+    public boolean isCompletedToday() { return completedToday; }
+
+    public void setCompletedToday(boolean completedToday) {
+        this.completedToday = completedToday;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public boolean isCompletedToday() {
-        return completedToday;
-    }
-
-    public String toString(){
-        return "ID: " + this.id + " Name: " + this.name + " Description: " + this.description + " Is completed?: " + String.valueOf(completedToday);
+    @Override
+    public String toString() {
+        return "Habit{id='" + id + "', name='" + name + "', completed=" + completedToday + "}";
     }
 }
