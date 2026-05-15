@@ -5,11 +5,11 @@ $dbname = "dgroup2689";
 $user = "sgroup2689";
 $password_db = "c434b13a28cd859c169a"; 
 
-$username = $_POST['username'];
-$hash = $_POST['hash']; 
+$username = $_POST['username'] ?? null;
+$hash = $_POST['hash'] ?? null;
 $mode = $_POST['mode'] ?? "login";
-$email = $_POST['email'];
-$is_admin = $_POST['is_admin'];
+$email = $_POST['email'] ?? null;
+$is_admin = $_POST['is_admin'] ?? "0";
 
 $conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password_db";
 $dbconn = pg_connect($conn_string);
@@ -25,12 +25,17 @@ function login() {
         return ["status" => "failure", "message" => "Username/Password cannot be empty"];
     }
     
-    $SQL_query = "SELECT password, userid FROM accounts WHERE username = $1";
+    $SQL_query = "SELECT password, userid, admin FROM accounts WHERE username = $1";
     $result = pg_query_params($dbconn, $SQL_query, array($username));
     
     if ($row = pg_fetch_assoc($result)) {
         if (hash_equals($row['password'], $hash)) {
-            return ["status" => "success", "message" => "Logged in!", "uuid" => $row['userid']];
+            return [
+                "status" => "success",
+                "message" => "Logged in!",
+                "uuid" => $row['userid'],
+                "is_admin" => $row['admin']
+            ];
         }
     }
     return ["status" => "failure", "message" => "Invalid username or password"];

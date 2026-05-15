@@ -43,7 +43,6 @@ if ($mode === "add") {
         echo json_encode(["status" => "error", "message" => "Missing habit_id"]);
         exit;
     }
-    pg_query_params($dbconn, "DELETE FROM habit_categories WHERE habit_id = $1", array((int)$habit_id));
     $SQL_query = "DELETE FROM habits WHERE id = $1 AND user_uuid = $2;";
     $params = array((int)$habit_id, $uuid);
 } else {

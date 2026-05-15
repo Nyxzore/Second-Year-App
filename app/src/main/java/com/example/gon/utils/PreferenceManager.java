@@ -18,11 +18,13 @@ import okhttp3.Response;
 
 public class PreferenceManager {
 
+    //public static final String hosted_server = "http://192.168.68.131/";
     public static final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
     private static final String pref_name = "my_prefs";
     private static final String key_uuid = "uuid";
     private static final String key_hash = "hash";
     private static final String key_username = "username";
+    private static final String key_is_admin = "is_admin";
     private static final String key_profile_pic = "profile_pic";
 
     private static final String key_completed_count = "completed_goal_count";
@@ -70,6 +72,16 @@ public class PreferenceManager {
     public static String get_username(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
         return prefs.getString(key_username, null);
+    }
+
+    public static void save_is_admin(Context context, boolean is_admin) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(key_is_admin, is_admin).apply();
+    }
+
+    public static boolean is_admin(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        return prefs.getBoolean(key_is_admin, false);
     }
 
     public static int get_completed_goal_count(Context context) {
@@ -157,10 +169,14 @@ public class PreferenceManager {
                         new Handler(Looper.getMainLooper()).post(() -> callback.on_response(response_data));
                     } else {
                         Log.e("GON_DEBUG : NETWORK", "HTTP ERROR:" + response.code() + " for " + php_file);
+                        String error_json = "{\"status\":\"error\", \"message\":\"HTTP ERROR: " + response.code() + "\"}";
+                        new Handler(Looper.getMainLooper()).post(() -> callback.on_response(error_json));
                     }
                 }
             } catch (Exception e) {
                 Log.e("GON_DEBUG : NETWORK", "Exception in post to " + php_file, e);
+                String error_json = "{\"status\":\"error\", \"message\":\"Network error: " + e.getMessage() + "\"}";
+                new Handler(Looper.getMainLooper()).post(() -> callback.on_response(error_json));
             }
         }).start();
     }

@@ -12,6 +12,7 @@
     <!-- Background Circle -->
 
     <View
+        android:id="@+id/viewCircle"
         android:layout_width="220dp"
         android:layout_height="220dp"
         android:background="@drawable/circle_bg"
@@ -152,17 +153,6 @@
                 android:indeterminateTint="#95D5B2"
                 android:visibility="invisible" />
 
-            <!-- Debug -->
-
-            <TextView
-                android:id="@+id/textViewDebug"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="12dp"
-                android:textAlignment="center"
-                android:textColor="#FFB4B4" />
-
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
@@ -177,5 +167,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewDebug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:paddingHorizontal="24dp"
+        android:textAlignment="center"
+        android:textColor="#FFB4B4"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

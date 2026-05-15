@@ -38,7 +38,7 @@ if ($category_id) {
     $params = array($uuid, (int)$category_id);
 } else {
     $SQL_query = "
-        SELECT h.id, h.user_uuid, h.name, h.description,
+        SELECT h.*,
             EXISTS (
                 SELECT 1
                 FROM habit_completions hc

@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (uuid != null && hash != null && saved_username != null) {
             chk_remember_me.setChecked(true);
+            findViewById(R.id.viewCircle).setVisibility(View.INVISIBLE);
             findViewById(R.id.imageViewLogo).setVisibility(View.INVISIBLE);
             findViewById(R.id.textSubtitle).setVisibility(View.INVISIBLE);
             findViewById(R.id.loginCard).setVisibility(View.INVISIBLE);
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             username = PreferenceManager.get_username(this);
             current_hash = hash;
             if (username == null) {
+                findViewById(R.id.viewCircle).setVisibility(View.VISIBLE);
                 findViewById(R.id.imageViewLogo).setVisibility(View.VISIBLE);
                 findViewById(R.id.textSubtitle).setVisibility(View.VISIBLE);
                 findViewById(R.id.loginCard).setVisibility(View.VISIBLE);
@@ -140,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_LONG).show();
                 status_text.setText(message);
                 
+                findViewById(R.id.viewCircle).setVisibility(View.VISIBLE);
                 findViewById(R.id.imageViewLogo).setVisibility(View.VISIBLE);
                 findViewById(R.id.textSubtitle).setVisibility(View.VISIBLE);
                 findViewById(R.id.loginCard).setVisibility(View.VISIBLE);

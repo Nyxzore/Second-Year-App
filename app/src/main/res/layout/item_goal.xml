@@ -100,19 +100,6 @@
             app:layout_constraintStart_toStartOf="@+id/textViewGoalName"
             app:layout_constraintTop_toBottomOf="@+id/imageViewCalendar" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:progress="30"
-            android:progressTint="@color/progress_bar"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textViewGoalName"
-            app:layout_constraintTop_toBottomOf="@+id/chipGroupGoalCategories" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
