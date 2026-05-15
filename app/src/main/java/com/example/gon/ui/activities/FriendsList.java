@@ -1,4 +1,4 @@
-package com.example.gon;
+package com.example.gon.ui.activities;
 import android.content.Intent;
 import androidx.core.graphics.Insets;
 
@@ -14,13 +14,16 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.gon.Entities.Friend;
+import com.example.gon.R;
+import com.example.gon.ui.adapters.FriendAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.*;
 public class FriendsList extends AppCompatActivity {
 private boolean showReq = false;                //FOR MODE OF RECYCLER VIEW STARTS WITH ALL FRIENDS
 private RecyclerView rvFriends;
-private FriendAdaptor friendAdaptor;
+private FriendAdapter friendAdaptor;
 private ArrayList<Friend> friendsList;   //general friend list
 
 private ArrayList<Friend> pendingRequestsList;   //pending requests
@@ -51,7 +54,7 @@ private EditText etFriendUsername;
     pendingRequestsList = new ArrayList<>();
 
 
-    friendAdaptor = new FriendAdaptor(friendsList);
+    friendAdaptor = new FriendAdapter(friendsList);
 
     rvFriends.setLayoutManager(new LinearLayoutManager(this));
     rvFriends.setAdapter(friendAdaptor);
@@ -72,7 +75,7 @@ private EditText etFriendUsername;
     }
 
     // Start by showing normal friends
-    friendAdaptor = new FriendAdaptor(acceptedFriendsList);
+    friendAdaptor = new FriendAdapter(acceptedFriendsList);
 
     rvFriends.setLayoutManager(new LinearLayoutManager(this));
     rvFriends.setAdapter(friendAdaptor);
@@ -85,7 +88,7 @@ private EditText etFriendUsername;
 
             btnToggleRequests.setText("Friends");
 
-            friendAdaptor = new FriendAdaptor(pendingRequestsList);
+            friendAdaptor = new FriendAdapter(pendingRequestsList);
             rvFriends.setAdapter(friendAdaptor);
 
         } else {
@@ -93,7 +96,7 @@ private EditText etFriendUsername;
 
             btnToggleRequests.setText("Requests");
 
-            friendAdaptor = new FriendAdaptor(acceptedFriendsList);
+            friendAdaptor = new FriendAdapter(acceptedFriendsList);
             rvFriends.setAdapter(friendAdaptor);
         }
     });
@@ -141,7 +144,7 @@ private EditText etFriendUsername;
                     // Parse JSON response from get_friends.php
 
                     // After adding friends:
-                    friendAdaptor = new FriendAdaptor(acceptedFriendsList);
+                    friendAdaptor = new FriendAdapter(acceptedFriendsList);
                     rvFriends.setAdapter(friendAdaptor);
 
                 } catch (Exception e) {
@@ -167,7 +170,7 @@ private EditText etFriendUsername;
                     // Parse JSON response from get_friend_requests.php
 
                     // After adding pending requests:
-                    friendAdaptor = new FriendAdaptor(pendingRequestsList);
+                    friendAdaptor = new FriendAdapter(pendingRequestsList);
                     rvFriends.setAdapter(friendAdaptor);
 
                 } catch (Exception e) {

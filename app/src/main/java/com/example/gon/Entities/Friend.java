@@ -1,4 +1,4 @@
-package com.example.gon;
+package com.example.gon.Entities;
 
 public class Friend {
     private String userID;
