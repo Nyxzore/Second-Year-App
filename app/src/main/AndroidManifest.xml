@@ -51,6 +51,7 @@
         <activity
             android:name=".ui.activities.AddEditGoal" />
         <activity
+<<<<<<< HEAD
             android:name=".ui.activities.CreateAccount" />
         <activity
             android:name=".ui.activities.HabitList"
@@ -58,6 +59,16 @@
             android:theme="@style/Theme.Gon.NoActionBar" />
         <activity android:name=".ui.activities.AddEditHabit" />
 
+=======
+            android:name=".CreateAccount" />
+
+        <activity
+            android:name=".FriendsList" />
+
+        <activity android:name=".FriendGoalsActivity"
+            android:parentActivityName=".FriendsList"/>
+<!--        back button to friends-->
+>>>>>>> c2ae4a791055e3fc171c2c30aa707e05364655be
     </application>
 
 </manifest>
