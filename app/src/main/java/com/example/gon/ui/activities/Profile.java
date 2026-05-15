@@ -40,140 +40,148 @@ import java.util.Map;
 
 public class Profile extends AppCompatActivity {
 
-    private static final int NOTIFICATION_PERMISSION_CODE = 101;
-    private ImageView imgProfile;
-    private final int[] profilePhotos = {
+    private static final int notification_permission_code = 101;
+    private ImageView img_profile;
+    private final int[] profile_photos = {
             R.drawable.pp0, R.drawable.pp1, R.drawable.pp2,
             R.drawable.pp3, R.drawable.pp4, R.drawable.pp5,
             R.drawable.pp6, R.drawable.pp7, R.drawable.pp8
     };
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
-        bottomNav.setSelectedItemId(R.id.nav_profile);
+        Log.d("GON_DEBUG : PROFILE", "Activity started");
+        BottomNavigationView bottom_nav = findViewById(R.id.bottomNavigationView);
+        bottom_nav.setSelectedItemId(R.id.nav_profile);
 
-        PreferenceManager.updateNavIcon(this, bottomNav);
-        updateStatsFromServer();
+        PreferenceManager.update_nav_icon(this, bottom_nav);
+        update_stats_from_server();
     }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle saved_instance_state) {
+        super.onCreate(saved_instance_state);
         setContentView(R.layout.activity_profile);
+        Log.d("GON_DEBUG : PROFILE", "Activity created");
 
-        imgProfile = findViewById(R.id.imgProfilePicture);
-        TextView txtUsername = findViewById(R.id.txtUsername);
+        img_profile = findViewById(R.id.imgProfilePicture);
+        TextView txt_username = findViewById(R.id.txtUsername);
 
-        int currentPicIndex = PreferenceManager.getProfilePic(this);
-        imgProfile.setImageResource(profilePhotos[currentPicIndex]);
+        int current_pic_index = PreferenceManager.get_profile_pic(this);
+        img_profile.setImageResource(profile_photos[current_pic_index]);
 
-        String savedUsername = PreferenceManager.getUsername(this);
-        if (savedUsername != null) {
-            txtUsername.setText(savedUsername);
+        String saved_username = PreferenceManager.get_username(this);
+        if (saved_username != null) {
+            txt_username.setText(saved_username);
         }
 
-        imgProfile.setOnClickListener(v -> showProfilePicker());
+        img_profile.setOnClickListener(v -> {
+            Log.d("GON_DEBUG : PROFILE", "Profile picture clicked");
+            show_profile_picker();
+        });
 
-        // Setup Bottom Navigation
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
-        bottomNav.setItemIconTintList(null); // Fixes the white/green square issue
-        bottomNav.setSelectedItemId(R.id.nav_profile);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
+        BottomNavigationView bottom_nav = findViewById(R.id.bottomNavigationView);
+        bottom_nav.setItemIconTintList(null);
+        bottom_nav.setSelectedItemId(R.id.nav_profile);
+        bottom_nav.setOnItemSelectedListener(item -> {
+            int item_id = item.getItemId();
+            Log.d("GON_DEBUG : PROFILE", "Nav item clicked: " + item_id);
+            if (item_id == R.id.nav_home) {
                 Intent intent = new Intent(this, GoalList.class);
                 startActivity(intent);
                 finish();
                 return true;
-            } else if (itemId == R.id.nav_friends) {
+            } else if (item_id == R.id.nav_friends) {
                 Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
                 return true;
-            } else if (itemId == R.id.nav_habits) {
+            } else if (item_id == R.id.nav_habits) {
                 Intent intent = new Intent(this, HabitList.class);
                 startActivity(intent);
                 finish();
                 return true;
-            } else if (itemId == R.id.nav_profile) {
+            } else if (item_id == R.id.nav_profile) {
                 return true;
             }
-
             return false;
         });
 
+        TextView txt_completed = findViewById(R.id.txtGoalsCompleted);
+        TextView txt_active = findViewById(R.id.txtActiveGoals);
+        txt_completed.setText(String.valueOf(PreferenceManager.get_completed_goal_count(this)));
+        txt_active.setText(String.valueOf(PreferenceManager.get_active_goal_count(this)));
 
-        //preupdate
-        TextView txtCompleted = findViewById(R.id.txtGoalsCompleted);
-        TextView txtActive = findViewById(R.id.txtActiveGoals);
-        txtCompleted.setText(String.valueOf(PreferenceManager.getCompletedGoalCount(this)));
-        txtActive.setText(String.valueOf(PreferenceManager.getActiveGoalCount(this)));
-
-        setupReminderUI();
+        setup_reminder_ui();
     }
 
-    private void setupReminderUI() {
-        SwitchCompat switchReminder = findViewById(R.id.switchReminder);
-        TextView txtReminderTime = findViewById(R.id.txtReminderTime);
-        View layoutReminderTime = findViewById(R.id.layoutReminderTime);
+    private void setup_reminder_ui() {
+        SwitchCompat switch_reminder = findViewById(R.id.switchReminder);
+        TextView txt_reminder_time = findViewById(R.id.txtReminderTime);
+        View layout_reminder_time = findViewById(R.id.layoutReminderTime);
 
-        boolean isEnabled = PreferenceManager.isReminderEnabled(this);
-        switchReminder.setChecked(isEnabled);
-        updateReminderTimeText(txtReminderTime);
+        boolean is_enabled = PreferenceManager.is_reminder_enabled(this);
+        switch_reminder.setChecked(is_enabled);
+        update_reminder_time_text(txt_reminder_time);
 
-        switchReminder.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                if (checkNotificationPermission()) {
-                    enableReminders(true);
+        switch_reminder.setOnCheckedChangeListener((button_view, is_checked) -> {
+            Log.d("GON_DEBUG : PROFILE", "Reminder switch toggled: " + is_checked);
+            if (is_checked) {
+                if (check_notification_permission()) {
+                    enable_reminders(true);
                 } else {
-                    switchReminder.setChecked(false);
+                    switch_reminder.setChecked(false);
                 }
             } else {
-                enableReminders(false);
+                enable_reminders(false);
             }
         });
 
-        layoutReminderTime.setOnClickListener(v -> {
-            showTimePicker(txtReminderTime);
+        layout_reminder_time.setOnClickListener(v -> {
+            Log.d("GON_DEBUG : PROFILE", "Reminder time layout clicked");
+            show_time_picker(txt_reminder_time);
         });
     }
 
-    private void updateReminderTimeText(TextView txtReminderTime) {
-        int hour = PreferenceManager.getReminderHour(this);
-        int minute = PreferenceManager.getReminderMinute(this);
-        txtReminderTime.setText(String.format(Locale.getDefault(), getString(R.string.reminder_time_format), hour, minute));
+    private void update_reminder_time_text(TextView txt_reminder_time) {
+        int hour = PreferenceManager.get_reminder_hour(this);
+        int minute = PreferenceManager.get_reminder_minute(this);
+        txt_reminder_time.setText(String.format(Locale.getDefault(), getString(R.string.reminder_time_format), hour, minute));
     }
 
-    private void enableReminders(boolean enable) {
-        PreferenceManager.setReminderEnabled(this, enable);
+    private void enable_reminders(boolean enable) {
+        Log.d("GON_DEBUG : PROFILE", "Enabling reminders: " + enable);
+        PreferenceManager.set_reminder_enabled(this, enable);
         if (enable) {
-            NotificationHelper.createNotificationChannel(this);
-            ReminderScheduler.scheduleNextReminder(this);
+            NotificationHelper.create_notification_channel(this);
+            ReminderScheduler.schedule_next_reminder(this);
             Toast.makeText(this, "Reminders enabled", Toast.LENGTH_SHORT).show();
         } else {
-            ReminderScheduler.cancelReminder(this);
+            ReminderScheduler.cancel_reminder(this);
             Toast.makeText(this, "Reminders disabled", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void showTimePicker(TextView txtReminderTime) {
-        int hour = PreferenceManager.getReminderHour(this);
-        int minute = PreferenceManager.getReminderMinute(this);
+    private void show_time_picker(TextView txt_reminder_time) {
+        int hour = PreferenceManager.get_reminder_hour(this);
+        int minute = PreferenceManager.get_reminder_minute(this);
 
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view, hourOfDay, minuteOfHour) -> {
-            PreferenceManager.saveReminderTime(this, hourOfDay, minuteOfHour);
-            updateReminderTimeText(txtReminderTime);
-            if (PreferenceManager.isReminderEnabled(this)) {
-                ReminderScheduler.scheduleNextReminder(this);
+        TimePickerDialog time_picker_dialog = new TimePickerDialog(this, (view, hour_of_day, minute_of_hour) -> {
+            Log.d("GON_DEBUG : PROFILE", "Time selected: " + hour_of_day + ":" + minute_of_hour);
+            PreferenceManager.save_reminder_time(this, hour_of_day, minute_of_hour);
+            update_reminder_time_text(txt_reminder_time);
+            if (PreferenceManager.is_reminder_enabled(this)) {
+                ReminderScheduler.schedule_next_reminder(this);
             }
         }, hour, minute, true);
 
-        timePickerDialog.show();
+        time_picker_dialog.show();
     }
 
-    private boolean checkNotificationPermission() {
+    private boolean check_notification_permission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_CODE);
+                Log.d("GON_DEBUG : PROFILE", "Requesting notification permission");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, notification_permission_code);
                 return false;
             }
         }
@@ -181,93 +189,97 @@ public class Profile extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == NOTIFICATION_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+    public void onRequestPermissionsResult(int request_code, @NonNull String[] permissions, @NonNull int[] grant_results) {
+        super.onRequestPermissionsResult(request_code, permissions, grant_results);
+        if (request_code == notification_permission_code) {
+            boolean granted = grant_results.length > 0 && grant_results[0] == PackageManager.PERMISSION_GRANTED;
+            Log.d("GON_DEBUG : PROFILE", "Permission result: " + granted);
+            if (granted) {
                 ((SwitchCompat) findViewById(R.id.switchReminder)).setChecked(true);
-                enableReminders(true);
+                enable_reminders(true);
             } else {
                 Toast.makeText(this, R.string.permission_rationale, Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    private void showProfilePicker() {
+    private void show_profile_picker() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose Profile Picture");
 
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_profile_picker, null);
-        GridView gridView = dialogView.findViewById(R.id.gridViewProfilePhotos);
+        View dialog_view = LayoutInflater.from(this).inflate(R.layout.dialog_profile_picker, null);
+        GridView grid_view = dialog_view.findViewById(R.id.gridViewProfilePhotos);
         
-        AlertDialog dialog = builder.setView(dialogView).create();
+        AlertDialog dialog = builder.setView(dialog_view).create();
 
-        gridView.setAdapter(new BaseAdapter() {
+        grid_view.setAdapter(new BaseAdapter() {
             @Override
-            public int getCount() { return profilePhotos.length; }
+            public int getCount() { return profile_photos.length; }
             @Override
-            public Object getItem(int position) { return profilePhotos[position]; }
+            public Object getItem(int position) { return profile_photos[position]; }
             @Override
             public long getItemId(int position) { return position; }
 
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(Profile.this).inflate(R.layout.item_profile_photo, parent, false);
+            public View getView(int position, View convert_view, ViewGroup parent) {
+                if (convert_view == null) {
+                    convert_view = LayoutInflater.from(Profile.this).inflate(R.layout.item_profile_photo, parent, false);
                 }
-                ImageView img = (ImageView) convertView;
-                img.setImageResource(profilePhotos[position]);
-                return convertView;
+                ImageView img = (ImageView) convert_view;
+                img.setImageResource(profile_photos[position]);
+                return convert_view;
             }
         });
 
-        gridView.setOnItemClickListener((parent, view, position, id) -> {
-            imgProfile.setImageResource(profilePhotos[position]);
-            PreferenceManager.saveProfilePic(this, position);
+        grid_view.setOnItemClickListener((parent, view, position, id) -> {
+            Log.d("GON_DEBUG : PROFILE", "Selected profile pic index: " + position);
+            img_profile.setImageResource(profile_photos[position]);
+            PreferenceManager.save_profile_pic(this, position);
 
-            BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
-            bottomNav.setSelectedItemId(R.id.nav_profile);
-            PreferenceManager.updateNavIcon(this, bottomNav);
+            BottomNavigationView bottom_nav = findViewById(R.id.bottomNavigationView);
+            bottom_nav.setSelectedItemId(R.id.nav_profile);
+            PreferenceManager.update_nav_icon(this, bottom_nav);
             
-            updateProfilePicOnServer(position);
+            update_profile_pic_on_server(position);
             dialog.dismiss();
         });
         dialog.show();
     }
 
-    private void updateProfilePicOnServer(int index) {
+    private void update_profile_pic_on_server(int index) {
+        Log.d("GON_DEBUG : PROFILE", "Updating profile pic on server: " + index);
         Map<String, String> params = new HashMap<>();
-        params.put("uuid", PreferenceManager.getUUID(this));
+        params.put("uuid", PreferenceManager.get_uuid(this));
         params.put("profile_pic", String.valueOf(index));
         params.put("mode", "update_profile_pic");
 
-        PreferenceManager.post("mutate_user.php", params, responseData -> {
-            // Success
+        PreferenceManager.post("mutate_user.php", params, response_data -> {
+            Log.d("GON_DEBUG : PROFILE", "Profile pic update server response: " + response_data);
         });
     }
 
-        public void updateStatsFromServer(){
-            TextView txtCompleted = findViewById(R.id.txtGoalsCompleted);
-            TextView txtActive = findViewById(R.id.txtActiveGoals);
+    public void update_stats_from_server() {
+        Log.d("GON_DEBUG : PROFILE", "Fetching stats from server...");
+        TextView txt_completed = findViewById(R.id.txtGoalsCompleted);
+        TextView txt_active = findViewById(R.id.txtActiveGoals);
 
-            Map<String, String> params = new HashMap<>();
-            params.put("uuid", PreferenceManager.getUUID(this));
-            PreferenceManager.post("get_stats.php", params, responseData -> {
-                try {
-                    JSONObject json = new JSONObject(responseData);
-                    int completed = json.getInt("completed_count");
-                    int active = json.getInt("active_count");
+        Map<String, String> params = new HashMap<>();
+        params.put("uuid", PreferenceManager.get_uuid(this));
+        PreferenceManager.post("get_stats.php", params, response_data -> {
+            try {
+                JSONObject json = new JSONObject(response_data);
+                int completed = json.getInt("completed_count");
+                int active = json.getInt("active_count");
+                Log.d("GON_DEBUG : PROFILE", "Stats fetched: completed=" + completed + ", active=" + active);
 
-                    txtCompleted.setText(String.valueOf(completed));
-                    txtActive.setText(String.valueOf(active));
-
-                    Log.d("GON_DEBUG : fetch_stats", "lifetime goals completed: " + String.valueOf(completed));
-                    Log.d("GON_DEBUG : fetch_stats", "active goals: " + String.valueOf(active));
-
+                runOnUiThread(() -> {
+                    txt_completed.setText(String.valueOf(completed));
+                    txt_active.setText(String.valueOf(active));
                     PreferenceManager.save_stats(this, completed, active);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
+                });
+            } catch (JSONException e) {
+                Log.e("GON_DEBUG : PROFILE", "update_stats_from_server error", e);
+            }
+        });
+    }
 }

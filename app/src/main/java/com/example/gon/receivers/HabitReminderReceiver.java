@@ -13,11 +13,9 @@ public class HabitReminderReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("HabitReminderReceiver", "Alarm received");
         
-        // Show the notification
-        NotificationHelper.createNotificationChannel(context);
-        NotificationHelper.showHabitReminder(context);
+        NotificationHelper.create_notification_channel(context);
+        NotificationHelper.show_habit_reminder(context);
         
-        // Schedule the next reminder for tomorrow
-        ReminderScheduler.scheduleNextReminder(context);
+        ReminderScheduler.schedule_next_reminder(context);
     }
 }

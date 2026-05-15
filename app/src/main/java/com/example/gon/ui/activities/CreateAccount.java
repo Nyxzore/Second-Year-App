@@ -24,44 +24,49 @@ import java.security.NoSuchAlgorithmException;
 
 public class CreateAccount extends AppCompatActivity {
 
-    private EditText edtUsername, edtEmail, edtPassword;
-    private TextView txtStatus;
-    private CheckBox chkIsAdmin;
+    private EditText edt_username, edt_email, edt_password;
+    private TextView txt_status;
+    private CheckBox chk_is_admin;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle saved_instance_state) {
+        super.onCreate(saved_instance_state);
         setContentView(R.layout.activity_create_account);
+        Log.d("GON_DEBUG : REGISTER", "Activity created");
 
-        edtUsername = findViewById(R.id.edtCreateUsername);
-        edtEmail = findViewById(R.id.edtCreateEmail);
-        edtPassword = findViewById(R.id.edtCreatePassword);
-        txtStatus = findViewById(R.id.textViewStatus);
-        chkIsAdmin = findViewById(R.id.chk_idAdmin);
+        edt_username = findViewById(R.id.edtCreateUsername);
+        edt_email = findViewById(R.id.edtCreateEmail);
+        edt_password = findViewById(R.id.edtCreatePassword);
+        txt_status = findViewById(R.id.textViewStatus);
+        chk_is_admin = findViewById(R.id.chk_idAdmin);
 
         findViewById(R.id.txtLogin).setOnClickListener(v -> finish());
     }
 
-    public void handleRegister(View v) {
-        String username = edtUsername.getText().toString().trim();
-        String email = edtEmail.getText().toString().trim();
-        String password = edtPassword.getText().toString().trim();
+    public void handle_register(View v) {
+        String username = edt_username.getText().toString().trim();
+        String email = edt_email.getText().toString().trim();
+        String password = edt_password.getText().toString().trim();
+
+        Log.d("GON_DEBUG : REGISTER", "Register button clicked for: " + username);
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            txtStatus.setText("All fields are required");
+            txt_status.setText("All fields are required");
             return;
         }
 
         try {
             String hash = sha256(password);
-            boolean isAdmin = chkIsAdmin.isChecked();
-            registerUserOnServer(username, email, hash, isAdmin);
+            boolean is_admin = chk_is_admin.isChecked();
+            register_user_on_server(username, email, hash, is_admin);
         } catch (NoSuchAlgorithmException e) {
-            txtStatus.setText("Error hashing password");
+            Log.e("GON_DEBUG : REGISTER", "Hashing error", e);
+            txt_status.setText("Error hashing password");
         }
     }
 
-    private void registerUserOnServer(String username, String email, String hash, boolean is_admin) {
+    private void register_user_on_server(String username, String email, String hash, boolean is_admin) {
+        Log.d("GON_DEBUG : REGISTER", "Sending registration request for: " + username);
         Map<String, String> params = new HashMap<>();
         params.put("username", username);
         params.put("email", email);
@@ -69,38 +74,39 @@ public class CreateAccount extends AppCompatActivity {
         params.put("is_admin", is_admin ? "1" : "0");
         params.put("mode", "create_account");
 
-        PreferenceManager.post("login.php", params, responseData -> {
-            handleServerResponse(responseData);
-        });
+        PreferenceManager.post("login.php", params, this::handle_server_response);
     }
 
-    private void handleServerResponse(String responseData) {
+    private void handle_server_response(String response_data) {
+        Log.d("GON_DEBUG : REGISTER", "Server response: " + response_data);
         try {
-            JSONObject json = new JSONObject(responseData);
+            JSONObject json = new JSONObject(response_data);
             String status = json.getString("status");
             String message = json.getString("message");
 
             if (status.equals("success")) {
+                Log.d("GON_DEBUG : REGISTER", "Registration successful");
                 Toast.makeText(this, "Account Created! Please log in.", Toast.LENGTH_LONG).show();
                 finish();
             } else {
-                txtStatus.setText(message);
+                Log.d("GON_DEBUG : REGISTER", "Registration failed: " + message);
+                txt_status.setText(message);
             }
         } catch (JSONException e) {
-            txtStatus.setText("Server error");
-            Log.e("REG_ERROR", responseData);
+            txt_status.setText("Server error");
+            Log.e("GON_DEBUG : REGISTER", "JSON parse error", e);
         }
     }
 
     private String sha256(String raw_data) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] encodedhash = digest.digest(raw_data.getBytes(StandardCharsets.UTF_8));
-        StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
-        for (byte b : encodedhash) {
+        byte[] encoded_hash = digest.digest(raw_data.getBytes(StandardCharsets.UTF_8));
+        StringBuilder hex_string = new StringBuilder(2 * encoded_hash.length);
+        for (byte b : encoded_hash) {
             String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) hexString.append('0');
-            hexString.append(hex);
+            if (hex.length() == 1) hex_string.append('0');
+            hex_string.append(hex);
         }
-        return hexString.toString();
+        return hex_string.toString();
     }
 }

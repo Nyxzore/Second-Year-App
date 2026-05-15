@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.google.android.material.chip.ChipGroup;
 
 import com.example.gon.R;
-import com.example.gon.models.Goal;
+import com.example.gon.Entities.Goal;
 import com.example.gon.ui.helpers.CategoryUiHelper;
 
 import androidx.annotation.NonNull;
@@ -22,41 +22,41 @@ import java.util.List;
 
 public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int TYPE_HEADER = 0;
-    private static final int TYPE_ITEM = 1;
-    private static final int TYPE_FOOTER = 2;
+    private static final int type_header = 0;
+    private static final int type_item = 1;
+    private static final int type_footer = 2;
 
     private final List<Goal> goal_list;
-    private HeaderViewHolder headerViewHolder;
-    private HeaderBindListener headerBindListener;
+    private HeaderViewHolder header_view_holder;
+    private HeaderBindListener header_bind_listener;
 
     public interface HeaderBindListener {
-        void onBindHeader(HeaderViewHolder holder);
+        void on_bind_header(HeaderViewHolder holder);
     }
 
     public GoalAdapter(List<Goal> goal_list) {
         this.goal_list = goal_list;
     }
 
-    public void setHeaderBindListener(HeaderBindListener listener) {
-        this.headerBindListener = listener;
+    public void set_header_bind_listener(HeaderBindListener listener) {
+        this.header_bind_listener = listener;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) return TYPE_HEADER;
-        if (position == goal_list.size() + 1) return TYPE_FOOTER;
-        return TYPE_ITEM;
+        if (position == 0) return type_header;
+        if (position == goal_list.size() + 1) return type_footer;
+        return type_item;
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == TYPE_HEADER) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int view_type) {
+        if (view_type == type_header) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.header_goal_list, parent, false);
-            headerViewHolder = new HeaderViewHolder(view);
-            return headerViewHolder;
-        } else if (viewType == TYPE_FOOTER) {
+            header_view_holder = new HeaderViewHolder(view);
+            return header_view_holder;
+        } else if (view_type == type_footer) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_goal_list, parent, false);
             return new FooterViewHolder(view);
         } else {
@@ -68,45 +68,44 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HeaderViewHolder) {
-            headerViewHolder = (HeaderViewHolder) holder;
-            if (headerBindListener != null) {
-                headerBindListener.onBindHeader((HeaderViewHolder) holder);
+            header_view_holder = (HeaderViewHolder) holder;
+            if (header_bind_listener != null) {
+                header_bind_listener.on_bind_header((HeaderViewHolder) holder);
             }
         } else if (holder instanceof GoalViewHolder) {
-            Goal currentGoal = goal_list.get(position - 1);
-            GoalViewHolder gHolder = (GoalViewHolder) holder;
-            gHolder.textViewGoalName.setText(currentGoal.getTitle());
-            gHolder.textViewGoalDescription.setText(currentGoal.getDescription());
-            gHolder.textViewGoalDate.setText(holder.itemView.getContext().getString(R.string.plan_to_do_by, currentGoal.getDueDate()));
+            Goal current_goal = goal_list.get(position - 1);
+            GoalViewHolder g_holder = (GoalViewHolder) holder;
+            g_holder.textViewGoalName.setText(current_goal.get_title());
+            g_holder.textViewGoalDescription.setText(current_goal.get_description());
+            g_holder.textViewGoalDate.setText(holder.itemView.getContext().getString(R.string.plan_to_do_by, current_goal.get_due_date()));
 
             try {
-                Date due_date = currentGoal.getDueDateAsDate();
+                Date due_date = current_goal.get_due_date_as_date();
                 Date today = new Date();
                 if (today.after(due_date)) {
-                    gHolder.textViewStatus.setText(R.string.status_overdue);
-                    gHolder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.overdue_date));
+                    g_holder.textViewStatus.setText(R.string.status_overdue);
+                    g_holder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.overdue_date));
                 } else {
-                    gHolder.textViewStatus.setText(R.string.status_active);
-                    gHolder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.ontrack_date));
+                    g_holder.textViewStatus.setText(R.string.status_active);
+                    g_holder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.ontrack_date));
                 }
             } catch (ParseException e) {
-                gHolder.textViewStatus.setText(R.string.status_active);
-                gHolder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.ontrack_date));
+                g_holder.textViewStatus.setText(R.string.status_active);
+                g_holder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.ontrack_date));
             }
 
-            CategoryUiHelper.bindDisplayChips(holder.itemView.getContext(),
-                    gHolder.chipGroupGoalCategories, currentGoal.getCategories());
+            CategoryUiHelper.bind_display_chips(holder.itemView.getContext(),
+                    g_holder.chipGroupGoalCategories, current_goal.get_categories());
         }
     }
 
     @Override
     public int getItemCount() {
-        // Header + List + Footer
         return goal_list.size() + 2;
     }
 
-    public HeaderViewHolder getHeaderViewHolder() {
-        return headerViewHolder;
+    public HeaderViewHolder get_header_view_holder() {
+        return header_view_holder;
     }
 
     public static class GoalViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
@@ -116,19 +115,19 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView textViewStatus;
         ChipGroup chipGroupGoalCategories;
 
-        public GoalViewHolder(@NonNull View itemView) {
-            super(itemView);
-            textViewGoalName = itemView.findViewById(R.id.textViewGoalName);
-            textViewGoalDescription = itemView.findViewById(R.id.textViewGoalDescription);
-            textViewGoalDate = itemView.findViewById(R.id.textViewGoalDate);
-            textViewStatus = itemView.findViewById(R.id.textViewStatus);
-            chipGroupGoalCategories = itemView.findViewById(R.id.chipGroupGoalCategories);
+        public GoalViewHolder(@NonNull View item_view) {
+            super(item_view);
+            textViewGoalName = item_view.findViewById(R.id.textViewGoalName);
+            textViewGoalDescription = item_view.findViewById(R.id.textViewGoalDescription);
+            textViewGoalDate = item_view.findViewById(R.id.textViewGoalDate);
+            textViewStatus = item_view.findViewById(R.id.textViewStatus);
+            chipGroupGoalCategories = item_view.findViewById(R.id.chipGroupGoalCategories);
 
-            itemView.setOnCreateContextMenuListener(this);
+            item_view.setOnCreateContextMenuListener(this);
         }
 
         @Override
-        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menu_info) {
             menu.add(this.getBindingAdapterPosition(), 101, 0, "Edit");
             menu.add(this.getBindingAdapterPosition(), 102, 1, "Delete");
         }
@@ -140,18 +139,18 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView txtUserName;
         public ChipGroup chipGroupGoalFilters;
 
-        public HeaderViewHolder(@NonNull View itemView) {
-            super(itemView);
-            lblActiveGoals = itemView.findViewById(R.id.lblActiveGoals);
-            btnAddCategory = itemView.findViewById(R.id.btnAddCategory);
-            txtUserName = itemView.findViewById(R.id.txtUserName);
-            chipGroupGoalFilters = itemView.findViewById(R.id.chipGroupGoalFilters);
+        public HeaderViewHolder(@NonNull View item_view) {
+            super(item_view);
+            lblActiveGoals = item_view.findViewById(R.id.lblActiveGoals);
+            btnAddCategory = item_view.findViewById(R.id.btnAddCategory);
+            txtUserName = item_view.findViewById(R.id.txtUserName);
+            chipGroupGoalFilters = item_view.findViewById(R.id.chipGroupGoalFilters);
         }
     }
 
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
-        public FooterViewHolder(@NonNull View itemView) {
-            super(itemView);
+        public FooterViewHolder(@NonNull View item_view) {
+            super(item_view);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.gon.models;
+package com.example.gon.Entities;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,7 +17,6 @@ public class Goal {
         this.due_date = "2026-06-21";
     }
 
-    //Generic instantiation would look like Goal("Finish Docs", "Finish writing documentation for this project", "2027-02-03")
     public Goal(String title, String description, String due_date, String id) {
         this.title = title;
         this.description = description;
@@ -25,26 +24,26 @@ public class Goal {
         this.id = id;
     }
 
-    public String getTitle() { return title; }
-    public String getDescription() { return description; }
-    public Date getDueDateAsDate() throws ParseException {
+    public String get_title() { return title; }
+    public String get_description() { return description; }
+    public Date get_due_date_as_date() throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return sdf.parse(this.due_date);
     }
-    public String getDueDate() {
+    public String get_due_date() {
         return this.due_date;
     }
-    public String getId() { return id; }
+    public String get_id() { return id; }
 
-    public void setTitle(String title) { this.title = title; }
-    public void setDescription(String description) { this.description = description; }
-    public void setDueDate(String dueDate) { this.due_date = dueDate; }
+    public void set_title(String title) { this.title = title; }
+    public void set_description(String description) { this.description = description; }
+    public void set_due_date(String due_date) { this.due_date = due_date; }
 
-    public List<Category> getCategories() {
+    public List<Category> get_categories() {
         return categories;
     }
 
-    public void setCategories(List<Category> categories) {
+    public void set_categories(List<Category> categories) {
         this.categories = categories != null ? categories : new ArrayList<>();
     }
 

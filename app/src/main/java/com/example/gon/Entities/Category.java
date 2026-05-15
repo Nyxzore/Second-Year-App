@@ -1,4 +1,4 @@
-package com.example.gon.models;
+package com.example.gon.Entities;
 
 import android.util.Log;
 
@@ -18,23 +18,22 @@ public class Category {
         this.name = name;
     }
 
-    public static Category fromJson(JSONObject obj) {
+    public static Category from_json(JSONObject obj) {
         return new Category(String.valueOf(obj.opt("id")), obj.optString("name", ""));
     }
 
-    public static List<Category> listFromJsonArray(JSONArray array) throws JSONException {
+    public static List<Category> list_from_json_array(JSONArray array) throws JSONException {
         List<Category> list = new ArrayList<>();
         if (array == null) {
             return list;
         }
         for (int i = 0; i < array.length(); i++) {
-            list.add(fromJson(array.getJSONObject(i)));
+            list.add(from_json(array.getJSONObject(i)));
         }
         return list;
     }
 
-    /** Parses the {@code categories} field from a goal/habit JSON object (array or missing). */
-    public static List<Category> listFromItemJson(JSONObject item) {
+    public static List<Category> list_from_item_json(JSONObject item) {
         if (item == null || !item.has("categories")) {
             return new ArrayList<>();
         }
@@ -44,22 +43,22 @@ public class Category {
         }
         try {
             if (raw instanceof JSONArray) {
-                return listFromJsonArray((JSONArray) raw);
+                return list_from_json_array((JSONArray) raw);
             }
             if (raw instanceof String) {
                 String trimmed = ((String) raw).trim();
                 if (trimmed.isEmpty()) {
                     return new ArrayList<>();
                 }
-                return listFromJsonArray(new JSONArray(trimmed));
+                return list_from_json_array(new JSONArray(trimmed));
             }
         } catch (JSONException e) {
-            Log.e("GON_CAT", "listFromItemJson", e);
+            Log.e("GON_CAT", "list_from_item_json", e);
         }
         return new ArrayList<>();
     }
 
-    public static String joinIds(List<Category> categories) {
+    public static String join_ids(List<Category> categories) {
         if (categories == null || categories.isEmpty()) {
             return "";
         }
@@ -68,12 +67,12 @@ public class Category {
             if (i > 0) {
                 sb.append(',');
             }
-            sb.append(categories.get(i).getId());
+            sb.append(categories.get(i).get_id());
         }
         return sb.toString();
     }
 
-    public static String joinNames(List<Category> categories) {
+    public static String join_names(List<Category> categories) {
         if (categories == null || categories.isEmpty()) {
             return "";
         }
@@ -82,16 +81,16 @@ public class Category {
             if (i > 0) {
                 sb.append(", ");
             }
-            sb.append(categories.get(i).getName());
+            sb.append(categories.get(i).get_name());
         }
         return sb.toString();
     }
 
-    public String getId() {
+    public String get_id() {
         return id;
     }
 
-    public String getName() {
+    public String get_name() {
         return name;
     }
 }

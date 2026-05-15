@@ -16,8 +16,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.example.gon.R;
-import com.example.gon.models.Goal;
-import com.example.gon.models.Category;
+import com.example.gon.Entities.Goal;
+import com.example.gon.Entities.Category;
 import com.example.gon.ui.adapters.GoalAdapter;
 import com.example.gon.ui.helpers.CategoryUiHelper;
 import com.example.gon.utils.PreferenceManager;
@@ -35,84 +35,89 @@ import java.util.Random;
 public class GoalList extends AppCompatActivity {
 
     private GoalAdapter adapter;
-    private ArrayList<Goal> myGoals;
-    private final ArrayList<Category> userCategories = new ArrayList<>();
-    private String selectedFilterCategoryId = null;
-    private int goalsFetchGeneration = 0;
+    private ArrayList<Goal> my_goals;
+    private final ArrayList<Category> user_categories = new ArrayList<>();
+    private String selected_filter_category_id = null;
+    private int goals_fetch_generation = 0;
 
     @Override
     protected void onStart() {
         super.onStart();
-        fetchCategories();
-        fetchGoalsFromServer();
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
-        bottomNav.setSelectedItemId(R.id.nav_home);
-        PreferenceManager.updateNavIcon(this, bottomNav);
+        Log.d("GON_DEBUG : GOAL_LIST", "Activity started");
+        fetch_categories();
+        fetch_goals_from_server();
+        BottomNavigationView bottom_nav = findViewById(R.id.bottomNavigationView);
+        bottom_nav.setSelectedItemId(R.id.nav_home);
+        PreferenceManager.update_nav_icon(this, bottom_nav);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_list);
-        myGoals = new ArrayList<>();
+        my_goals = new ArrayList<>();
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerViewGoals);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView recycler_view = findViewById(R.id.recyclerViewGoals);
+        recycler_view.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new GoalAdapter(myGoals);
-        adapter.setHeaderBindListener(this::bindGoalListHeader);
-        recyclerView.setAdapter(adapter);
+        adapter = new GoalAdapter(my_goals);
+        adapter.set_header_bind_listener(this::bind_goal_list_header);
+        recycler_view.setAdapter(adapter);
 
-        ItemTouchHelper.SimpleCallback swipeCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        ItemTouchHelper.SimpleCallback swipe_callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            public boolean onMove(@NonNull RecyclerView recycler_view, @NonNull RecyclerView.ViewHolder view_holder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
 
             @Override
-            public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-                int position = viewHolder.getBindingAdapterPosition();
-                if (position == 0 || position > myGoals.size()) return 0;
-                return super.getSwipeDirs(recyclerView, viewHolder);
+            public int getSwipeDirs(@NonNull RecyclerView recycler_view, @NonNull RecyclerView.ViewHolder view_holder) {
+                int position = view_holder.getBindingAdapterPosition();
+                if (position == 0 || position > my_goals.size()) return 0;
+                return super.getSwipeDirs(recycler_view, view_holder);
             }
 
             @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getBindingAdapterPosition();
-                Goal selectedGoal = myGoals.get(position - 1);
+            public void onSwiped(@NonNull RecyclerView.ViewHolder view_holder, int direction) {
+                int position = view_holder.getBindingAdapterPosition();
+                Goal selected_goal = my_goals.get(position - 1);
 
-                myGoals.remove(position - 1);
+                Log.d("GON_DEBUG : GOAL_LIST", "Swiped goal: " + selected_goal.get_title());
+
+                my_goals.remove(position - 1);
                 adapter.notifyItemRemoved(position);
-                complete_goal_post(selectedGoal.getId());
+                complete_goal_post(selected_goal.get_id());
 
-                MediaPlayer mediaPlayer = MediaPlayer.create(GoalList.this, R.raw.goal_complete);
-                mediaPlayer.start();
+                MediaPlayer media_player = MediaPlayer.create(GoalList.this, R.raw.goal_complete);
+                media_player.start();
 
-                updateHeaderStats();
+                update_header_stats();
             }
         };
-        new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerView);
+        new ItemTouchHelper(swipe_callback).attachToRecyclerView(recycler_view);
 
         FloatingActionButton btn_add_goal = findViewById(R.id.fab);
         btn_add_goal.setOnClickListener(view -> {
+            Log.d("GON_DEBUG : GOAL_LIST", "Add goal FAB clicked");
             Intent intent = new Intent(GoalList.this, AddEditGoal.class);
             startActivity(intent);
         });
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
-        bottomNav.setItemIconTintList(null);
-        bottomNav.setSelectedItemId(R.id.nav_home);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
+        BottomNavigationView bottom_nav = findViewById(R.id.bottomNavigationView);
+        bottom_nav.setItemIconTintList(null);
+        bottom_nav.setSelectedItemId(R.id.nav_home);
+        bottom_nav.setOnItemSelectedListener(item -> {
+            int item_id = item.getItemId();
+            Log.d("GON_DEBUG : GOAL_LIST", "Nav item clicked: " + item_id);
+            if (item_id == R.id.nav_home) {
                 return true;
-            } else if (itemId == R.id.nav_friends) {
+            } else if (item_id == R.id.nav_friends) {
                 Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
                 return true;
-            } else if (itemId == R.id.nav_profile) {
+            } else if (item_id == R.id.nav_profile) {
                 startActivity(new Intent(GoalList.this, Profile.class));
                 return true;
-            } else if (itemId == R.id.nav_habits) {
+            } else if (item_id == R.id.nav_habits) {
                 startActivity(new Intent(GoalList.this, HabitList.class));
                 return true;
             }
@@ -120,85 +125,100 @@ public class GoalList extends AppCompatActivity {
         });
     }
 
-    private void bindGoalListHeader(GoalAdapter.HeaderViewHolder header) {
-        header.lblActiveGoals.setText(String.valueOf(myGoals.size()));
-        header.txtUserName.setText(PreferenceManager.getUsername(this) + " 🌱");
-        header.btnAddCategory.setOnClickListener(view -> CategoryUiHelper.showAddCategoryDialog(this, newCategory -> fetchCategories()));
-        bindFilterChips(header);
+    private void bind_goal_list_header(GoalAdapter.HeaderViewHolder header) {
+        header.lblActiveGoals.setText(String.valueOf(my_goals.size()));
+        header.txtUserName.setText(PreferenceManager.get_username(this) + " 🌱");
+        header.btnAddCategory.setOnClickListener(view -> {
+            Log.d("GON_DEBUG : GOAL_LIST", "Header add category clicked");
+            CategoryUiHelper.show_add_category_dialog(this, new_category -> fetch_categories());
+        });
+        bind_filter_chips(header);
     }
 
-    private void bindFilterChips(GoalAdapter.HeaderViewHolder header) {
-        CategoryUiHelper.bindFilterChips(this, header.chipGroupGoalFilters, userCategories,
-                selectedFilterCategoryId, categoryId -> {
-                    selectedFilterCategoryId = categoryId;
-                    fetchGoalsFromServer();
+    private void bind_filter_chips(GoalAdapter.HeaderViewHolder header) {
+        CategoryUiHelper.bind_filter_chips(this, header.chipGroupGoalFilters, user_categories,
+                selected_filter_category_id, category_id -> {
+                    Log.d("GON_DEBUG : GOAL_LIST", "Filter changed to category_id: " + category_id);
+                    selected_filter_category_id = category_id;
+                    fetch_goals_from_server();
                 });
     }
 
-    private void updateHeaderStats() {
-        GoalAdapter.HeaderViewHolder header = adapter.getHeaderViewHolder();
+    private void update_header_stats() {
+        GoalAdapter.HeaderViewHolder header = adapter.get_header_view_holder();
         if (header != null) {
-            bindGoalListHeader(header);
+            bind_goal_list_header(header);
         }
     }
 
-    public void fetchCategories() {
+    public void fetch_categories() {
+        Log.d("GON_DEBUG : GOAL_LIST", "Fetching categories...");
         Map<String, String> params = new HashMap<>();
-        params.put("uuid", PreferenceManager.getUUID(this));
+        params.put("uuid", PreferenceManager.get_uuid(this));
 
-        PreferenceManager.post("get_categories.php", params, responseData -> {
+        PreferenceManager.post("get_categories.php", params, response_data -> {
             try {
-                JSONObject jsonResponse = new JSONObject(responseData);
-                if (!"success".equals(jsonResponse.optString("status"))) {
+                JSONObject json_response = new JSONObject(response_data);
+                if (!"success".equals(json_response.optString("status"))) {
+                    Log.d("GON_DEBUG : GOAL_LIST", "Categories fetch failed: " + json_response.optString("message"));
                     return;
                 }
-                userCategories.clear();
-                userCategories.addAll(Category.listFromJsonArray(jsonResponse.getJSONArray("categories")));
-                runOnUiThread(this::updateHeaderStats);
+                user_categories.clear();
+                user_categories.addAll(Category.list_from_json_array(json_response.getJSONArray("categories")));
+                Log.d("GON_DEBUG : GOAL_LIST", "Categories fetched: " + user_categories.size());
+                runOnUiThread(this::update_header_stats);
             } catch (JSONException e) {
-                Log.e("GON_DEBUG", "fetchCategories", e);
+                Log.e("GON_DEBUG : GOAL_LIST", "fetch_categories error", e);
             }
         });
     }
 
-    public void fetchGoalsFromServer() {
-        final int generation = ++goalsFetchGeneration;
+    public void fetch_goals_from_server() {
+        final int generation = ++goals_fetch_generation;
+        Log.d("GON_DEBUG : GOAL_LIST", "Fetching goals (gen " + generation + ")...");
         Map<String, String> params = new HashMap<>();
-        params.put("uuid", PreferenceManager.getUUID(this));
-        if (selectedFilterCategoryId != null) {
-            params.put("category_id", selectedFilterCategoryId);
+        params.put("uuid", PreferenceManager.get_uuid(this));
+        if (selected_filter_category_id != null) {
+            params.put("category_id", selected_filter_category_id);
         }
 
-        PreferenceManager.post("get_goals.php", params, responseData -> {
-            if (generation != goalsFetchGeneration) return;
+        PreferenceManager.post("get_goals.php", params, response_data -> {
+            if (generation != goals_fetch_generation) {
+                Log.d("GON_DEBUG : GOAL_LIST", "Discarding stale response (gen " + generation + ")");
+                return;
+            }
             try {
-                JSONObject jsonResponse = new JSONObject(responseData);
-                if (!"success".equals(jsonResponse.optString("status"))) return;
+                JSONObject json_response = new JSONObject(response_data);
+                if (!"success".equals(json_response.optString("status"))) {
+                    Log.d("GON_DEBUG : GOAL_LIST", "Goals fetch failed: " + json_response.optString("message"));
+                    return;
+                }
 
-                JSONArray goalsArray = jsonResponse.getJSONArray("goals");
-                ArrayList<Goal> newGoals = new ArrayList<>();
+                JSONArray goals_array = json_response.getJSONArray("goals");
+                ArrayList<Goal> new_goals = new ArrayList<>();
 
-                for (int i = 0; i < goalsArray.length(); i++) {
-                    JSONObject goal = goalsArray.getJSONObject(i);
+                for (int i = 0; i < goals_array.length(); i++) {
+                    JSONObject goal = goals_array.getJSONObject(i);
                     Goal g = new Goal(
                             goal.getString("title"),
                             goal.optString("description", ""),
                             goal.getString("due_date"),
                             String.valueOf(goal.get("id"))
                     );
-                    g.setCategories(Category.listFromItemJson(goal));
-                    Log.d("GON_CAT", "goal \"" + g.getTitle() + "\" categories=" + g.getCategories().size());
-                    newGoals.add(g);
+                    g.set_categories(Category.list_from_item_json(goal));
+                    new_goals.add(g);
                 }
 
+                Log.d("GON_DEBUG : GOAL_LIST", "Goals fetched: " + new_goals.size());
+
                 runOnUiThread(() -> {
-                    myGoals.clear();
-                    myGoals.addAll(newGoals);
+                    my_goals.clear();
+                    my_goals.addAll(new_goals);
                     adapter.notifyDataSetChanged();
-                    updateHeaderStats();
+                    update_header_stats();
                 });
             } catch (JSONException e) {
-                Log.e("GON_DEBUG", "fetchGoals", e);
+                Log.e("GON_DEBUG : GOAL_LIST", "fetch_goals error", e);
             }
         });
     }
@@ -206,69 +226,74 @@ public class GoalList extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(@NonNull android.view.MenuItem item) {
         int position = item.getGroupId();
-        if (position == 0 || position > myGoals.size()) return false;
+        if (position == 0 || position > my_goals.size()) return false;
 
-        Goal selectedGoal = myGoals.get(position - 1);
+        Goal selected_goal = my_goals.get(position - 1);
+        Log.d("GON_DEBUG : GOAL_LIST", "Context menu item " + item.getItemId() + " for goal " + selected_goal.get_title());
 
         if (item.getItemId() == 101) {
             Intent intent = new Intent(GoalList.this, AddEditGoal.class);
             intent.putExtra("EDIT_MODE", true);
-            intent.putExtra("goal_id", selectedGoal.getId());
-            intent.putExtra("title", selectedGoal.getTitle());
-            intent.putExtra("description", selectedGoal.getDescription());
-            intent.putExtra("due_date", selectedGoal.getDueDate());
-            intent.putExtra("category_ids", Category.joinIds(selectedGoal.getCategories()));
+            intent.putExtra("goal_id", selected_goal.get_id());
+            intent.putExtra("title", selected_goal.get_title());
+            intent.putExtra("description", selected_goal.get_description());
+            intent.putExtra("due_date", selected_goal.get_due_date());
+            intent.putExtra("category_ids", Category.join_ids(selected_goal.get_categories()));
             startActivity(intent);
             return true;
         } else if (item.getItemId() == 102) {
-            myGoals.remove(position - 1);
+            my_goals.remove(position - 1);
             adapter.notifyItemRemoved(position);
-            delete_goal_post(selectedGoal.getId());
-            updateHeaderStats();
+            delete_goal_post(selected_goal.get_id());
+            update_header_stats();
             return true;
         }
         return super.onContextItemSelected(item);
     }
 
     public void delete_goal_post(String goal_id) {
+        Log.d("GON_DEBUG : GOAL_LIST", "Deleting goal id: " + goal_id);
         Map<String, String> params = new HashMap<>();
         params.put("goal_id", goal_id);
         params.put("mode", "delete");
-        params.put("uuid", PreferenceManager.getUUID(this));
+        params.put("uuid", PreferenceManager.get_uuid(this));
 
-        PreferenceManager.post("mutate_goal.php", params, responseData -> {
+        PreferenceManager.post("mutate_goal.php", params, response_data -> {
             try {
-                JSONObject json = new JSONObject(responseData);
+                JSONObject json = new JSONObject(response_data);
                 String status = json.getString("status");
                 String message = json.getString("message");
+                Log.d("GON_DEBUG : GOAL_LIST", "Delete goal response: " + status + ". Message: " + message);
                 Toast.makeText(GoalList.this,
                         status.equals("success") ? message : "Server: " + message,
                         Toast.LENGTH_LONG).show();
             } catch (JSONException e) {
-                Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
+                Log.e("GON_DEBUG : GOAL_LIST", "JSON Error: " + e.getMessage());
             }
         });
     }
 
     public void complete_goal_post(String goal_id) {
+        Log.d("GON_DEBUG : GOAL_LIST", "Completing goal id: " + goal_id);
         Map<String, String> params = new HashMap<>();
         params.put("goal_id", goal_id);
 
-        PreferenceManager.post("complete_goal.php", params, responseData -> {
+        PreferenceManager.post("complete_goal.php", params, response_data -> {
             try {
-                JSONObject json = new JSONObject(responseData);
+                JSONObject json = new JSONObject(response_data);
                 String status = json.getString("status");
                 String message = json.getString("message");
+                Log.d("GON_DEBUG : GOAL_LIST", "Complete goal response: " + status + ". Message: " + message);
 
                 if (status.equals("success")) {
                     List<String> affirmations = List.of("Goal Crushed", "1 More Down", "Keep Going", "Completed");
-                    String randomAffirmation = affirmations.get(new Random().nextInt(affirmations.size()));
-                    Toast.makeText(GoalList.this, randomAffirmation, Toast.LENGTH_LONG).show();
+                    String random_affirmation = affirmations.get(new Random().nextInt(affirmations.size()));
+                    Toast.makeText(GoalList.this, random_affirmation, Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(GoalList.this, "Server: " + message, Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
-                Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
+                Log.e("GON_DEBUG : GOAL_LIST", "JSON Error: " + e.getMessage());
             }
         });
     }

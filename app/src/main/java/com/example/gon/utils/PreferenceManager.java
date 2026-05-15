@@ -18,150 +18,122 @@ import okhttp3.Response;
 
 public class PreferenceManager {
 
-    public static final String HOSTED_SERVER = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
-    private static final String PREF_NAME = "my_prefs";
-    private static final String KEY_UUID = "uuid";
-    private static final String KEY_HASH = "hash";
-    private static final String KEY_USERNAME = "username";
-    private static final String KEY_PROFILE_PIC = "profile_pic";
+    public static final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
+    private static final String pref_name = "my_prefs";
+    private static final String key_uuid = "uuid";
+    private static final String key_hash = "hash";
+    private static final String key_username = "username";
+    private static final String key_profile_pic = "profile_pic";
 
-    private static final String KEY_COMPLETED_COUNT = "completed_goal_count";
-    private static final String KEY_ACTIVE_COUNT = "active_goal_count";
+    private static final String key_completed_count = "completed_goal_count";
+    private static final String key_active_count = "active_goal_count";
 
-    private static final String KEY_REMINDER_ENABLED = "reminder_enabled";
-    private static final String KEY_REMINDER_HOUR = "reminder_hour";
-    private static final String KEY_REMINDER_MINUTE = "reminder_minute";
+    private static final String key_reminder_enabled = "reminder_enabled";
+    private static final String key_reminder_hour = "reminder_hour";
+    private static final String key_reminder_minute = "reminder_minute";
 
-    // Save UUID
-    public static void saveUUID(Context context, String uuid) {
-        SharedPreferences prefs =
-                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+    public static void save_uuid(Context context, String uuid) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        prefs.edit().putString(key_uuid, uuid).apply();
+    }
 
+    public static String get_uuid(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        return prefs.getString(key_uuid, null);
+    }
+
+    public static void save_profile_pic(Context context, int index) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        prefs.edit().putInt(key_profile_pic, index).apply();
+    }
+
+    public static int get_profile_pic(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        return prefs.getInt(key_profile_pic, 0);
+    }
+
+    public static void save_hash(Context context, String hash) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        prefs.edit().putString(key_hash, hash).apply();
+    }
+
+    public static String get_hash_string(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        return prefs.getString(key_hash, null);
+    }
+
+    public static void save_username(Context context, String username) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        prefs.edit().putString(key_username, username).apply();
+    }
+
+    public static String get_username(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        return prefs.getString(key_username, null);
+    }
+
+    public static int get_completed_goal_count(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        return prefs.getInt(key_completed_count, 0);
+    }
+
+    public static int get_active_goal_count(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
+        return prefs.getInt(key_active_count, 0);
+    }
+
+    public static void save_stats(Context context, int completed, int active) {
+        SharedPreferences prefs = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE);
         prefs.edit()
-                .putString(KEY_UUID, uuid)
+                .putInt(key_active_count, active)
+                .putInt(key_completed_count, completed)
                 .apply();
     }
 
-    public static String getUUID(Context context) {
-        SharedPreferences prefs =
-                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-
-        return prefs.getString(KEY_UUID, null);
+    public static void set_reminder_enabled(Context context, boolean enabled) {
+        context.getSharedPreferences(pref_name, Context.MODE_PRIVATE)
+                .edit().putBoolean(key_reminder_enabled, enabled).apply();
     }
 
-    public static void saveProfilePic(Context context, int index) {
-        SharedPreferences prefs =
-                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-
-        prefs.edit()
-                .putInt(KEY_PROFILE_PIC, index)
-                .apply();
-    }
-    public static int getProfilePic(Context context) {
-        SharedPreferences prefs =
-                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-
-        return prefs.getInt(KEY_PROFILE_PIC, 0); // Default to pp0
+    public static boolean is_reminder_enabled(Context context) {
+        return context.getSharedPreferences(pref_name, Context.MODE_PRIVATE)
+                .getBoolean(key_reminder_enabled, false);
     }
 
-    // Save hash
-    public static void saveHash(Context context, String hash) {
-        SharedPreferences prefs =
-                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-
-        prefs.edit()
-                .putString(KEY_HASH, hash)
-                .apply();
-    }
-
-    // Read hash
-    public static String getHashString(Context context) {
-        SharedPreferences prefs =
-                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-
-        return prefs.getString(KEY_HASH, null);
-    }
-
-    public static void saveUsername(Context context, String username) {
-        SharedPreferences prefs =
-                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-
-        prefs.edit()
-                .putString(KEY_USERNAME, username)
-                .apply();
-    }
-
-    // Read hash
-    public static String getUsername(Context context) {
-        SharedPreferences prefs =
-                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-
-        return prefs.getString(KEY_USERNAME, null);
-    }
-
-    public static int getCompletedGoalCount(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return prefs.getInt(KEY_COMPLETED_COUNT, 0);
-    }
-
-    public static int getActiveGoalCount(Context context){
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return prefs.getInt(KEY_ACTIVE_COUNT, 0);
-    }
-
-    public static void save_stats(Context context, int completed, int active){
-        SharedPreferences prefs =
-                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-
-        prefs.edit()
-                .putInt(KEY_ACTIVE_COUNT, active)
-                .putInt(KEY_COMPLETED_COUNT, completed)
-                .apply();
-    }
-
-    public static void setReminderEnabled(Context context, boolean enabled) {
-        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-                .edit().putBoolean(KEY_REMINDER_ENABLED, enabled).apply();
-    }
-
-    public static boolean isReminderEnabled(Context context) {
-        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-                .getBoolean(KEY_REMINDER_ENABLED, false);
-    }
-
-    public static void saveReminderTime(Context context, int hour, int minute) {
-        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+    public static void save_reminder_time(Context context, int hour, int minute) {
+        context.getSharedPreferences(pref_name, Context.MODE_PRIVATE)
                 .edit()
-                .putInt(KEY_REMINDER_HOUR, hour)
-                .putInt(KEY_REMINDER_MINUTE, minute)
+                .putInt(key_reminder_hour, hour)
+                .putInt(key_reminder_minute, minute)
                 .apply();
     }
 
-    public static int getReminderHour(Context context) {
-        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-                .getInt(KEY_REMINDER_HOUR, 20); // Default 8 PM
+    public static int get_reminder_hour(Context context) {
+        return context.getSharedPreferences(pref_name, Context.MODE_PRIVATE)
+                .getInt(key_reminder_hour, 20);
     }
 
-    public static int getReminderMinute(Context context) {
-        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-                .getInt(KEY_REMINDER_MINUTE, 0);
+    public static int get_reminder_minute(Context context) {
+        return context.getSharedPreferences(pref_name, Context.MODE_PRIVATE)
+                .getInt(key_reminder_minute, 0);
     }
 
-    public static final int[] PROFILE_PHOTOS = {
+    public static final int[] profile_photos = {
             R.drawable.pp0, R.drawable.pp1, R.drawable.pp2,
             R.drawable.pp3, R.drawable.pp4, R.drawable.pp5,
             R.drawable.pp6, R.drawable.pp7, R.drawable.pp8
     };
-    public static void updateNavIcon(Context context, BottomNavigationView navView) {
-        int currentPicIndex = getProfilePic(context);
-        navView.getMenu().findItem(R.id.nav_profile).setIcon(PROFILE_PHOTOS[currentPicIndex]);
+
+    public static void update_nav_icon(Context context, BottomNavigationView nav_view) {
+        int current_pic_index = get_profile_pic(context);
+        nav_view.getMenu().findItem(R.id.nav_profile).setIcon(profile_photos[current_pic_index]);
     }
 
     public interface NetworkCallback {
-        void onResponse(String response);
+        void on_response(String response);
     }
 
-    public static void post(String phpFile, Map<String, String> params, NetworkCallback callback) {
+    public static void post(String php_file, Map<String, String> params, NetworkCallback callback) {
         new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
@@ -171,16 +143,16 @@ public class PreferenceManager {
                 }
 
                 Request request = new Request.Builder()
-                        .url(HOSTED_SERVER + phpFile)
+                        .url(hosted_server + php_file)
                         .post(builder.build())
                         .build();
 
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
-                        String responseData = response.body().string();
-                        new Handler(Looper.getMainLooper()).post(() -> callback.onResponse(responseData));
+                        String response_data = response.body().string();
+                        new Handler(Looper.getMainLooper()).post(() -> callback.on_response(response_data));
                     } else {
-                        Log.e("GON_DEBUG", "HTTP ERROR:"  + response.code() +  " for "  + phpFile);
+                        Log.e("GON_DEBUG", "HTTP ERROR:" + response.code() + " for " + php_file);
                     }
                 }
             } catch (Exception e) {
@@ -188,5 +160,4 @@ public class PreferenceManager {
             }
         }).start();
     }
-
 }

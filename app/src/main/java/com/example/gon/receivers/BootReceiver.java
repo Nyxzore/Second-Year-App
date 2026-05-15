@@ -13,8 +13,8 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             Log.d("BootReceiver", "Boot completed, rescheduling reminders");
-            if (PreferenceManager.isReminderEnabled(context)) {
-                ReminderScheduler.scheduleNextReminder(context);
+            if (PreferenceManager.is_reminder_enabled(context)) {
+                ReminderScheduler.schedule_next_reminder(context);
             }
         }
     }
