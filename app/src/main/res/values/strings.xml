@@ -92,4 +92,16 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+
+    <!-- Habit Reminders -->
+    <string name="reminder_title">Daily Habit Reminder</string>
+    <string name="reminder_content">Don\'t forget to complete your habits today!</string>
+    <string name="reminder_settings_title">Daily Reminders</string>
+    <string name="reminder_enable">Enable Notifications</string>
+    <string name="reminder_time">Reminder Time</string>
+    <string name="reminder_time_format">Remind at %02d:%02d</string>
+    <string name="notification_channel_name">Habit Reminders</string>
+    <string name="notification_channel_desc">Daily reminders to check your habits</string>
+    <string name="permission_rationale">Please enable notification permission to receive habit reminders.</string>
+    <string name="change">Change</string>
 </resources>

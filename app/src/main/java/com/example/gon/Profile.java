@@ -1,6 +1,10 @@
 package com.example.gon;
 
+import android.Manifest;
+import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,18 +16,26 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Profile extends AppCompatActivity {
 
+    private static final int NOTIFICATION_PERMISSION_CODE = 101;
     private ImageView imgProfile;
     private final int[] profilePhotos = {
             R.drawable.pp0, R.drawable.pp1, R.drawable.pp2,
@@ -90,6 +102,90 @@ public class Profile extends AppCompatActivity {
         TextView txtActive = findViewById(R.id.txtActiveGoals);
         txtCompleted.setText(String.valueOf(PreferenceManager.getCompletedGoalCount(this)));
         txtActive.setText(String.valueOf(PreferenceManager.getActiveGoalCount(this)));
+
+        setupReminderUI();
+    }
+
+    private void setupReminderUI() {
+        SwitchCompat switchReminder = findViewById(R.id.switchReminder);
+        TextView txtReminderTime = findViewById(R.id.txtReminderTime);
+        View layoutReminderTime = findViewById(R.id.layoutReminderTime);
+
+        boolean isEnabled = PreferenceManager.isReminderEnabled(this);
+        switchReminder.setChecked(isEnabled);
+        updateReminderTimeText(txtReminderTime);
+
+        switchReminder.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                if (checkNotificationPermission()) {
+                    enableReminders(true);
+                } else {
+                    switchReminder.setChecked(false);
+                }
+            } else {
+                enableReminders(false);
+            }
+        });
+
+        layoutReminderTime.setOnClickListener(v -> {
+            showTimePicker(txtReminderTime);
+        });
+    }
+
+    private void updateReminderTimeText(TextView txtReminderTime) {
+        int hour = PreferenceManager.getReminderHour(this);
+        int minute = PreferenceManager.getReminderMinute(this);
+        txtReminderTime.setText(String.format(Locale.getDefault(), getString(R.string.reminder_time_format), hour, minute));
+    }
+
+    private void enableReminders(boolean enable) {
+        PreferenceManager.setReminderEnabled(this, enable);
+        if (enable) {
+            NotificationHelper.createNotificationChannel(this);
+            ReminderScheduler.scheduleNextReminder(this);
+            Toast.makeText(this, "Reminders enabled", Toast.LENGTH_SHORT).show();
+        } else {
+            ReminderScheduler.cancelReminder(this);
+            Toast.makeText(this, "Reminders disabled", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showTimePicker(TextView txtReminderTime) {
+        int hour = PreferenceManager.getReminderHour(this);
+        int minute = PreferenceManager.getReminderMinute(this);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view, hourOfDay, minuteOfHour) -> {
+            PreferenceManager.saveReminderTime(this, hourOfDay, minuteOfHour);
+            updateReminderTimeText(txtReminderTime);
+            if (PreferenceManager.isReminderEnabled(this)) {
+                ReminderScheduler.scheduleNextReminder(this);
+            }
+        }, hour, minute, true);
+
+        timePickerDialog.show();
+    }
+
+    private boolean checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_CODE);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == NOTIFICATION_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                ((SwitchCompat) findViewById(R.id.switchReminder)).setChecked(true);
+                enableReminders(true);
+            } else {
+                Toast.makeText(this, R.string.permission_rationale, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void showProfilePicker() {

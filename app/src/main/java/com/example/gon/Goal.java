@@ -4,7 +4,9 @@ import android.database.DatabaseErrorHandler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /*
@@ -12,6 +14,7 @@ import java.util.Locale;
  */
 public class Goal {
     private String description, title, due_date, id;
+    private List<Category> categories = new ArrayList<>();
     //if new attributes are added make sure this is reflected in the goals table as well as ln63 of GoalList.java
 
     public Goal() {
@@ -42,6 +45,14 @@ public class Goal {
     public void setTitle(String title) { this.title = title; }
     public void setDescription(String description) { this.description = description; }
     public void setDueDate(String dueDate) { this.due_date = dueDate; }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories != null ? categories : new ArrayList<>();
+    }
 
     public String toString() {
         return "ID: " + this.id + " Title: " + this.title + " Description: " + this.description + " Due Date: " + this.due_date;

@@ -1,10 +1,14 @@
 package com.example.gon;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Habit {
     private final String name;
     private final String description;
     private final String id;
     private boolean completedToday;
+    private List<Category> categories = new ArrayList<>();
 
     public Habit(String name, String description, String id, boolean completedToday) {
         this.name = name;
@@ -20,6 +24,14 @@ public class Habit {
 
     public void setCompletedToday(boolean completedToday) {
         this.completedToday = completedToday;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories != null ? categories : new ArrayList<>();
     }
 
     @Override

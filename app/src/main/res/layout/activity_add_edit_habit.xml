@@ -45,19 +45,54 @@
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/edtHabitTitle" />
 
+    <TextView
+        android:id="@+id/txtHabitCategoryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="Categories"
+        android:textColor="#1B4332"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edtHabitDescription" />
+
+    <TextView
+        android:id="@+id/btnAddCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" + Add"
+        android:textColor="#2D6A4F"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppins_bold"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/txtHabitCategoryLabel"
+        app:layout_constraintStart_toEndOf="@id/txtHabitCategoryLabel"
+        app:layout_constraintTop_toTopOf="@id/txtHabitCategoryLabel" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupHabitCategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:chipSpacingHorizontal="8dp"
+        app:chipSpacingVertical="4dp"
+        app:layout_constraintTop_toBottomOf="@id/txtHabitCategoryLabel" />
+
     <Button
         android:id="@+id/btnSaveHabit"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginTop="32dp"
         android:backgroundTint="#2D6A4F"
+        android:fontFamily="@font/poppins_bold"
         android:text="Save Habit"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
         app:cornerRadius="18dp"
-        app:layout_constraintTop_toBottomOf="@id/edtHabitDescription"
-        android:fontFamily="@font/poppins_bold" />
+        app:layout_constraintTop_toBottomOf="@id/chipGroupHabitCategories" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

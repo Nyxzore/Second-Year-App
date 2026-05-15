@@ -255,6 +255,90 @@
 
             </androidx.cardview.widget.CardView>
 
+            <!-- REMINDERS SECTION -->
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/colorSurface"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/reminder_settings_title"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/reminder_enable"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/poppins_regular"/>
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchReminder"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            app:thumbTint="#2E7D32"
+                            app:trackTint="#B7E4C7"/>
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutReminderTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:padding="4dp">
+
+                        <TextView
+                            android:id="@+id/txtReminderTime"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/reminder_time"
+                            android:textColor="?attr/colorOnSurface"
+                            android:alpha="0.7"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_light"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/change"
+                            android:textColor="#2E7D32"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_bold"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
             <!-- RECENT GOALS -->
 
             <androidx.cardview.widget.CardView

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,14 +32,17 @@ public class GoalList extends AppCompatActivity {
 
     private GoalAdapter adapter;
     private ArrayList<Goal> myGoals;
+    private final ArrayList<Category> userCategories = new ArrayList<>();
+    private String selectedFilterCategoryId = null;
+    private int goalsFetchGeneration = 0;
 
     @Override
     protected void onStart() {
         super.onStart();
+        fetchCategories();
         fetchGoalsFromServer();
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setSelectedItemId(R.id.nav_home);
-
         PreferenceManager.updateNavIcon(this, bottomNav);
     }
 
@@ -54,9 +56,9 @@ public class GoalList extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new GoalAdapter(myGoals);
+        adapter.setHeaderBindListener(this::bindGoalListHeader);
         recyclerView.setAdapter(adapter);
 
-        // Swipe left to complete
         ItemTouchHelper.SimpleCallback swipeCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -66,14 +68,13 @@ public class GoalList extends AppCompatActivity {
             @Override
             public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 int position = viewHolder.getBindingAdapterPosition();
-                if (position == 0 || position > myGoals.size()) return 0; // Disable swipe for header/footer
+                if (position == 0 || position > myGoals.size()) return 0;
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getBindingAdapterPosition();
-                
                 Goal selectedGoal = myGoals.get(position - 1);
 
                 myGoals.remove(position - 1);
@@ -95,7 +96,6 @@ public class GoalList extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Setup Bottom Navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setItemIconTintList(null);
         bottomNav.setSelectedItemId(R.id.nav_home);
@@ -107,107 +107,105 @@ public class GoalList extends AppCompatActivity {
                 Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (itemId == R.id.nav_profile) {
-                Intent intent = new Intent(GoalList.this, Profile.class);
-                startActivity(intent);
+                startActivity(new Intent(GoalList.this, Profile.class));
                 return true;
-            }
-            else if (itemId == R.id.nav_habits) {
-                Intent intent = new Intent(GoalList.this, HabitList.class);
-                startActivity(intent);
+            } else if (itemId == R.id.nav_habits) {
+                startActivity(new Intent(GoalList.this, HabitList.class));
                 return true;
             }
             return false;
         });
     }
 
+    private void bindGoalListHeader(GoalAdapter.HeaderViewHolder header) {
+        header.lblActiveGoals.setText(String.valueOf(myGoals.size()));
+        header.txtUserName.setText(PreferenceManager.getUsername(this) + " 🌱");
+        header.btnAddCategory.setOnClickListener(view -> CategoryUiHelper.showAddCategoryDialog(this, newCategory -> fetchCategories()));
+        bindFilterChips(header);
+    }
+
+    private void bindFilterChips(GoalAdapter.HeaderViewHolder header) {
+        CategoryUiHelper.bindFilterChips(this, header.chipGroupGoalFilters, userCategories,
+                selectedFilterCategoryId, categoryId -> {
+                    selectedFilterCategoryId = categoryId;
+                    fetchGoalsFromServer();
+                });
+    }
+
     private void updateHeaderStats() {
         GoalAdapter.HeaderViewHolder header = adapter.getHeaderViewHolder();
         if (header != null) {
-            header.lblActiveGoals.setText(String.valueOf(myGoals.size()));
-            
-            // Set username and click listener
-            header.txtUserName.setText(PreferenceManager.getUsername(this) + " 🌱");
-            header.btnAddCategory.setOnClickListener(view -> showAddCategoryDialog());
+            bindGoalListHeader(header);
         }
     }
 
-    private void showAddCategoryDialog() {
-        EditText input = new EditText(this);
-        input.setHint("Category name");
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        int padding = (int) (16 * getResources().getDisplayMetrics().density);
-        input.setPadding(padding, padding, padding, padding);
-
-        new MaterialAlertDialogBuilder(this)
-                .setTitle("New Category")
-                .setView(input)
-                .setPositiveButton("Add", (dialog, which) -> {
-                    String categoryName = input.getText().toString().trim();
-                    if (!categoryName.isEmpty()) {
-                        add_category_post(categoryName);
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
-    public void fetchGoalsFromServer() {
-        myGoals.clear();
+    public void fetchCategories() {
         Map<String, String> params = new HashMap<>();
         params.put("uuid", PreferenceManager.getUUID(this));
 
-        PreferenceManager.post("get_goals.php", params, responseData -> {
+        PreferenceManager.post("get_categories.php", params, responseData -> {
             try {
                 JSONObject jsonResponse = new JSONObject(responseData);
-                JSONArray goalsArray = jsonResponse.getJSONArray("goals");
-
-                for (int i = 0; i < goalsArray.length(); i++) {
-                    JSONObject goal = goalsArray.getJSONObject(i);
-                    String title = goal.getString("title");
-                    String description = goal.getString("description");
-                    String due_date = goal.getString("due_date");
-                    String id = goal.getString("id");
-                    myGoals.add(new Goal(title, description, due_date, id));
-                    Log.d("GON_DEBUG : Goal fetched:", myGoals.get(i).toString());
+                if (!"success".equals(jsonResponse.optString("status"))) {
+                    return;
                 }
-                adapter.notifyDataSetChanged();
-                updateHeaderStats();
+                userCategories.clear();
+                userCategories.addAll(Category.listFromJsonArray(jsonResponse.getJSONArray("categories")));
+                runOnUiThread(this::updateHeaderStats);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e("GON_DEBUG", "fetchCategories", e);
             }
         });
     }
 
-    @Override
-    public boolean onContextItemSelected(@NonNull android.view.MenuItem item) {
-        int position = item.getGroupId();
-        if (position == 0 || position > myGoals.size()) return false;
-        
-        Goal selectedGoal = myGoals.get(position - 1);
-
-        if (item.getItemId() == 101) { // Edit
-            Intent intent = new Intent(GoalList.this, AddEditGoal.class);
-            intent.putExtra("EDIT_MODE", true);
-            intent.putExtra("goal_id", selectedGoal.getId());
-            intent.putExtra("title", selectedGoal.getTitle());
-            intent.putExtra("description", selectedGoal.getDescription());
-            intent.putExtra("due_date", selectedGoal.getDueDate());
-            startActivity(intent);
-            return true;
-        } else if (item.getItemId() == 102) { // Delete
-            myGoals.remove(position - 1);
-            adapter.notifyItemRemoved(position);
-            delete_goal_post(selectedGoal.getId());
-            updateHeaderStats();
-            return true;
+    public void fetchGoalsFromServer() {
+        final int generation = ++goalsFetchGeneration;
+        Map<String, String> params = new HashMap<>();
+        params.put("uuid", PreferenceManager.getUUID(this));
+        if (selectedFilterCategoryId != null) {
+            params.put("category_id", selectedFilterCategoryId);
         }
-        return super.onContextItemSelected(item);
+
+        PreferenceManager.post("get_goals.php", params, responseData -> {
+            if (generation != goalsFetchGeneration) return;
+            try {
+                JSONObject jsonResponse = new JSONObject(responseData);
+                if (!"success".equals(jsonResponse.optString("status"))) return;
+
+                JSONArray goalsArray = jsonResponse.getJSONArray("goals");
+                ArrayList<Goal> newGoals = new ArrayList<>();
+
+                for (int i = 0; i < goalsArray.length(); i++) {
+                    JSONObject goal = goalsArray.getJSONObject(i);
+                    Goal g = new Goal(
+                            goal.getString("title"),
+                            goal.optString("description", ""),
+                            goal.getString("due_date"),
+                            String.valueOf(goal.get("id"))
+                    );
+                    if (goal.has("categories")) {
+                        g.setCategories(Category.listFromJsonArray(goal.getJSONArray("categories")));
+                    }
+                    newGoals.add(g);
+                }
+
+                runOnUiThread(() -> {
+                    myGoals.clear();
+                    myGoals.addAll(newGoals);
+                    adapter.notifyDataSetChanged();
+                    updateHeaderStats();
+                });
+            } catch (JSONException e) {
+                Log.e("GON_DEBUG", "fetchGoals", e);
+            }
+        });
     }
 
     public void delete_goal_post(String goal_id) {
         Map<String, String> params = new HashMap<>();
         params.put("goal_id", goal_id);
         params.put("mode", "delete");
+        params.put("uuid", PreferenceManager.getUUID(this));
 
         PreferenceManager.post("mutate_goal.php", params, responseData -> {
             try {
@@ -244,24 +242,6 @@ public class GoalList extends AppCompatActivity {
             } catch (JSONException e) {
                 Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
                 Toast.makeText(GoalList.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    public void add_category_post(String categoryName) {
-        Map<String, String> params = new HashMap<>();
-        params.put("uuid", PreferenceManager.getUUID(this));
-        params.put("category_name", categoryName);
-
-        PreferenceManager.post("add_category.php", params, responseData -> {
-            try {
-                JSONObject json = new JSONObject(responseData);
-                String status = json.getString("status");
-                String message = json.getString("message");
-                Toast.makeText(GoalList.this, message, Toast.LENGTH_SHORT).show();
-            } catch (JSONException e) {
-                Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
-                Toast.makeText(GoalList.this, "Error: " + responseData, Toast.LENGTH_LONG).show();
             }
         });
     }

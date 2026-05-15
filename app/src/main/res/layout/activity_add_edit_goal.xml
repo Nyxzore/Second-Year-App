@@ -71,129 +71,49 @@
             android:fontFamily="@font/poppins_regular"/>
 
         <!-- CATEGORY -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Goal Category"
-            android:textColor="#1E1B39"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_regular"/>
-
-        <HorizontalScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:scrollbars="none">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:text="Categories"
+                android:textColor="#1E1B39"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins_regular"/>
 
-                <!-- FITNESS -->
-                <LinearLayout
-                    android:id="@+id/layoutFitness"
-                    android:layout_width="100dp"
-                    android:layout_height="110dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/category_selected"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="10dp">
+            <TextView
+                android:id="@+id/btnAddCategoryGoal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" + Add New"
+                android:textColor="#3CB371"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_bold"
+                android:padding="8dp" />
+        </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🏃"
-                        android:textSize="28sp" />
+        <TextView
+            android:id="@+id/txtGoalCategoryHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Select one or more. Add categories from the goals list (+)."
+            android:textColor="#8E8EA0"
+            android:textSize="13sp"
+            android:fontFamily="@font/poppins_regular"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Fitness"
-                        android:textColor="#1B5E20"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/poppins_light"/>
-                </LinearLayout>
-
-                <!-- HEALTH -->
-                <LinearLayout
-                    android:id="@+id/layoutHealth"
-                    android:layout_width="100dp"
-                    android:layout_height="110dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/category_unselected"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💚"
-                        android:textSize="28sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Health"
-                        android:textColor="#1E1B39"
-                        android:fontFamily="@font/poppins_regular"/>
-                </LinearLayout>
-
-                <!-- LEARNING -->
-                <LinearLayout
-                    android:id="@+id/layoutLearning"
-                    android:layout_width="100dp"
-                    android:layout_height="110dp"
-                    android:background="@drawable/category_unselected"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📚"
-                        android:textSize="28sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Learning"
-                        android:textColor="#1E1B39"
-                        android:fontFamily="@font/poppins_regular"/>
-                </LinearLayout>
-
-                <!-- OTHER -->
-                <LinearLayout
-                    android:id="@+id/layoutOther"
-                    android:layout_width="96dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="12dp"
-                    android:background="@drawable/category_unselected"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="..."
-                        android:textSize="22sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Other"
-                        android:textColor="#1E1B39"
-                        android:fontFamily="@font/poppins_regular"/>
-                </LinearLayout>
-
-            </LinearLayout>
-        </HorizontalScrollView>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupGoalCategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="4dp" />
 
         <!-- TARGET DATE -->
         <TextView

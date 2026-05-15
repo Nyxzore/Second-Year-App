@@ -27,6 +27,10 @@ public class PreferenceManager {
     private static final String KEY_COMPLETED_COUNT = "completed_goal_count";
     private static final String KEY_ACTIVE_COUNT = "active_goal_count";
 
+    private static final String KEY_REMINDER_ENABLED = "reminder_enabled";
+    private static final String KEY_REMINDER_HOUR = "reminder_hour";
+    private static final String KEY_REMINDER_MINUTE = "reminder_minute";
+
     // Save UUID
     public static void saveUUID(Context context, String uuid) {
         SharedPreferences prefs =
@@ -112,6 +116,34 @@ public class PreferenceManager {
                 .putInt(KEY_ACTIVE_COUNT, active)
                 .putInt(KEY_COMPLETED_COUNT, completed)
                 .apply();
+    }
+
+    public static void setReminderEnabled(Context context, boolean enabled) {
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                .edit().putBoolean(KEY_REMINDER_ENABLED, enabled).apply();
+    }
+
+    public static boolean isReminderEnabled(Context context) {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                .getBoolean(KEY_REMINDER_ENABLED, false);
+    }
+
+    public static void saveReminderTime(Context context, int hour, int minute) {
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                .edit()
+                .putInt(KEY_REMINDER_HOUR, hour)
+                .putInt(KEY_REMINDER_MINUTE, minute)
+                .apply();
+    }
+
+    public static int getReminderHour(Context context) {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                .getInt(KEY_REMINDER_HOUR, 20); // Default 8 PM
+    }
+
+    public static int getReminderMinute(Context context) {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                .getInt(KEY_REMINDER_MINUTE, 0);
     }
 
     public static final int[] PROFILE_PHOTOS = {

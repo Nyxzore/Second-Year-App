@@ -29,13 +29,28 @@ public class HabitAdapter extends RecyclerView.Adapter<HabitAdapter.HabitViewHol
         Habit h = habitList.get(position);
         holder.txtTitle.setText(h.getName());
 
+        String desc = h.getDescription();
+        if (desc != null && !desc.isEmpty()) {
+            holder.txtDescription.setText(desc);
+            holder.txtDescription.setVisibility(View.VISIBLE);
+        } else {
+            holder.txtDescription.setVisibility(View.GONE);
+        }
+
+        String categoryLabel = Category.joinNames(h.getCategories());
+        if (categoryLabel.isEmpty()) {
+            holder.txtCategories.setVisibility(View.GONE);
+        } else {
+            holder.txtCategories.setVisibility(View.VISIBLE);
+            holder.txtCategories.setText(categoryLabel);
+        }
+
         if (h.isCompletedToday()) {
             holder.txtStatus.setText("Completed ✓");
             holder.txtStatus.setTextColor(Color.GRAY);
             holder.itemView.setAlpha(0.5f);
         } else {
-            String desc = h.getDescription();
-            holder.txtStatus.setText((desc == null || desc.isEmpty()) ? "Active" : desc);
+            holder.txtStatus.setText("Swipe to complete");
             holder.txtStatus.setTextColor(Color.parseColor("#4B8A5B"));
             holder.itemView.setAlpha(1.0f);
         }
@@ -45,11 +60,13 @@ public class HabitAdapter extends RecyclerView.Adapter<HabitAdapter.HabitViewHol
     public int getItemCount() { return habitList.size(); }
 
     public static class HabitViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
-        TextView txtTitle, txtStatus;
+        TextView txtTitle, txtDescription, txtStatus, txtCategories;
         public HabitViewHolder(@NonNull View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.txtHabitTitle);
+            txtDescription = itemView.findViewById(R.id.txtHabitDescription);
             txtStatus = itemView.findViewById(R.id.txtCompletionStatus);
+            txtCategories = itemView.findViewById(R.id.txtHabitCategories);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override

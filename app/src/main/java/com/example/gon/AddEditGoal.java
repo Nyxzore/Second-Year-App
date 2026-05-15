@@ -2,70 +2,57 @@ package com.example.gon;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.chip.ChipGroup;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class AddEditGoal extends AppCompatActivity {
+
+    private final ArrayList<Category> userCategories = new ArrayList<>();
+    private final Set<String> selectedCategoryIds = new HashSet<>();
+    private ChipGroup chipGroupGoalCategories;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_goal);
 
-        //Category Selection
-        LinearLayout fitness = findViewById(R.id.layoutFitness);
-        LinearLayout health = findViewById(R.id.layoutHealth);
-        LinearLayout learning = findViewById(R.id.layoutLearning);
-        LinearLayout other = findViewById(R.id.layoutOther);
-
-        LinearLayout[] categories = {fitness, health, learning, other};
-
-        View.OnClickListener categoryClickListener = v -> {
-
-            //Reset all categories
-            for (LinearLayout category : categories) {
-                category.setBackgroundResource(R.drawable.category_unselected);
-            }
-
-            //Highlight selected category
-            v.setBackgroundResource(R.drawable.category_selected);
-        };
-
-        fitness.setOnClickListener(categoryClickListener);
-        health.setOnClickListener(categoryClickListener);
-        learning.setOnClickListener(categoryClickListener);
-        other.setOnClickListener(categoryClickListener);
+        chipGroupGoalCategories = findViewById(R.id.chipGroupGoalCategories);
+        selectedCategoryIds.addAll(CategoryUiHelper.idsFromCommaSeparated(
+                getIntent().getStringExtra("category_ids")));
 
         boolean edit_mode = getIntent().getBooleanExtra("EDIT_MODE", false);
 
-        TextView lblDate = (TextView) findViewById(R.id.lblDate);
-        Button btnAdd = (Button) findViewById(R.id.btnAdd);
-        CalendarView calendarView = (CalendarView) findViewById(R.id.calendarView);
-        EditText edtDescription = (EditText) findViewById(R.id.edtGoalDescription);
-        EditText edtTitle = (EditText) findViewById(R.id.edtGoalTitle);
+        TextView lblDate = findViewById(R.id.lblDate);
+        Button btnAdd = findViewById(R.id.btnAdd);
+        CalendarView calendarView = findViewById(R.id.calendarView);
+        EditText edtDescription = findViewById(R.id.edtGoalDescription);
+        EditText edtTitle = findViewById(R.id.edtGoalTitle);
 
-        if (edit_mode){
+        if (edit_mode) {
             btnAdd.setText("Finish edit");
             lblDate.setText(getIntent().getStringExtra("due_date"));
             edtTitle.setText(getIntent().getStringExtra("title"));
             edtDescription.setText(getIntent().getStringExtra("description"));
 
-            // Attempt to set the calendar to the existing due date
             try {
                 String dateStr = getIntent().getStringExtra("due_date");
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -75,12 +62,12 @@ public class AddEditGoal extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e("GON_DEBUG", "Date parse error: " + e.getMessage());
             }
-        }
-        else {
+        } else {
             calendarView.setDate(System.currentTimeMillis());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             lblDate.setText(sdf.format(System.currentTimeMillis()));
         }
+
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             String selectedDate = String.format("%d-%02d-%02d", year, (month + 1), dayOfMonth);
             lblDate.setText(selectedDate);
@@ -90,7 +77,7 @@ public class AddEditGoal extends AppCompatActivity {
         });
 
         btnAdd.setOnClickListener(v -> {
-            if (edtTitle.getText().toString().trim().isEmpty()){
+            if (edtTitle.getText().toString().trim().isEmpty()) {
                 Toast.makeText(this, "A goal must have a title", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -99,13 +86,41 @@ public class AddEditGoal extends AppCompatActivity {
             btnAdd.setText("...");
             post_goal(edit_mode);
         });
+
+        findViewById(R.id.btnAddCategoryGoal).setOnClickListener(v -> {
+            CategoryUiHelper.showAddCategoryDialog(this, newCategory -> {
+                userCategories.add(newCategory);
+                selectedCategoryIds.add(newCategory.getId());
+                CategoryUiHelper.bindSelectableChips(this, chipGroupGoalCategories, userCategories, selectedCategoryIds);
+            });
+        });
+
+        loadCategories();
     }
 
-    public void post_goal(Boolean edit_mode){
-        //retrieving data from UI
-        EditText edtDescription = (EditText) findViewById(R.id.edtGoalDescription);
-        EditText edtTitle = (EditText) findViewById(R.id.edtGoalTitle);
-        TextView lblDate = (TextView) findViewById(R.id.lblDate);
+    private void loadCategories() {
+        Map<String, String> params = new HashMap<>();
+        params.put("uuid", PreferenceManager.getUUID(this));
+
+        PreferenceManager.post("get_categories.php", params, responseData -> runOnUiThread(() -> {
+            try {
+                JSONObject json = new JSONObject(responseData);
+                if (!"success".equals(json.optString("status"))) {
+                    return;
+                }
+                userCategories.clear();
+                userCategories.addAll(Category.listFromJsonArray(json.getJSONArray("categories")));
+                CategoryUiHelper.bindSelectableChips(this, chipGroupGoalCategories, userCategories, selectedCategoryIds);
+            } catch (JSONException e) {
+                Log.e("GON_DEBUG", "loadCategories", e);
+            }
+        }));
+    }
+
+    public void post_goal(Boolean edit_mode) {
+        EditText edtDescription = findViewById(R.id.edtGoalDescription);
+        EditText edtTitle = findViewById(R.id.edtGoalTitle);
+        TextView lblDate = findViewById(R.id.lblDate);
         final String description = edtDescription.getText().toString();
         final String title = edtTitle.getText().toString();
         final String due_date = lblDate.getText().toString();
@@ -118,8 +133,12 @@ public class AddEditGoal extends AppCompatActivity {
         params.put("due_date", due_date);
         params.put("mode", edit_mode ? "edit" : "add");
         params.put("goal_id", goal_id);
+        params.put("category_ids", CategoryUiHelper.commaSeparatedIds(selectedCategoryIds));
 
-            PreferenceManager.post("mutate_goal.php", params, responseData -> {
+        PreferenceManager.post("mutate_goal.php", params, responseData -> runOnUiThread(() -> {
+            Button btnAdd = findViewById(R.id.btnAdd);
+            btnAdd.setEnabled(true);
+            btnAdd.setText(edit_mode ? "Finish edit" : "CREATE GOAL");
             try {
                 JSONObject json = new JSONObject(responseData);
                 String status = json.getString("status");
@@ -135,6 +154,6 @@ public class AddEditGoal extends AppCompatActivity {
                 Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
                 Toast.makeText(AddEditGoal.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
             }
-        });
+        }));
     }
 }

@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.material.chip.ChipGroup;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,9 +25,18 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Goal> goal_list;
     private HeaderViewHolder headerViewHolder;
+    private HeaderBindListener headerBindListener;
+
+    public interface HeaderBindListener {
+        void onBindHeader(HeaderViewHolder holder);
+    }
 
     public GoalAdapter(List<Goal> goal_list) {
         this.goal_list = goal_list;
+    }
+
+    public void setHeaderBindListener(HeaderBindListener listener) {
+        this.headerBindListener = listener;
     }
 
     public GoalAdapter() {
@@ -57,7 +68,12 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof GoalViewHolder) {
+        if (holder instanceof HeaderViewHolder) {
+            headerViewHolder = (HeaderViewHolder) holder;
+            if (headerBindListener != null) {
+                headerBindListener.onBindHeader((HeaderViewHolder) holder);
+            }
+        } else if (holder instanceof GoalViewHolder) {
             Goal currentGoal = goal_list.get(position - 1);
             GoalViewHolder gHolder = (GoalViewHolder) holder;
             gHolder.textViewGoalName.setText(currentGoal.getTitle());
@@ -78,6 +94,14 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 gHolder.textViewStatus.setText("Active");
                 gHolder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.ontrack_date));
             }
+
+            String categoryLabel = Category.joinNames(currentGoal.getCategories());
+            if (categoryLabel.isEmpty()) {
+                gHolder.textViewGoalCategories.setVisibility(View.GONE);
+            } else {
+                gHolder.textViewGoalCategories.setVisibility(View.VISIBLE);
+                gHolder.textViewGoalCategories.setText(categoryLabel);
+            }
         }
     }
 
@@ -96,6 +120,7 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView textViewGoalDescription;
         TextView textViewGoalDate;
         TextView textViewStatus;
+        TextView textViewGoalCategories;
 
         public GoalViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -103,6 +128,7 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             textViewGoalDescription = itemView.findViewById(R.id.textViewGoalDescription);
             textViewGoalDate = itemView.findViewById(R.id.textViewGoalDate);
             textViewStatus = itemView.findViewById(R.id.textViewStatus);
+            textViewGoalCategories = itemView.findViewById(R.id.textViewGoalCategories);
 
             itemView.setOnCreateContextMenuListener(this);
         }
@@ -118,12 +144,14 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView lblActiveGoals;
         public TextView btnAddCategory;
         public TextView txtUserName;
+        public ChipGroup chipGroupGoalFilters;
 
         public HeaderViewHolder(@NonNull View itemView) {
             super(itemView);
             lblActiveGoals = itemView.findViewById(R.id.lblActiveGoals);
             btnAddCategory = itemView.findViewById(R.id.btnAddCategory);
             txtUserName = itemView.findViewById(R.id.txtUserName);
+            chipGroupGoalFilters = itemView.findViewById(R.id.chipGroupGoalFilters);
         }
     }
 
