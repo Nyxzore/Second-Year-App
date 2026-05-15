@@ -129,6 +129,11 @@ public class MainActivity extends AppCompatActivity {
                 PreferenceManager.save_uuid(this, uuid);
                 PreferenceManager.save_username(this, username);
 
+                if (json.has("profile_pic")) {
+                    int pic_index = json.optInt("profile_pic", 0);
+                    PreferenceManager.save_profile_pic(this, pic_index);
+                }
+
                 if (chk_remember_me != null && chk_remember_me.isChecked()) {
                     PreferenceManager.save_hash(this, current_hash);
                 } else {

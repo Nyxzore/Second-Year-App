@@ -25,7 +25,7 @@ function login() {
         return ["status" => "failure", "message" => "Username/Password cannot be empty"];
     }
     
-    $SQL_query = "SELECT password, userid, admin FROM accounts WHERE username = $1";
+    $SQL_query = "SELECT password, userid, admin, profile_picture FROM accounts WHERE username = $1";
     $result = pg_query_params($dbconn, $SQL_query, array($username));
     
     if ($row = pg_fetch_assoc($result)) {
@@ -34,7 +34,8 @@ function login() {
                 "status" => "success",
                 "message" => "Logged in!",
                 "uuid" => $row['userid'],
-                "is_admin" => $row['admin']
+                "is_admin" => $row['admin'],
+                "profile_pic" => $row['profile_picture']
             ];
         }
     }

@@ -18,19 +18,27 @@ if (!$dbconn) {
 }
     
 function update_profile_pic() {
-    global $dbconn, $username, $hash;
-    if (empty($username) || empty($hash)) {
-        return ["status" => "failure", "message" => "Username/Password cannot be empty"];
+    global $dbconn, $uuid, $profile_picture_index;
+    if (empty($uuid)) {
+        return ["status" => "failure", "message" => "UUID cannot be empty"];
     }
     
     $SQL_query = "UPDATE accounts SET profile_picture = $1 WHERE userid = $2";
     $result = pg_query_params($dbconn, $SQL_query, array($profile_picture_index, $uuid));
-    return ["status" => "success"];
+
+    if ($result) {
+        return ["status" => "success"];
+    } else {
+        return ["status" => "error", "message" => pg_last_error($dbconn)];
+    }
 }
+
+$response = ["status" => "error", "message" => "Invalid mode"];
 
 if ($mode === "update_profile_pic") {
     $response = update_profile_pic();
-    
+}
+
 pg_close($dbconn);
 
 header('Content-Type: application/json');
