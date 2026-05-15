@@ -1,4 +1,4 @@
-package com.example.gon;
+package com.example.gon.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.gon.R;
+import com.example.gon.utils.PreferenceManager;
 
 import org.json.JSONException;
 import java.util.HashMap;

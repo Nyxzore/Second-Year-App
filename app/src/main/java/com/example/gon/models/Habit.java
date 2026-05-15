@@ -1,4 +1,4 @@
-package com.example.gon;
+package com.example.gon.models;
 
 import java.util.ArrayList;
 import java.util.List;

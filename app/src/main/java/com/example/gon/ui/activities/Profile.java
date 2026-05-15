@@ -1,4 +1,4 @@
-package com.example.gon;
+package com.example.gon.ui.activities;
 
 import android.Manifest;
 import android.app.TimePickerDialog;
@@ -25,6 +25,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import com.example.gon.R;
+import com.example.gon.utils.PreferenceManager;
+import com.example.gon.utils.NotificationHelper;
+import com.example.gon.utils.ReminderScheduler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,7 +60,7 @@ public class Profile extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_page);
+        setContentView(R.layout.activity_profile);
 
         imgProfile = findViewById(R.id.imgProfilePicture);
         TextView txtUsername = findViewById(R.id.txtUsername);

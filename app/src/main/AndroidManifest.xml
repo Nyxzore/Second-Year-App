@@ -19,12 +19,12 @@
         android:usesCleartextTraffic="true">
 
         <receiver
-            android:name=".HabitReminderReceiver"
+            android:name=".receivers.HabitReminderReceiver"
             android:enabled="true"
             android:exported="false" />
 
         <receiver
-            android:name=".BootReceiver"
+            android:name=".receivers.BootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -34,12 +34,12 @@
         </receiver>
 
         <activity
-            android:name=".GoalList"
+            android:name=".ui.activities.GoalList"
             android:exported="false"
             android:label="@string/title_activity_goal_list"
             android:theme="@style/Theme.Gon.NoActionBar" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,16 +47,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Profile" />
+        <activity android:name=".ui.activities.Profile" />
         <activity
-            android:name=".AddEditGoal" />
+            android:name=".ui.activities.AddEditGoal" />
         <activity
-            android:name=".CreateAccount" />
+            android:name=".ui.activities.CreateAccount" />
         <activity
-            android:name=".HabitList"
+            android:name=".ui.activities.HabitList"
             android:exported="false"
             android:theme="@style/Theme.Gon.NoActionBar" />
-        <activity android:name=".AddEditHabit" />
+        <activity android:name=".ui.activities.AddEditHabit" />
 
     </application>
 

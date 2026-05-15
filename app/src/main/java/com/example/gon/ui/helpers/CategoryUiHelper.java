@@ -1,9 +1,14 @@
-package com.example.gon;
+package com.example.gon.ui.helpers;
 
 import android.content.Context;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -12,10 +17,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import com.example.gon.R;
+import com.example.gon.models.Category;
+import com.example.gon.utils.PreferenceManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -75,29 +83,54 @@ public final class CategoryUiHelper {
                     }
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e("GON", "postCategory error", e);
             }
         });
     }
 
-    public static void bindFilterChips(Context context, ChipGroup chipGroup, List<Category> categories,
-                                       String selectedCategoryId, FilterListener listener) {
-        if (chipGroup.getChildCount() > 0 && categories.size() + 1 == chipGroup.getChildCount()) {
-            for (int i = 0; i < chipGroup.getChildCount(); i++) {
-                View child = chipGroup.getChildAt(i);
-                if (child instanceof Chip) {
-                    Chip chip = (Chip) child;
-                    String id = (String) chip.getTag();
-                    chip.setChecked((id == null && selectedCategoryId == null) || (id != null && id.equals(selectedCategoryId)));
-                }
-            }
+    public static void bindDisplayChips(Context context, ChipGroup chipGroup, List<Category> categories) {
+        if (chipGroup == null) {
             return;
         }
+        chipGroup.removeAllViews();
+        if (categories == null || categories.isEmpty()) {
+            chipGroup.setVisibility(View.GONE);
+            return;
+        }
+        chipGroup.setVisibility(View.VISIBLE);
+        float density = context.getResources().getDisplayMetrics().density;
+        int margin = (int) (6 * density);
+        int padH = (int) (10 * density);
+        int padV = (int) (4 * density);
+        int forestGreen = ContextCompat.getColor(context, R.color.forest_green);
+        for (Category category : categories) {
+            TextView pill = new TextView(context);
+            pill.setText(category.getName());
+            pill.setTextColor(forestGreen);
+            pill.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+            pill.setBackgroundResource(R.drawable.category_selected);
+            pill.setPadding(padH, padV, padH, padV);
+            pill.setClickable(false);
+            pill.setFocusable(false);
+            ViewGroup.MarginLayoutParams lp = new ViewGroup.MarginLayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            lp.setMarginEnd(margin);
+            lp.bottomMargin = margin;
+            pill.setLayoutParams(lp);
+            chipGroup.addView(pill);
+        }
+        chipGroup.requestLayout();
+    }
 
+    public static void bindFilterChips(Context context, ChipGroup chipGroup, List<Category> categories,
+                                       String selectedCategoryId, FilterListener listener) {
+        // We use tags to track selected ID and avoid unnecessary re-creation if the selection changed
         chipGroup.setSingleSelection(true);
         chipGroup.setSelectionRequired(false);
         chipGroup.removeAllViews();
-
+        
         chipGroup.addView(makeFilterChip(context, chipGroup, "All", selectedCategoryId == null, null,
                 () -> listener.onFilterChanged(null)));
 

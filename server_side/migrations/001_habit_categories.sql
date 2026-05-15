@@ -1,5 +1,5 @@
--- Run on PostgreSQL if habit_categories does not exist yet.
--- categories, goal_categories are assumed to exist per project ERD.
+-- Run on PostgreSQL (dgroup2689) if habit_categories does not exist yet.
+-- categories and goal_categories are assumed to exist per project ERD.
 
 CREATE TABLE IF NOT EXISTS habit_categories (
     habit_id INTEGER NOT NULL REFERENCES habits(id) ON DELETE CASCADE,

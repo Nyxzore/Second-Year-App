@@ -37,15 +37,14 @@
             android:fontFamily="@font/poppins_regular"
             android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/txtHabitCategories"
-            android:layout_width="wrap_content"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupHabitCategories"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:fontFamily="@font/poppins_italic"
-            android:textColor="#888888"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            android:layout_marginTop="6dp"
+            android:minHeight="28dp"
+            app:chipSpacingHorizontal="4dp"
+            app:chipSpacingVertical="4dp" />
 
         <TextView
             android:id="@+id/txtCompletionStatus"

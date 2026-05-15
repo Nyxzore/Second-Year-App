@@ -1,6 +1,4 @@
-package com.example.gon;
-
-import android.database.DatabaseErrorHandler;
+package com.example.gon.models;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,13 +7,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/*
-    This is the generic goal object equipped fully with accesser and mutator methods
- */
 public class Goal {
     private String description, title, due_date, id;
     private List<Category> categories = new ArrayList<>();
-    //if new attributes are added make sure this is reflected in the goals table as well as ln63 of GoalList.java
 
     public Goal() {
         this.description = "What exactly is my goal?";

@@ -1,4 +1,4 @@
-package com.example.gon;
+package com.example.gon.ui.adapters;
 
 import android.graphics.Color;
 import android.view.ContextMenu;
@@ -6,8 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.gon.R;
+import com.example.gon.models.Habit;
+import com.example.gon.ui.helpers.CategoryUiHelper;
+import com.google.android.material.chip.ChipGroup;
+
 import java.util.List;
 
 public class HabitAdapter extends RecyclerView.Adapter<HabitAdapter.HabitViewHolder> {
@@ -20,7 +27,7 @@ public class HabitAdapter extends RecyclerView.Adapter<HabitAdapter.HabitViewHol
     @NonNull
     @Override
     public HabitViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.habit_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_habit, parent, false);
         return new HabitViewHolder(view);
     }
 
@@ -37,13 +44,8 @@ public class HabitAdapter extends RecyclerView.Adapter<HabitAdapter.HabitViewHol
             holder.txtDescription.setVisibility(View.GONE);
         }
 
-        String categoryLabel = Category.joinNames(h.getCategories());
-        if (categoryLabel.isEmpty()) {
-            holder.txtCategories.setVisibility(View.GONE);
-        } else {
-            holder.txtCategories.setVisibility(View.VISIBLE);
-            holder.txtCategories.setText(categoryLabel);
-        }
+        CategoryUiHelper.bindDisplayChips(holder.itemView.getContext(),
+                holder.chipGroupHabitCategories, h.getCategories());
 
         if (h.isCompletedToday()) {
             holder.txtStatus.setText("Completed ✓");
@@ -60,13 +62,15 @@ public class HabitAdapter extends RecyclerView.Adapter<HabitAdapter.HabitViewHol
     public int getItemCount() { return habitList.size(); }
 
     public static class HabitViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
-        TextView txtTitle, txtDescription, txtStatus, txtCategories;
+        TextView txtTitle, txtDescription, txtStatus;
+        ChipGroup chipGroupHabitCategories;
+
         public HabitViewHolder(@NonNull View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.txtHabitTitle);
             txtDescription = itemView.findViewById(R.id.txtHabitDescription);
             txtStatus = itemView.findViewById(R.id.txtCompletionStatus);
-            txtCategories = itemView.findViewById(R.id.txtHabitCategories);
+            chipGroupHabitCategories = itemView.findViewById(R.id.chipGroupHabitCategories);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override

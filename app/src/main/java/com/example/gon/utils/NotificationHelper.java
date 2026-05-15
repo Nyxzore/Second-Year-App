@@ -1,4 +1,4 @@
-package com.example.gon;
+package com.example.gon.utils;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,6 +10,9 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+
+import com.example.gon.R;
+import com.example.gon.ui.activities.HabitList;
 
 public class NotificationHelper {
     public static final String CHANNEL_ID = "habit_reminders";

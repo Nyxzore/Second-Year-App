@@ -1,4 +1,4 @@
-package com.example.gon;
+package com.example.gon.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.example.gon.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Map;

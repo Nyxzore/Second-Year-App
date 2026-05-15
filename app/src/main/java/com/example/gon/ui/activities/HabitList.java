@@ -1,4 +1,4 @@
-package com.example.gon;
+package com.example.gon.ui.activities;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -15,7 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import com.example.gon.R;
+import com.example.gon.models.Habit;
+import com.example.gon.models.Category;
+import com.example.gon.ui.adapters.HabitAdapter;
+import com.example.gon.ui.helpers.CategoryUiHelper;
+import com.example.gon.utils.PreferenceManager;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +37,7 @@ public class HabitList extends AppCompatActivity {
     private final ArrayList<Category> userCategories = new ArrayList<>();
     private String selectedFilterCategoryId = null;
     private ChipGroup chipGroupHabitFilters;
+    private int habitsFetchGeneration = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +52,7 @@ public class HabitList extends AppCompatActivity {
         rv.setAdapter(adapter);
 
         chipGroupHabitFilters = findViewById(R.id.chipGroupHabitFilters);
-        findViewById(R.id.btnAddHabitCategory).setOnClickListener(v -> {
-            CategoryUiHelper.showAddCategoryDialog(this, newCategory -> {
-                fetchCategories();
-            });
-        });
+        findViewById(R.id.btnAddHabitCategory).setOnClickListener(v -> CategoryUiHelper.showAddCategoryDialog(this, newCategory -> fetchCategories()));
 
         ItemTouchHelper.SimpleCallback swipe = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
@@ -123,16 +127,19 @@ public class HabitList extends AppCompatActivity {
     }
 
     public void fetchHabits() {
-        String uuid = PreferenceManager.getUUID(this);
+        final int generation = ++habitsFetchGeneration;
         Map<String, String> params = new HashMap<>();
-        params.put("uuid", uuid);
+        params.put("uuid", PreferenceManager.getUUID(this));
         if (selectedFilterCategoryId != null) {
             params.put("category_id", selectedFilterCategoryId);
         }
 
         PreferenceManager.post("get_habit.php", params, response -> {
+            if (generation != habitsFetchGeneration) return;
             try {
                 JSONObject json = new JSONObject(response);
+                if (!"success".equals(json.optString("status"))) return;
+
                 JSONArray array = json.getJSONArray("habits");
                 ArrayList<Habit> newList = new ArrayList<>();
 
@@ -145,9 +152,8 @@ public class HabitList extends AppCompatActivity {
 
                     Habit h = new Habit(obj.getString("name"), obj.optString("description", ""),
                             String.valueOf(obj.get("id")), isComp);
-                    if (obj.has("categories")) {
-                        h.setCategories(Category.listFromJsonArray(obj.getJSONArray("categories")));
-                    }
+                    h.setCategories(Category.listFromItemJson(obj));
+                    Log.d("GON_CAT", "habit \"" + h.getName() + "\" categories=" + h.getCategories().size());
                     newList.add(h);
                 }
 

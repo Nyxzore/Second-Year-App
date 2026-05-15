@@ -1,4 +1,4 @@
-package com.example.gon;
+package com.example.gon.ui.adapters;
 
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -8,12 +8,15 @@ import android.widget.TextView;
 
 import com.google.android.material.chip.ChipGroup;
 
+import com.example.gon.R;
+import com.example.gon.models.Goal;
+import com.example.gon.ui.helpers.CategoryUiHelper;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +26,7 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_ITEM = 1;
     private static final int TYPE_FOOTER = 2;
 
-    private List<Goal> goal_list;
+    private final List<Goal> goal_list;
     private HeaderViewHolder headerViewHolder;
     private HeaderBindListener headerBindListener;
 
@@ -39,10 +42,6 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.headerBindListener = listener;
     }
 
-    public GoalAdapter() {
-        this.goal_list = new ArrayList<>();
-    }
-
     @Override
     public int getItemViewType(int position) {
         if (position == 0) return TYPE_HEADER;
@@ -54,14 +53,14 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.goal_list_header, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.header_goal_list, parent, false);
             headerViewHolder = new HeaderViewHolder(view);
             return headerViewHolder;
         } else if (viewType == TYPE_FOOTER) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.goal_list_footer, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_goal_list, parent, false);
             return new FooterViewHolder(view);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.goal_card, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_goal, parent, false);
             return new GoalViewHolder(view);
         }
     }
@@ -78,30 +77,25 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             GoalViewHolder gHolder = (GoalViewHolder) holder;
             gHolder.textViewGoalName.setText(currentGoal.getTitle());
             gHolder.textViewGoalDescription.setText(currentGoal.getDescription());
-            gHolder.textViewGoalDate.setText("Plan to do by " + currentGoal.getDueDate());
+            gHolder.textViewGoalDate.setText(holder.itemView.getContext().getString(R.string.plan_to_do_by, currentGoal.getDueDate()));
 
             try {
                 Date due_date = currentGoal.getDueDateAsDate();
                 Date today = new Date();
                 if (today.after(due_date)) {
-                    gHolder.textViewStatus.setText("Overdue");
+                    gHolder.textViewStatus.setText(R.string.status_overdue);
                     gHolder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.overdue_date));
                 } else {
-                    gHolder.textViewStatus.setText("Active");
+                    gHolder.textViewStatus.setText(R.string.status_active);
                     gHolder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.ontrack_date));
                 }
             } catch (ParseException e) {
-                gHolder.textViewStatus.setText("Active");
+                gHolder.textViewStatus.setText(R.string.status_active);
                 gHolder.textViewStatus.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.ontrack_date));
             }
 
-            String categoryLabel = Category.joinNames(currentGoal.getCategories());
-            if (categoryLabel.isEmpty()) {
-                gHolder.textViewGoalCategories.setVisibility(View.GONE);
-            } else {
-                gHolder.textViewGoalCategories.setVisibility(View.VISIBLE);
-                gHolder.textViewGoalCategories.setText(categoryLabel);
-            }
+            CategoryUiHelper.bindDisplayChips(holder.itemView.getContext(),
+                    gHolder.chipGroupGoalCategories, currentGoal.getCategories());
         }
     }
 
@@ -120,7 +114,7 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView textViewGoalDescription;
         TextView textViewGoalDate;
         TextView textViewStatus;
-        TextView textViewGoalCategories;
+        ChipGroup chipGroupGoalCategories;
 
         public GoalViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -128,7 +122,7 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             textViewGoalDescription = itemView.findViewById(R.id.textViewGoalDescription);
             textViewGoalDate = itemView.findViewById(R.id.textViewGoalDate);
             textViewStatus = itemView.findViewById(R.id.textViewStatus);
-            textViewGoalCategories = itemView.findViewById(R.id.textViewGoalCategories);
+            chipGroupGoalCategories = itemView.findViewById(R.id.chipGroupGoalCategories);
 
             itemView.setOnCreateContextMenuListener(this);
         }

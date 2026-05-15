@@ -1,4 +1,4 @@
-package com.example.gon;
+package com.example.gon.ui.activities;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +9,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.gon.R;
+import com.example.gon.utils.PreferenceManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;

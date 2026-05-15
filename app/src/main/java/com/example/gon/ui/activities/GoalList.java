@@ -1,11 +1,9 @@
-package com.example.gon;
+package com.example.gon.ui.activities;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,8 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import com.example.gon.R;
+import com.example.gon.models.Goal;
+import com.example.gon.models.Category;
+import com.example.gon.ui.adapters.GoalAdapter;
+import com.example.gon.ui.helpers.CategoryUiHelper;
+import com.example.gon.utils.PreferenceManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,7 +89,6 @@ public class GoalList extends AppCompatActivity {
                 mediaPlayer.start();
 
                 updateHeaderStats();
-                Log.e("GON_DEBUG : goal_list", "goal completed post succesful");
             }
         };
         new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerView);
@@ -183,9 +186,8 @@ public class GoalList extends AppCompatActivity {
                             goal.getString("due_date"),
                             String.valueOf(goal.get("id"))
                     );
-                    if (goal.has("categories")) {
-                        g.setCategories(Category.listFromJsonArray(goal.getJSONArray("categories")));
-                    }
+                    g.setCategories(Category.listFromItemJson(goal));
+                    Log.d("GON_CAT", "goal \"" + g.getTitle() + "\" categories=" + g.getCategories().size());
                     newGoals.add(g);
                 }
 
@@ -199,6 +201,33 @@ public class GoalList extends AppCompatActivity {
                 Log.e("GON_DEBUG", "fetchGoals", e);
             }
         });
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull android.view.MenuItem item) {
+        int position = item.getGroupId();
+        if (position == 0 || position > myGoals.size()) return false;
+
+        Goal selectedGoal = myGoals.get(position - 1);
+
+        if (item.getItemId() == 101) {
+            Intent intent = new Intent(GoalList.this, AddEditGoal.class);
+            intent.putExtra("EDIT_MODE", true);
+            intent.putExtra("goal_id", selectedGoal.getId());
+            intent.putExtra("title", selectedGoal.getTitle());
+            intent.putExtra("description", selectedGoal.getDescription());
+            intent.putExtra("due_date", selectedGoal.getDueDate());
+            intent.putExtra("category_ids", Category.joinIds(selectedGoal.getCategories()));
+            startActivity(intent);
+            return true;
+        } else if (item.getItemId() == 102) {
+            myGoals.remove(position - 1);
+            adapter.notifyItemRemoved(position);
+            delete_goal_post(selectedGoal.getId());
+            updateHeaderStats();
+            return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     public void delete_goal_post(String goal_id) {
@@ -217,7 +246,6 @@ public class GoalList extends AppCompatActivity {
                         Toast.LENGTH_LONG).show();
             } catch (JSONException e) {
                 Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
-                Toast.makeText(GoalList.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -241,7 +269,6 @@ public class GoalList extends AppCompatActivity {
                 }
             } catch (JSONException e) {
                 Log.e("GON_DEBUG", "JSON Error: " + e.getMessage());
-                Toast.makeText(GoalList.this, "Response Error: " + responseData, Toast.LENGTH_LONG).show();
             }
         });
     }
