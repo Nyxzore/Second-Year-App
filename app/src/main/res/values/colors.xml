@@ -4,6 +4,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="pale_green">#e1fae7</color>
     <color name="forest_green">#2b5c38</color>
+    <color name="brand_green">#4B8A5B</color>
     <color name="overdue_date">#ff0000</color>
     <color name="ontrack_date">#2b5c38</color>
+    <color name="progress_bar">#FF000000</color>
 </resources>

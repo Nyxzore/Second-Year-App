@@ -1,0 +1,44 @@
+<?php
+header('Content-Type: application/json');
+
+$host = "localhost";
+$port = "5432";
+$dbname = "dgroup2689";
+$user = "sgroup2689";
+$password = "c434b13a28cd859c169a";
+$uuid = $_POST['uuid'] ?? null;
+
+$conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password";
+$dbconn = pg_connect($conn_string);
+
+if (!$dbconn) {
+    echo json_encode(["status" => "error", "message" => "Unable to open database"]);
+    exit;
+}
+
+if (empty($uuid)) {
+    echo json_encode(["status" => "error", "message" => "Missing uuid"]);
+    exit;
+}
+
+// Sorting categories alphabetically by name
+$SQL_query = "SELECT id, name FROM categories WHERE user_uuid = $1 ORDER BY name ASC";
+$result = pg_query_params($dbconn, $SQL_query, array($uuid));
+
+if (!$result) {
+    echo json_encode(["status" => "error", "message" => pg_last_error($dbconn)]);
+    exit;
+}
+
+$categories = [];
+while ($row = pg_fetch_assoc($result)) {
+    $categories[] = $row;
+}
+
+pg_close($dbconn);
+
+echo json_encode([
+    "status" => "success",
+    "categories" => $categories
+]);
+?>

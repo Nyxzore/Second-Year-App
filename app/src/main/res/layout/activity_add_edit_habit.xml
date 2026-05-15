@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_bg"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/textViewAddHabitTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppins_bold"
+        android:text="New Habit"
+        android:textColor="#1B4332"
+        android:textSize="32sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/edtHabitTitle"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/edittext_bg"
+        android:fontFamily="@font/poppins_regular"
+        android:hint="Habit Title"
+        android:paddingStart="20dp"
+        android:textColor="#1B4332"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/textViewAddHabitTitle" />
+
+    <EditText
+        android:id="@+id/edtHabitDescription"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/edittext_bg"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="top"
+        android:hint="Description (optional)"
+        android:padding="20dp"
+        android:textColor="#1B4332"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/edtHabitTitle" />
+
+    <TextView
+        android:id="@+id/txtHabitCategoryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="Categories"
+        android:textColor="#1B4332"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edtHabitDescription" />
+
+    <TextView
+        android:id="@+id/btnAddCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" + Add"
+        android:textColor="#2D6A4F"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppins_bold"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/txtHabitCategoryLabel"
+        app:layout_constraintStart_toEndOf="@id/txtHabitCategoryLabel"
+        app:layout_constraintTop_toTopOf="@id/txtHabitCategoryLabel" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupHabitCategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:chipSpacingHorizontal="8dp"
+        app:chipSpacingVertical="4dp"
+        app:layout_constraintTop_toBottomOf="@id/txtHabitCategoryLabel" />
+
+    <Button
+        android:id="@+id/btnSaveHabit"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:backgroundTint="#2D6A4F"
+        android:fontFamily="@font/poppins_bold"
+        android:text="Save Habit"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:cornerRadius="18dp"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupHabitCategories" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
