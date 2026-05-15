@@ -19,46 +19,23 @@ function sync_goal_categories($dbconn, $goal_id, $category_ids, $user_uuid) {
     pg_query_params($dbconn, "DELETE FROM goal_categories WHERE goal_id = $1", array((int)$goal_id));
 
     foreach ($category_ids as $category_id) {
-        $check = pg_query_params(
+        pg_query_params(
             $dbconn,
-            "SELECT id FROM categories WHERE id = $1 AND user_uuid = $2",
-            array($category_id, $user_uuid)
+            "INSERT INTO goal_categories (goal_id, category_id) VALUES ($1, $2)",
+            array((int)$goal_id, (int)$category_id)
         );
-        if ($check && pg_num_rows($check) > 0) {
-            pg_query_params(
-                $dbconn,
-                "INSERT INTO goal_categories (goal_id, category_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
-                array((int)$goal_id, $category_id)
-            );
-        }
     }
 }
 
 function sync_habit_categories($dbconn, $habit_id, $category_ids, $user_uuid) {
-    $owner = pg_query_params(
-        $dbconn,
-        "SELECT id FROM habits WHERE id = $1 AND user_uuid = $2",
-        array((int)$habit_id, $user_uuid)
-    );
-    if (!$owner || pg_num_rows($owner) === 0) {
-        return;
-    }
-
     pg_query_params($dbconn, "DELETE FROM habit_categories WHERE habit_id = $1", array((int)$habit_id));
 
     foreach ($category_ids as $category_id) {
-        $check = pg_query_params(
+        pg_query_params(
             $dbconn,
-            "SELECT id FROM categories WHERE id = $1 AND user_uuid = $2",
-            array($category_id, $user_uuid)
+            "INSERT INTO habit_categories (habit_id, category_id) VALUES ($1, $2)",
+            array((int)$habit_id, (int)$category_id)
         );
-        if ($check && pg_num_rows($check) > 0) {
-            pg_query_params(
-                $dbconn,
-                "INSERT INTO habit_categories (habit_id, category_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
-                array((int)$habit_id, $category_id)
-            );
-        }
     }
 }
 
@@ -90,7 +67,7 @@ function fetch_categories_for_goals($dbconn, $goal_ids) {
     }
 
     while ($row = pg_fetch_assoc($result)) {
-        $goal_id = (string)$row['goal_id'];
+        $goal_id = $row['goal_id'];
         if (!isset($map[$goal_id])) {
             $map[$goal_id] = [];
         }
@@ -127,7 +104,7 @@ function fetch_categories_for_habits($dbconn, $habit_ids) {
     }
 
     while ($row = pg_fetch_assoc($result)) {
-        $habit_id = (string)$row['habit_id'];
+        $habit_id = $row['habit_id'];
         if (!isset($map[$habit_id])) {
             $map[$habit_id] = [];
         }

@@ -39,8 +39,7 @@ if ($mode === "edit") {
 $result = pg_query_params($dbconn, $SQL_query, $params);
 
 if (!$result) {
-    $error = pg_last_error($dbconn);
-    echo json_encode(["status" => "error", "message" => $error]);
+    echo json_encode(["status" => "error", "message" => pg_last_error($dbconn)]);
     pg_close($dbconn);
     exit;
 }
@@ -55,4 +54,4 @@ if ($mode === "add" || $mode === "edit") {
 }
 
 pg_close($dbconn);
-echo json_encode(["status" => "success", "message" => "change successful"]);
+echo json_encode(["status" => "success", "message" => "change succesful"]);

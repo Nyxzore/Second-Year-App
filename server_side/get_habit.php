@@ -1,6 +1,5 @@
 <?php
 header('Content-Type: application/json');
-
 require_once __DIR__ . '/category_helpers.php';
 
 $host = "localhost";
@@ -9,7 +8,7 @@ $dbname = "dgroup2689";
 $user = "sgroup2689";
 $password = "c434b13a28cd859c169a";
 $uuid = $_POST['uuid'] ?? null;
-$category_id = $_POST['category_id'] ?? '';
+$category_id = $_POST['category_id'] ?? null;
 
 $conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password";
 $dbconn = pg_connect($conn_string);
@@ -23,9 +22,9 @@ if (empty($uuid)) {
     exit;
 }
 
-if ($category_id !== '' && ctype_digit((string)$category_id)) {
+if ($category_id) {
     $SQL_query = "
-        SELECT DISTINCT h.id, h.user_uuid, h.name, h.description,
+        SELECT h.*,
             EXISTS (
                 SELECT 1
                 FROM habit_completions hc
@@ -33,10 +32,9 @@ if ($category_id !== '' && ctype_digit((string)$category_id)) {
                   AND hc.completion_date = CURRENT_DATE
             ) AS completed_today
         FROM habits h
-        INNER JOIN habit_categories hc_cat ON hc_cat.habit_id = h.id
-        WHERE h.user_uuid = $1
-          AND hc_cat.category_id = $2
-    ";
+        JOIN habit_categories hcat ON h.id = hcat.habit_id
+        WHERE h.user_uuid = $1 AND hcat.category_id = $2
+        ORDER BY h.name ASC";
     $params = array($uuid, (int)$category_id);
 } else {
     $SQL_query = "
@@ -49,7 +47,7 @@ if ($category_id !== '' && ctype_digit((string)$category_id)) {
             ) AS completed_today
         FROM habits h
         WHERE h.user_uuid = $1
-    ";
+        ORDER BY h.name ASC";
     $params = array($uuid);
 }
 
@@ -63,16 +61,15 @@ if (!$result) {
 $habits = [];
 $habit_ids = [];
 while ($row = pg_fetch_assoc($result)) {
+    $row['completed_today'] = ($row['completed_today'] === 't');
     $habits[] = $row;
     $habit_ids[] = $row['id'];
 }
 
 $category_map = fetch_categories_for_habits($dbconn, $habit_ids);
 foreach ($habits as &$habit) {
-    $hid = (string)$habit['id'];
-    $habit['categories'] = isset($category_map[$hid]) ? $category_map[$hid] : [];
+    $habit['categories'] = $category_map[$habit['id']] ?? [];
 }
-unset($habit);
 
 pg_close($dbconn);
 
@@ -80,3 +77,4 @@ echo json_encode([
     "status" => "success",
     "habits" => $habits
 ]);
+?>

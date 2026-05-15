@@ -21,6 +21,7 @@ if (empty($uuid)) {
     exit;
 }
 
+// Sorting categories alphabetically by name
 $SQL_query = "SELECT id, name FROM categories WHERE user_uuid = $1 ORDER BY name ASC";
 $result = pg_query_params($dbconn, $SQL_query, array($uuid));
 
@@ -40,3 +41,4 @@ echo json_encode([
     "status" => "success",
     "categories" => $categories
 ]);
+?>

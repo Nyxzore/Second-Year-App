@@ -136,10 +136,13 @@ public class PreferenceManager {
     public static void post(String php_file, Map<String, String> params, NetworkCallback callback) {
         new Thread(() -> {
             try {
+                Log.d("GON_DEBUG : NETWORK", "POST to " + php_file + " with params: " + params.toString());
                 OkHttpClient client = new OkHttpClient();
                 FormBody.Builder builder = new FormBody.Builder();
                 for (Map.Entry<String, String> entry : params.entrySet()) {
-                    builder.add(entry.getKey(), entry.getValue());
+                    if (entry.getValue() != null) {
+                        builder.add(entry.getKey(), entry.getValue());
+                    }
                 }
 
                 Request request = new Request.Builder()
@@ -150,13 +153,14 @@ public class PreferenceManager {
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
                         String response_data = response.body().string();
+                        Log.d("GON_DEBUG : NETWORK", "Response from " + php_file + ": " + response_data);
                         new Handler(Looper.getMainLooper()).post(() -> callback.on_response(response_data));
                     } else {
-                        Log.e("GON_DEBUG", "HTTP ERROR:" + response.code() + " for " + php_file);
+                        Log.e("GON_DEBUG : NETWORK", "HTTP ERROR:" + response.code() + " for " + php_file);
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("GON_DEBUG : NETWORK", "Exception in post to " + php_file, e);
             }
         }).start();
     }

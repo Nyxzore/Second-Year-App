@@ -1,6 +1,5 @@
 <?php
 header('Content-Type: application/json');
-
 require_once __DIR__ . '/category_helpers.php';
 
 $host = "localhost";
@@ -9,7 +8,7 @@ $dbname = "dgroup2689";
 $user = "sgroup2689";
 $password = "c434b13a28cd859c169a";
 $uuid = $_POST['uuid'] ?? null;
-$category_id = $_POST['category_id'] ?? '';
+$category_id = $_POST['category_id'] ?? null;
 
 $conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password";
 $dbconn = pg_connect($conn_string);
@@ -24,19 +23,16 @@ if (empty($uuid)) {
     exit;
 }
 
-if ($category_id !== '' && ctype_digit((string)$category_id)) {
+if ($category_id) {
     $SQL_query = "
-        SELECT DISTINCT g.*
+        SELECT g.*
         FROM goals g
-        INNER JOIN goal_categories gc ON gc.goal_id = g.id
-        WHERE g.user_uuid = $1
-          AND g.completed = false
-          AND gc.category_id = $2
-        ORDER BY g.due_date
-    ";
+        JOIN goal_categories gc ON g.id = gc.goal_id
+        WHERE g.user_uuid = $1 AND g.completed = false AND gc.category_id = $2
+        ORDER BY g.due_date ASC";
     $params = array($uuid, (int)$category_id);
 } else {
-    $SQL_query = "SELECT * FROM goals WHERE user_uuid = $1 AND completed = false ORDER BY due_date";
+    $SQL_query = "SELECT * FROM goals WHERE user_uuid = $1 AND completed = false ORDER BY due_date ASC";
     $params = array($uuid);
 }
 
@@ -55,10 +51,8 @@ while ($row = pg_fetch_assoc($result)) {
 
 $category_map = fetch_categories_for_goals($dbconn, $goal_ids);
 foreach ($goals as &$goal) {
-    $gid = (string)$goal['id'];
-    $goal['categories'] = isset($category_map[$gid]) ? $category_map[$gid] : [];
+    $goal['categories'] = $category_map[$goal['id']] ?? [];
 }
-unset($goal);
 
 pg_close($dbconn);
 
@@ -66,3 +60,4 @@ echo json_encode([
     "status" => "success",
     "goals" => $goals
 ]);
+?>

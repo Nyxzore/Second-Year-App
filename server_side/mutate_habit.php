@@ -1,6 +1,5 @@
 <?php
 header('Content-Type: application/json');
-
 require_once __DIR__ . '/category_helpers.php';
 
 $host = "localhost";
@@ -65,11 +64,10 @@ if ($mode === "add") {
     $habit_id = $row['id'];
 }
 
-if ($mode === "add") {
-    sync_habit_categories($dbconn, $habit_id, $category_ids, $uuid);
-} elseif ($mode === "edit" && pg_affected_rows($result) > 0) {
+if ($mode === "add" || $mode === "edit") {
     sync_habit_categories($dbconn, $habit_id, $category_ids, $uuid);
 }
 
 pg_close($dbconn);
 echo json_encode(["status" => "success", "message" => "change successful"]);
+?>
