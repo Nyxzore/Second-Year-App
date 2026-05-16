@@ -1,31 +1,24 @@
 <?php
-header('Content-Type: application/json');
 $host = "localhost";
 $port = "5432";
 $dbname = "dgroup2689";
 $user = "sgroup2689";
-$password_db = "c434b13a28cd859c169a";
+$pass = "c434b13a28cd859c169a";
 
 $uuid = $_POST['uuid'] ?? null;
-$friend_id = $_POST['friend_id'] ?? null;
+$fid = $_POST['friend_id'] ?? null;
 
-$dbconn = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$password_db");
+$db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
+if (!$db) exit(json_encode(array("status" => "error")));
 
-if (!$dbconn) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
-    exit;
-}
+$sql = "delete from friendships where user_id1 = $1 and user_id2 = $2 and status = 'pending'";
+$res = pg_query_params($db, $sql, array($fid, $uuid));
 
-$SQL = "DELETE FROM friendships
-        WHERE user_id1 = $1 AND user_id2 = $2 AND status = 'pending'";
-
-$result = pg_query_params($dbconn, $SQL, array($friend_id, $uuid));
-
-if ($result && pg_affected_rows($result) > 0) {
-    echo json_encode(["status" => "success", "message" => "Request ignored and deleted."]);
+if ($res && pg_affected_rows($res) > 0) {
+    echo json_encode(array("status" => "success"));
 } else {
-    echo json_encode(["status" => "failure", "message" => "Request not found."]);
+    echo json_encode(array("status" => "failure"));
 }
 
-pg_close($dbconn);
+pg_close($db);
 ?>

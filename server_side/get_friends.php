@@ -1,40 +1,27 @@
 <?php
-header('Content-Type: application/json');
 $host = "localhost";
 $port = "5432";
 $dbname = "dgroup2689";
 $user = "sgroup2689";
-$password_db = "c434b13a28cd859c169a";
+$pass = "c434b13a28cd859c169a";
 $uuid = $_POST['uuid'] ?? null;
 
-$dbconn = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$password_db");
+$db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
+if (!$db) exit(json_encode(array("status" => "error")));
 
-if (!$dbconn){
-    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
-    exit;
-    }
+$sql = "select a.userid, a.username from accounts a join friendships f on (f.user_id1 = a.userid or f.user_id2 = a.userid) where (f.user_id1 = $1 or f.user_id2 = $1) and f.status = 'active' and a.userid != $1";
+$res = pg_query_params($db, $sql, array($uuid));
 
-$SQL = "SELECT a.userid, a.username
-        FROM accounts a
-        JOIN friendships f ON (f.user_id1 = a.userid OR f.user_id2 = a.userid)
-        WHERE (f.user_id1 = $1 OR f.user_id2 = $1)
-            AND f.status = 'active'
-            AND a.userid != $1
-        ";
-
-$result  = pg_query_params($dbconn, $SQL, array($uuid));
-
-$friends = [];
-if ($result) {
-    while ($row = pg_fetch_assoc($result)){
-    $friends[] = [
+$friends = array();
+while ($row = pg_fetch_assoc($res)) {
+    $friends[] = array(
         "id" => $row['userid'],
         "username" => $row['username'],
         "status" => "accepted"
-        ];
-    }
+    );
 }
 
-echo json_encode(["status" => "success", "friends" => $friends]);
-pg_close($dbconn);
+pg_close($db);
+header('Content-Type: application/json');
+echo json_encode(array("status" => "success", "friends" => $friends));
 ?>

@@ -1,114 +1,70 @@
 <?php
-
-function parse_category_ids($raw) {
-    if ($raw === null || $raw === '') {
-        return [];
-    }
-    $parts = explode(',', $raw);
+function parse_category_ids($str) {
+    if (!$str) return [];
+    $parts = explode(',', $str);
     $ids = [];
-    foreach ($parts as $part) {
-        $part = trim($part);
-        if ($part !== '' && ctype_digit($part)) {
-            $ids[] = (int)$part;
-        }
+    foreach ($parts as $p) {
+        $p = trim($p);
+        if ($p != "") $ids[] = $p;
     }
-    return array_values(array_unique($ids));
+    return $ids;
 }
 
-function sync_goal_categories($dbconn, $goal_id, $category_ids, $user_uuid) {
-    pg_query_params($dbconn, "DELETE FROM goal_categories WHERE goal_id = $1", array((int)$goal_id));
-
-    foreach ($category_ids as $category_id) {
-        pg_query_params(
-            $dbconn,
-            "INSERT INTO goal_categories (goal_id, category_id) VALUES ($1, $2)",
-            array((int)$goal_id, (int)$category_id)
-        );
+function sync_goal_categories($db, $gid, $cats) {
+    pg_query_params($db, "delete from goal_categories where goal_id = $1", array($gid));
+    foreach ($cats as $cid) {
+        pg_query_params($db, "insert into goal_categories (goal_id, category_id) values ($1, $2)", array($gid, $cid));
     }
 }
 
-function sync_habit_categories($dbconn, $habit_id, $category_ids, $user_uuid) {
-    pg_query_params($dbconn, "DELETE FROM habit_categories WHERE habit_id = $1", array((int)$habit_id));
-
-    foreach ($category_ids as $category_id) {
-        pg_query_params(
-            $dbconn,
-            "INSERT INTO habit_categories (habit_id, category_id) VALUES ($1, $2)",
-            array((int)$habit_id, (int)$category_id)
-        );
+function sync_habit_categories($db, $hid, $cats) {
+    pg_query_params($db, "delete from habit_categories where habit_id = $1", array($hid));
+    foreach ($cats as $cid) {
+        pg_query_params($db, "insert into habit_categories (habit_id, category_id) values ($1, $2)", array($hid, $cid));
     }
 }
 
-function fetch_categories_for_goals($dbconn, $goal_ids) {
+function fetch_categories_for_goals($db, $gids) {
     $map = [];
-    if (empty($goal_ids)) {
-        return $map;
-    }
-
+    if (!$gids) return $map;
     $placeholders = [];
-    $params = [];
-    $i = 1;
-    foreach ($goal_ids as $gid) {
+    for ($i = 1; $i <= count($gids); $i++) {
         $placeholders[] = '$' . $i;
-        $params[] = (int)$gid;
-        $i++;
     }
-
-    $sql = "
-        SELECT gc.goal_id, c.id, c.name
-        FROM goal_categories gc
-        JOIN categories c ON c.id = gc.category_id
-        WHERE gc.goal_id IN (" . implode(',', $placeholders) . ")
-        ORDER BY c.name ASC
-    ";
-    $result = pg_query_params($dbconn, $sql, $params);
-    if (!$result) {
-        return $map;
-    }
-
-    while ($row = pg_fetch_assoc($result)) {
-        $goal_id = $row['goal_id'];
-        if (!isset($map[$goal_id])) {
-            $map[$goal_id] = [];
-        }
-        $map[$goal_id][] = ["id" => $row['id'], "name" => $row['name']];
+    $sql = "select gc.goal_id, c.id, c.name from goal_categories gc join categories c on c.id = gc.category_id where gc.goal_id in (" . implode(',', $placeholders) . ") order by c.name asc";
+    $res = pg_query_params($db, $sql, $gids);
+    while ($row = pg_fetch_assoc($res)) {
+        $id = $row['goal_id'];
+        if (!isset($map[$id])) $map[$id] = [];
+        $map[$id][] = array("id" => $row['id'], "name" => $row['name']);
     }
     return $map;
 }
 
-function fetch_categories_for_habits($dbconn, $habit_ids) {
+function fetch_categories_for_habits($db, $hids) {
     $map = [];
-    if (empty($habit_ids)) {
-        return $map;
-    }
-
+    if (!$hids) return $map;
     $placeholders = [];
-    $params = [];
-    $i = 1;
-    foreach ($habit_ids as $hid) {
+    for ($i = 1; $i <= count($hids); $i++) {
         $placeholders[] = '$' . $i;
-        $params[] = (int)$hid;
-        $i++;
     }
-
-    $sql = "
-        SELECT hc.habit_id, c.id, c.name
-        FROM habit_categories hc
-        JOIN categories c ON c.id = hc.category_id
-        WHERE hc.habit_id IN (" . implode(',', $placeholders) . ")
-        ORDER BY c.name ASC
-    ";
-    $result = pg_query_params($dbconn, $sql, $params);
-    if (!$result) {
-        return $map;
-    }
-
-    while ($row = pg_fetch_assoc($result)) {
-        $habit_id = $row['habit_id'];
-        if (!isset($map[$habit_id])) {
-            $map[$habit_id] = [];
-        }
-        $map[$habit_id][] = ["id" => $row['id'], "name" => $row['name']];
+    $sql = "select hc.habit_id, c.id, c.name from habit_categories hc join categories c on c.id = hc.category_id where hc.habit_id in (" . implode(',', $placeholders) . ") order by c.name asc";
+    $res = pg_query_params($db, $sql, $hids);
+    while ($row = pg_fetch_assoc($res)) {
+        $id = $row['habit_id'];
+        if (!isset($map[$id])) $map[$id] = [];
+        $map[$id][] = array("id" => $row['id'], "name" => $row['name']);
     }
     return $map;
 }
+
+function fetch_all_categories($db, $uid) {
+    $sql = "select id, name from categories where user_id = $1 order by name asc";
+    $res = pg_query_params($db, $sql, array($uid));
+    $categories = [];
+    while ($row = pg_fetch_assoc($res)) {
+        $categories[] = array("id" => $row['id'], "name" => $row['name']);
+    }
+    return $categories;
+}
+?>

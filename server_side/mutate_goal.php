@@ -25,18 +25,18 @@ if (!$dbconn) {
 }
 
 if ($mode === "edit") {
-    $SQL_query = "UPDATE goals SET title = $1, description = $2, due_date = $3 WHERE id = $4 AND user_uuid = $5;";
+    $sql = "update goals set title = $1, description = $2, due_date = $3 where id = $4 and user_uuid = $5;";
     $params = array($title, $descrip, $due_date, (int)$goal_id, $uuid);
 } elseif ($mode === "add") {
-    $SQL_query = "INSERT INTO goals (description, title, due_date, user_uuid, completed) VALUES ($1, $2, $3, $4, false) RETURNING id;";
+    $sql = "insert into goals (description, title, due_date, user_uuid, completed) values ($1, $2, $3, $4, false) returning id;";
     $params = array($descrip, $title, $due_date, $uuid);
 } else {
-    pg_query_params($dbconn, "DELETE FROM goal_categories WHERE goal_id = $1", array((int)$goal_id));
-    $SQL_query = "DELETE FROM goals WHERE id = $1 AND user_uuid = $2;";
+    pg_query_params($dbconn, "delete from goal_categories where goal_id = $1", array((int)$goal_id));
+    $sql = "delete from goals where id = $1 and user_uuid = $2;";
     $params = array((int)$goal_id, $uuid);
 }
 
-$result = pg_query_params($dbconn, $SQL_query, $params);
+$result = pg_query_params($dbconn, $sql, $params);
 
 if (!$result) {
     echo json_encode(["status" => "error", "message" => pg_last_error($dbconn)]);

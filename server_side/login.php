@@ -3,77 +3,58 @@ $host = "localhost";
 $port = "5432";
 $dbname = "dgroup2689";
 $user = "sgroup2689";
-$password_db = "c434b13a28cd859c169a"; 
+$pass = "c434b13a28cd859c169a";
 
-$username = $_POST['username'] ?? null;
+$user_in = $_POST['username'] ?? null;
 $hash = $_POST['hash'] ?? null;
 $mode = $_POST['mode'] ?? "login";
-$email = $_POST['email'] ?? null;
-$is_admin = $_POST['is_admin'] ?? "0";
+$mail = $_POST['email'] ?? null;
+$adm = $_POST['is_admin'] ?? "0";
 
-$conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password_db";
-$dbconn = pg_connect($conn_string);
-
-if (!$dbconn) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
-    exit;
-}
+$db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
+if (!$db) exit(json_encode(array("status" => "error")));
     
 function login() {
-    global $dbconn, $username, $hash;
-    if (empty($username) || empty($hash)) {
-        return ["status" => "failure", "message" => "Username/Password cannot be empty"];
-    }
+    global $db, $user_in, $hash;
+    if (!$user_in || !$hash) return array("status" => "failure", "message" => "empty fields");
     
-    $SQL_query = "SELECT password, userid, admin, profile_picture FROM accounts WHERE username = $1";
-    $result = pg_query_params($dbconn, $SQL_query, array($username));
+    $sql = "select password, userid, admin, profile_picture from accounts where username = $1";
+    $res = pg_query_params($db, $sql, array($user_in));
     
-    if ($row = pg_fetch_assoc($result)) {
+    if ($row = pg_fetch_assoc($res)) {
         if (hash_equals($row['password'], $hash)) {
-            return [
+            return array(
                 "status" => "success",
-                "message" => "Logged in!",
                 "uuid" => $row['userid'],
                 "is_admin" => $row['admin'],
                 "profile_pic" => $row['profile_picture']
-            ];
+            );
         }
     }
-    return ["status" => "failure", "message" => "Invalid username or password"];
+    return array("status" => "failure", "message" => "invalid");
 }
 
-function create_account() {
-    global $dbconn, $username, $hash, $email, $is_admin;
-    if (empty($username) || empty($hash)) {
-        return ["status" => "failure", "message" => "Username/Password cannot be empty"];
-    }
-    // 1. Check if user exists
-    $check_query = "SELECT username FROM accounts WHERE username = $1";
-    $check_res = pg_query_params($dbconn, $check_query, array($username));
-    if (pg_fetch_assoc($check_res)) {
-        return ["status" => "failure", "message" => "Username already taken"];
-    }
+function create() {
+    global $db, $user_in, $hash, $mail, $adm;
+    if (!$user_in || !$hash) return array("status" => "failure", "message" => "empty fields");
 
-    // 2. Insert new user
-    $SQL_query = "INSERT INTO accounts (username, password, email, admin) VALUES ($1, $2, $3, $4) RETURNING userid";
-    $result = pg_query_params($dbconn, $SQL_query, array($username, $hash, $email, $is_admin));
+    $res = pg_query_params($db, "select username from accounts where username = $1", array($user_in));
+    if (pg_fetch_assoc($res)) return array("status" => "failure", "message" => "taken");
+
+    $sql = "insert into accounts (username, password, email, admin) values ($1, $2, $3, $4) returning userid";
+    $res = pg_query_params($db, $sql, array($user_in, $hash, $mail, $adm));
     
-    
-    if ($result) {
-        $row = pg_fetch_assoc($result);
-        return ["status" => "success", "message" => "Account created!", "uuid" => $row['userid']];
+    if ($res) {
+        $row = pg_fetch_assoc($res);
+        return array("status" => "success", "uuid" => $row['userid']);
     }
-    return ["status" => "error", "message" => "Failed to create account: " . pg_last_error($dbconn)];
+    return array("status" => "error");
 }
 
-if ($mode === "login") {
-    $response = login();
-} else if ($mode === "create_account") {
-    $response = create_account(); 
-}
+if ($mode === "login") $resp = login();
+else if ($mode === "create_account") $resp = create();
 
-pg_close($dbconn);
-
+pg_close($db);
 header('Content-Type: application/json');
-echo json_encode($response);
+echo json_encode($resp);
 ?>

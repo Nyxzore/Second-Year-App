@@ -1,80 +1,43 @@
 <?php
-header('Content-Type: application/json');
 require_once __DIR__ . '/category_helpers.php';
 
 $host = "localhost";
 $port = "5432";
 $dbname = "dgroup2689";
 $user = "sgroup2689";
-$password = "c434b13a28cd859c169a";
+$pass = "c434b13a28cd859c169a";
 $uuid = $_POST['uuid'] ?? null;
-$category_id = $_POST['category_id'] ?? null;
+$cid = $_POST['category_id'] ?? null;
 
-$conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password";
-$dbconn = pg_connect($conn_string);
+$db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
 
-if (!$dbconn) {
-    echo json_encode(["status" => "error", "message" => "Unable to open database"]);
-    exit;
-}
-if (empty($uuid)) {
-    echo json_encode(["status" => "error", "message" => "Missing uuid"]);
-    exit;
-}
+if (!$db) exit(json_encode(array("status" => "error", "message" => "db fail")));
+if (!$uuid) exit(json_encode(array("status" => "error", "message" => "no uuid")));
 
-if ($category_id) {
-    $SQL_query = "
-        SELECT h.*,
-            EXISTS (
-                SELECT 1
-                FROM habit_completions hc
-                WHERE hc.habit_id = h.id
-                  AND hc.completion_date = CURRENT_DATE
-            ) AS completed_today
-        FROM habits h
-        JOIN habit_categories hcat ON h.id = hcat.habit_id
-        WHERE h.user_uuid = $1 AND hcat.category_id = $2
-        ORDER BY h.name ASC";
-    $params = array($uuid, (int)$category_id);
+if ($cid) {
+    $sql = "select h.*, exists (select 1 from habit_completions hc where hc.habit_id = h.id and hc.completion_date = current_date) as completed_today from habits h join habit_categories hcat on h.id = hcat.habit_id where h.user_uuid = $1 and hcat.category_id = $2 order by h.name asc";
+    $p = array($uuid, (int)$cid);
 } else {
-    $SQL_query = "
-        SELECT h.*,
-            EXISTS (
-                SELECT 1
-                FROM habit_completions hc
-                WHERE hc.habit_id = h.id
-                  AND hc.completion_date = CURRENT_DATE
-            ) AS completed_today
-        FROM habits h
-        WHERE h.user_uuid = $1
-        ORDER BY h.name ASC";
-    $params = array($uuid);
+    $sql = "select h.*, exists (select 1 from habit_completions hc where hc.habit_id = h.id and hc.completion_date = current_date) as completed_today from habits h where h.user_uuid = $1 order by h.name asc";
+    $p = array($uuid);
 }
 
-$result = pg_query_params($dbconn, $SQL_query, $params);
-
-if (!$result) {
-    echo json_encode(["status" => "error", "message" => pg_last_error($dbconn)]);
-    exit;
-}
-
-$habits = [];
-$habit_ids = [];
-while ($row = pg_fetch_assoc($result)) {
+$res = pg_query_params($db, $sql, $p);
+$habits = array();
+$ids = array();
+while ($row = pg_fetch_assoc($res)) {
     $row['completed_today'] = ($row['completed_today'] === 't');
     $habits[] = $row;
-    $habit_ids[] = $row['id'];
+    $ids[] = $row['id'];
 }
 
-$category_map = fetch_categories_for_habits($dbconn, $habit_ids);
-foreach ($habits as &$habit) {
-    $habit['categories'] = $category_map[$habit['id']] ?? [];
+$map = fetch_categories_for_habits($db, $ids);
+foreach ($habits as &$h) {
+    $h['categories'] = $map[$h['id']] ?? array();
 }
 
-pg_close($dbconn);
+pg_close($db);
 
-echo json_encode([
-    "status" => "success",
-    "habits" => $habits
-]);
+header('Content-Type: application/json');
+echo json_encode(array("status" => "success", "habits" => $habits));
 ?>

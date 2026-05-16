@@ -14,7 +14,7 @@ if (!$dbconn) {
     exit;
 }
 
-$res = pg_query_params($dbconn, "SELECT userid FROM accounts WHERE username = $1", array($friend_username));
+$res = pg_query_params($dbconn, "select userid from accounts where username = $1", array($friend_username));
 $row = pg_fetch_assoc($res);
 
 if (!$row) {
@@ -29,8 +29,8 @@ if ($uuid == $friend_id) {
     exit;
 }
 
-$SQL = "INSERT INTO friendships (user_id1, user_id2, status) VALUES ($1, $2, 'pending')";
-$result = pg_query_params($dbconn, $SQL, array($uuid, $friend_id));
+$sql = "insert into friendships (user_id1, user_id2, status) values ($1, $2, 'pending')";
+$result = pg_query_params($dbconn, $sql, array($uuid, $friend_id));
 
 if ($result) {
     echo "Request sent to " . $friend_username;

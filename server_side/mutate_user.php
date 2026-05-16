@@ -3,44 +3,25 @@ $host = "localhost";
 $port = "5432";
 $dbname = "dgroup2689";
 $user = "sgroup2689";
-$password_db = "c434b13a28cd859c169a"; 
+$pass = "c434b13a28cd859c169a";
 
-$mode = $_POST['mode'];
-$uuid = $_POST['uuid'];
-$profile_picture_index = $_POST['profile_pic'];
+$mode = $_POST['mode'] ?? '';
+$uuid = $_POST['uuid'] ?? '';
+$pic = $_POST['profile_pic'] ?? '';
 
-$conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password_db";
-$dbconn = pg_connect($conn_string);
-
-if (!$dbconn) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
-    exit;
-}
+$db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
+if (!$db) exit(json_encode(array("status" => "error")));
     
-function update_profile_pic() {
-    global $dbconn, $uuid, $profile_picture_index;
-    if (empty($uuid)) {
-        return ["status" => "failure", "message" => "UUID cannot be empty"];
-    }
-    
-    $SQL_query = "UPDATE accounts SET profile_picture = $1 WHERE userid = $2";
-    $result = pg_query_params($dbconn, $SQL_query, array($profile_picture_index, $uuid));
-
-    if ($result) {
-        return ["status" => "success"];
-    } else {
-        return ["status" => "error", "message" => pg_last_error($dbconn)];
-    }
-}
-
-$response = ["status" => "error", "message" => "Invalid mode"];
-
 if ($mode === "update_profile_pic") {
-    $response = update_profile_pic();
+    $sql = "update accounts set profile_picture = $1 where userid = $2";
+    $res = pg_query_params($db, $sql, array($pic, $uuid));
+    if ($res) $resp = array("status" => "success");
+    else $resp = array("status" => "error");
+} else {
+    $resp = array("status" => "error", "message" => "bad mode");
 }
 
-pg_close($dbconn);
-
+pg_close($db);
 header('Content-Type: application/json');
-echo json_encode($response);
+echo json_encode($resp);
 ?>

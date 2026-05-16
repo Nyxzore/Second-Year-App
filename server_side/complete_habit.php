@@ -1,46 +1,31 @@
 <?php
-header('Content-Type: application/json');
-
 $host = "localhost";
 $port = "5432";
 $dbname = "dgroup2689";
 $user = "sgroup2689";
-$password = "c434b13a28cd859c169a";
+$pass = "c434b13a28cd859c169a";
 
-$habit_id = $_POST['habit_id'] ?? null;
-$uuid = $_POST['uuid'] ?? null; // user_uuid
+$hid = $_POST['habit_id'] ?? null;
+$uuid = $_POST['uuid'] ?? null;
 
-$conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password";
-$dbconn = pg_connect($conn_string);
+$db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
+if (!$db) exit(json_encode(array("status" => "error")));
 
-if (!$dbconn) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
+if (!$hid || !$uuid) exit(json_encode(array("status" => "error")));
+
+$sql1 = "select 1 from habit_completions where habit_id = $1 and completion_date = current_date";
+$res1 = pg_query_params($db, $sql1, array($hid));
+
+if ($res1 && pg_num_rows($res1) > 0) {
+    echo json_encode(array("status" => "already_completed_today"));
     exit;
 }
 
-if (empty($habit_id) || empty($uuid)) {
-    echo json_encode(["status" => "error", "message" => "Missing habit_id or uuid"]);
-    exit;
-}
+$sql2 = "insert into habit_completions (habit_id, user_uuid, completion_date) values ($1, $2, current_date)";
+$res2 = pg_query_params($db, $sql2, array($hid, $uuid));
 
-// 1. Check if a completion already exists for today 
-$check_sql = "SELECT 1 FROM habit_completions WHERE habit_id = $1 AND completion_date = CURRENT_DATE";
-$check_res = pg_query_params($dbconn, $check_sql, array($habit_id));
+if ($res2) echo json_encode(array("status" => "success"));
+else echo json_encode(array("status" => "error"));
 
-if ($check_res && pg_num_rows($check_res) > 0) {
-    echo json_encode(["status" => "already_completed_today", "message" => "Already completed today"]);
-    exit;
-}
-
-// 2. Insert the new completion 
-$insert_sql = "INSERT INTO habit_completions (habit_id, user_uuid, completion_date) VALUES ($1, $2, CURRENT_DATE)";
-$insert_res = pg_query_params($dbconn, $insert_sql, array($habit_id, $uuid));
-
-if ($insert_res) {
-    echo json_encode(["status" => "success", "message" => "Completed for today"]);
-} else {
-    echo json_encode(["status" => "error", "message" => pg_last_error($dbconn)]);
-}
-
-pg_close($dbconn);
+pg_close($db);
 ?>

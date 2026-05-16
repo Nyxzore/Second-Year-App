@@ -1,72 +1,47 @@
 <?php
-header('Content-Type: application/json');
 require_once __DIR__ . '/category_helpers.php';
 
 $host = "localhost";
 $port = "5432";
 $dbname = "dgroup2689";
 $user = "sgroup2689";
-$password = "c434b13a28cd859c169a";
+$pass = "c434b13a28cd859c169a";
 
 $uuid = $_POST['uuid'] ?? null;
 $name = $_POST['name'] ?? null;
-$description = $_POST['description'] ?? '';
+$desc = $_POST['description'] ?? '';
 $mode = $_POST['mode'] ?? null;
-$habit_id = $_POST['habit_id'] ?? null;
-$category_ids = parse_category_ids($_POST['category_ids'] ?? '');
+$hid = $_POST['habit_id'] ?? null;
+$cats = parse_category_ids($_POST['category_ids'] ?? '');
 
-$conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password";
-$dbconn = pg_connect($conn_string);
-
-if (!$dbconn) {
-    echo json_encode(["status" => "error", "message" => "Unable to open database"]);
-    exit;
-}
+$db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
+if (!$db) exit(json_encode(array("status" => "error")));
 
 if ($mode === "add") {
-    if (empty($uuid) || empty($name)) {
-        echo json_encode(["status" => "error", "message" => "Missing uuid or name"]);
-        exit;
-    }
-    $SQL_query = "INSERT INTO habits (name, description, date_started, user_uuid)
-                  VALUES ($1, $2, CURRENT_DATE, $3) RETURNING id;";
-    $params = array($name, $description, $uuid);
+    $sql = "insert into habits (name, description, date_started, user_uuid) values ($1, $2, current_date, $3) returning id;";
+    $p = array($name, $desc, $uuid);
 } elseif ($mode === "edit") {
-    if (empty($habit_id) || empty($name)) {
-        echo json_encode(["status" => "error", "message" => "Missing habit_id or name"]);
-        exit;
-    }
-    $SQL_query = "UPDATE habits SET name = $1, description = $2 WHERE id = $3 AND user_uuid = $4;";
-    $params = array($name, $description, (int)$habit_id, $uuid);
+    $sql = "update habits set name = $1, description = $2 where id = $3 and user_uuid = $4;";
+    $p = array($name, $desc, (int)$hid, $uuid);
 } elseif ($mode === "delete") {
-    if (empty($habit_id)) {
-        echo json_encode(["status" => "error", "message" => "Missing habit_id"]);
-        exit;
-    }
-    $SQL_query = "DELETE FROM habits WHERE id = $1 AND user_uuid = $2;";
-    $params = array((int)$habit_id, $uuid);
+    $sql = "delete from habits where id = $1 and user_uuid = $2;";
+    $p = array((int)$hid, $uuid);
 } else {
-    echo json_encode(["status" => "error", "message" => "Invalid mode"]);
-    exit;
+    exit(json_encode(array("status" => "error")));
 }
 
-$result = pg_query_params($dbconn, $SQL_query, $params);
-
-if (!$result) {
-    echo json_encode(["status" => "error", "message" => pg_last_error($dbconn)]);
-    pg_close($dbconn);
-    exit;
-}
+$res = pg_query_params($db, $sql, $p);
+if (!$res) exit(json_encode(array("status" => "error")));
 
 if ($mode === "add") {
-    $row = pg_fetch_assoc($result);
-    $habit_id = $row['id'];
+    $row = pg_fetch_assoc($res);
+    $hid = $row['id'];
 }
 
 if ($mode === "add" || $mode === "edit") {
-    sync_habit_categories($dbconn, $habit_id, $category_ids, $uuid);
+    sync_habit_categories($db, $hid, $cats);
 }
 
-pg_close($dbconn);
-echo json_encode(["status" => "success", "message" => "change successful"]);
+pg_close($db);
+echo json_encode(array("status" => "success"));
 ?>

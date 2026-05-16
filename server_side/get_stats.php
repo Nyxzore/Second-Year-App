@@ -3,34 +3,25 @@ $host = "localhost";
 $port = "5432";
 $dbname = "dgroup2689";
 $user = "sgroup2689";
-$password_db = "c434b13a28cd859c169a"; 
+$pass = "c434b13a28cd859c169a";
+$uuid = $_POST['uuid'] ?? null;
 
-$uuid = $_POST['uuid'];
+$db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
 
-$conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password_db";
-$dbconn = pg_connect($conn_string);
+if (!$db) exit(json_encode(array("status" => "error")));
 
-if (!$dbconn) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
-    exit;
-}
+$res1 = pg_query_params($db, "select count(id) as count from goals where user_uuid = $1 and completed = true", array($uuid));
+$comp = pg_fetch_assoc($res1)['count'] ?? 0;
 
-$q1 = "SELECT COUNT(id) as count FROM goals WHERE user_uuid = $1 AND completed = true";
-$res1 = pg_query_params($dbconn, $q1, array($uuid));
-$completed = pg_fetch_assoc($res1)['count'] ?? 0;
+$res2 = pg_query_params($db, "select count(id) as count from goals where user_uuid = $1 and completed = false", array($uuid));
+$act = pg_fetch_assoc($res2)['count'] ?? 0;
 
-$q2 = "SELECT COUNT(id) as count FROM goals WHERE user_uuid = $1 AND completed = false";
-$res2 = pg_query_params($dbconn, $q2, array($uuid));
-$active = pg_fetch_assoc($res2)['count'] ?? 0;
-
-$response = [
-    "status" => "success",
-    "completed_count" => (int)$completed,
-    "active_count" => (int)$active
-];
-
-pg_close($dbconn);
+pg_close($db);
 
 header('Content-Type: application/json');
-echo json_encode($response);
+echo json_encode(array(
+    "status" => "success",
+    "completed_count" => (int)$comp,
+    "active_count" => (int)$act
+));
 ?>

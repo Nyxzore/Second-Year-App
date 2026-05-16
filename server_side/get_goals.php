@@ -1,63 +1,44 @@
 <?php
-header('Content-Type: application/json');
+
 require_once __DIR__ . '/category_helpers.php';
 
 $host = "localhost";
 $port = "5432";
 $dbname = "dgroup2689";
 $user = "sgroup2689";
-$password = "c434b13a28cd859c169a";
+$pass = "c434b13a28cd859c169a";
 $uuid = $_POST['uuid'] ?? null;
-$category_id = $_POST['category_id'] ?? null;
+$cid = $_POST['category_id'] ?? null;
 
-$conn_string = "host=$host port=$port dbname=$dbname user=$user password=$password";
-$dbconn = pg_connect($conn_string);
+$db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
 
-if (!$dbconn) {
-    echo json_encode(["status" => "error", "message" => "Unable to open database"]);
-    exit;
-}
+if (!$db) exit(json_encode(array("status" => "error", "message" => "db error")));
+if (!$uuid) exit(json_encode(array("status" => "error", "message" => "no uuid")));
 
-if (empty($uuid)) {
-    echo json_encode(["status" => "error", "message" => "Missing uuid"]);
-    exit;
-}
-
-if ($category_id) {
-    $SQL_query = "
-        SELECT g.*
-        FROM goals g
-        JOIN goal_categories gc ON g.id = gc.goal_id
-        WHERE g.user_uuid = $1 AND g.completed = false AND gc.category_id = $2
-        ORDER BY g.due_date ASC";
-    $params = array($uuid, (int)$category_id);
+if ($cid) {
+    $sql = "select g.* from goals g join goal_categories gc on g.id = gc.goal_id where g.user_uuid = $1 and g.completed = false and gc.category_id = $2 order by g.due_date asc";
+    $p = array($uuid, (int)$cid);
 } else {
-    $SQL_query = "SELECT * FROM goals WHERE user_uuid = $1 AND completed = false ORDER BY due_date ASC";
-    $params = array($uuid);
+    $sql = "select * from goals where user_uuid = $1 and completed = false order by due_date asc";
+    $p = array($uuid);
 }
 
-$result = pg_query_params($dbconn, $SQL_query, $params);
-if (!$result) {
-    echo json_encode(["status" => "error", "message" => pg_last_error($dbconn)]);
-    exit;
-}
 
-$goals = [];
-$goal_ids = [];
-while ($row = pg_fetch_assoc($result)) {
+$res = pg_query_params($db, $sql, $p);
+$goals = array();
+$ids = array();
+while ($row = pg_fetch_assoc($res)) {
     $goals[] = $row;
-    $goal_ids[] = $row['id'];
+    $ids[] = $row['id'];
 }
 
-$category_map = fetch_categories_for_goals($dbconn, $goal_ids);
-foreach ($goals as &$goal) {
-    $goal['categories'] = $category_map[$goal['id']] ?? [];
+$map = fetch_categories_for_goals($db, $ids);
+foreach ($goals as &$g) {
+    $g['categories'] = $map[$g['id']] ?? array();
 }
 
-pg_close($dbconn);
+pg_close($db);
 
-echo json_encode([
-    "status" => "success",
-    "goals" => $goals
-]);
+header('Content-Type: application/json');
+echo json_encode(array("status" => "success", "goals" => $goals));
 ?>
