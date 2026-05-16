@@ -18,8 +18,8 @@ import okhttp3.Response;
 
 public class PreferenceManager {
 
-    //public static final String hosted_server = "http://192.168.68.131/";
-    public static final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
+    public static final String hosted_server = "http://192.168.68.118:8080/";
+    //public static final String hosted_server = "https://wmc.ms.wits.ac.za/students/sgroup2689/";
     private static final String pref_name = "my_prefs";
     private static final String key_uuid = "uuid";
     private static final String key_hash = "hash";

@@ -120,8 +120,8 @@ public class MainActivity extends AppCompatActivity {
     private void handle_auth_response(String response_data, TextView status_text, String username, String current_hash) {
         try {
             org.json.JSONObject json = new org.json.JSONObject(response_data);
-            String status = json.getString("status");
-            String message = json.getString("message");
+            String status = json.optString("status", "error");
+            String message = json.optString("message", "");
 
             if (status.equals("success")) {
                 uuid = json.getString("uuid");
@@ -132,6 +132,12 @@ public class MainActivity extends AppCompatActivity {
                 if (json.has("profile_pic")) {
                     int pic_index = json.optInt("profile_pic", 0);
                     PreferenceManager.save_profile_pic(this, pic_index);
+                }
+
+                if (json.has("is_admin")) {
+                    String adminStr = json.optString("is_admin", "f");
+                    boolean isAdmin = adminStr.equalsIgnoreCase("t") || adminStr.equals("1") || adminStr.equalsIgnoreCase("true");
+                    PreferenceManager.save_is_admin(this, isAdmin);
                 }
 
                 if (chk_remember_me != null && chk_remember_me.isChecked()) {

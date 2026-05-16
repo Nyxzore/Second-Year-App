@@ -1,16 +1,11 @@
 package com.example.gon.ui.activities;
 import android.content.Intent;
-import androidx.core.graphics.Insets;
-
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,19 +32,12 @@ private Button btnToggleRequests;
 
 private EditText etFriendUsername;
      Button btnAddFriend;
-@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    EdgeToEdge.enable(this);
-    setContentView(R.layout.activity_friends2);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_friends2);
 
-    ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-        Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-        v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-        return insets;
-    });
-
-    rvFriends = findViewById(R.id.rvFriends);
+        rvFriends = findViewById(R.id.rvFriends);
     btnToggleRequests = findViewById(R.id.btnToggleRequests);
     etFriendUsername = findViewById(R.id.etFriendUsername);
     btnAddFriend = findViewById(R.id.btnAddFriend);
@@ -228,6 +216,11 @@ private EditText etFriendUsername;
                 return true;
             } else if (itemId == R.id.nav_profile) {
                 Intent intent = new Intent(FriendsList.this, Profile.class);
+                startActivity(intent);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_habits) {
+                Intent intent = new Intent(FriendsList.this, HabitList.class);
                 startActivity(intent);
                 finish();
                 return true;

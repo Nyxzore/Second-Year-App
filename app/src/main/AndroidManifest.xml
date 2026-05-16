@@ -58,16 +58,12 @@
             android:theme="@style/Theme.Gon.NoActionBar" />
         <activity android:name=".ui.activities.AddEditHabit" />
 
-
-            android:name=".CreateAccount" />
-
         <activity
             android:name=".ui.activities.FriendsList" />
 
         <activity android:name=".ui.activities.FriendGoalsActivity"
             android:parentActivityName=".ui.activities.FriendsList"/>
 <!--        back button to friends-->
->>>>>>> c2ae4a791055e3fc171c2c30aa707e05364655be
     </application>
 
 </manifest>

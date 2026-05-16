@@ -276,12 +276,15 @@ public class HabitList extends AppCompatActivity {
 
     private void setup_navigation() {
         BottomNavigationView nav = findViewById(R.id.bottomNavigationView);
+        PreferenceManager.update_nav_icon(this, nav);
+        nav.setItemIconTintList(null);
         nav.setSelectedItemId(R.id.nav_habits);
         nav.setOnItemSelectedListener(item -> {
             Log.d("GON_DEBUG : HABIT_LIST", "Nav item clicked: " + item.getItemId());
             if (item.getItemId() == R.id.nav_home) startActivity(new Intent(this, GoalList.class));
             else if (item.getItemId() == R.id.nav_profile) startActivity(new Intent(this, Profile.class));
             else if (item.getItemId() == R.id.nav_friends) startActivity(new Intent(this, FriendsList.class));
+            else if (item.getItemId() == R.id.nav_habits) return true;
             else return true;
             finish();
             return true;
