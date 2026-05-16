@@ -24,7 +24,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class CreateAccount extends AppCompatActivity {
 
-    private EditText edt_username, edt_email, edt_password;
+    private EditText edt_username, edt_email, edt_password, edt_confirm_password;
     private TextView txt_status;
     private CheckBox chk_is_admin;
 
@@ -37,6 +37,7 @@ public class CreateAccount extends AppCompatActivity {
         edt_username = findViewById(R.id.edtCreateUsername);
         edt_email = findViewById(R.id.edtCreateEmail);
         edt_password = findViewById(R.id.edtCreatePassword);
+        edt_confirm_password = findViewById(R.id.edtConfirmPassword);
         txt_status = findViewById(R.id.textViewStatus);
         chk_is_admin = findViewById(R.id.chk_idAdmin);
 
@@ -47,11 +48,17 @@ public class CreateAccount extends AppCompatActivity {
         String username = edt_username.getText().toString().trim();
         String email = edt_email.getText().toString().trim();
         String password = edt_password.getText().toString().trim();
+        String confirm_password = edt_confirm_password.getText().toString().trim();
 
         Log.d("GON_DEBUG : REGISTER", "Register button clicked for: " + username);
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
             txt_status.setText("All fields are required");
+            return;
+        }
+
+        if (!password.equals(confirm_password)) {
+            txt_status.setText("Passwords do not match");
             return;
         }
 
@@ -81,19 +88,19 @@ public class CreateAccount extends AppCompatActivity {
         Log.d("GON_DEBUG : REGISTER", "Server response: " + response_data);
         try {
             JSONObject json = new JSONObject(response_data);
-            String status = json.getString("status");
-            String message = json.getString("message");
+            String status = json.optString("status", "error");
+            String message = json.optString("message", "Unknown error occurred");
 
             if (status.equals("success")) {
                 Log.d("GON_DEBUG : REGISTER", "Registration successful");
-                Toast.makeText(this, "Account Created! Please log in.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
                 finish();
             } else {
                 Log.d("GON_DEBUG : REGISTER", "Registration failed: " + message);
                 txt_status.setText(message);
             }
         } catch (JSONException e) {
-            txt_status.setText("Server error");
+            txt_status.setText("Server response error");
             Log.e("GON_DEBUG : REGISTER", "JSON parse error", e);
         }
     }

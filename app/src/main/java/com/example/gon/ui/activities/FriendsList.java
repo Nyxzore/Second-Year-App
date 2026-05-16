@@ -3,6 +3,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -74,18 +75,19 @@ private EditText etFriendUsername;
 
     btnToggleRequests.setOnClickListener(v -> {
         showReq = !showReq;
+        TextView title = findViewById(R.id.textViewFriendsTitle);
 
         if (showReq) {
             // Show friend requests
-
-            btnToggleRequests.setText("Friends");
+            title.setText("Requests");
+            btnToggleRequests.setText("Show Friends");
 
             friendAdaptor = new FriendAdapter(pendingRequestsList);
             rvFriends.setAdapter(friendAdaptor);
 
         } else {
             // Show normal friends
-
+            title.setText("Community");
             btnToggleRequests.setText("Requests");
 
             friendAdaptor = new FriendAdapter(acceptedFriendsList);
