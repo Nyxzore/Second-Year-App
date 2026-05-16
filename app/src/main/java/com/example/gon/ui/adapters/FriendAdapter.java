@@ -9,11 +9,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gon.Entities.Friend;
 import com.example.gon.ui.activities.FriendGoalsActivity;
 import com.example.gon.R;
+import com.example.gon.utils.PreferenceManager;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.*;
 
@@ -109,11 +114,6 @@ public class FriendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
         //
-        Toast.makeText(
-                v.getContext(),
-                "View goals for " + friend.getUsername(),
-                Toast.LENGTH_SHORT
-        ).show();
     }
 
     private void nudgeFriend(View v, Friend friend) {
@@ -134,16 +134,20 @@ public class FriendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         // and update the request's status to Accepted in the database.
 
         if (position != RecyclerView.NO_POSITION) {
-            Toast.makeText(
-                    v.getContext(),
-                    "Accepted " + friend.getUsername(),
-                    Toast.LENGTH_SHORT
-            ).show();
+            Map<String, String> params = new HashMap<>();
+            params.put("uuid", PreferenceManager.get_uuid(v.getContext()));
+            params.put("friend_id", friend.getUserID());
 
+            PreferenceManager.post("accept_friend.php", params, response -> {
+                ((AppCompatActivity) v.getContext()).runOnUiThread(() -> {
+                    friendsList.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, friendsList.size());
+
+                    Toast.makeText(v.getContext(), "Accepted " + friend.getUsername(), Toast.LENGTH_SHORT).show();
+                });
+            });
             // For now, remove request locally from RecyclerView
-            friendsList.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, friendsList.size());
         }
     }
 
@@ -153,16 +157,19 @@ public class FriendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         // and either delete the request or mark it as Ignored in the database.
 
         if (position != RecyclerView.NO_POSITION) {
-            Toast.makeText(
-                    v.getContext(),
-                    "Ignored " + friend.getUsername(),
-                    Toast.LENGTH_SHORT
-            ).show();
+            Map<String, String> params = new HashMap<>();
+            params.put("uuid", PreferenceManager.get_uuid(v.getContext()));
+            params.put("friend_id", friend.getUserID());
 
-            // For now, remove request locally from RecyclerView
-            friendsList.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, friendsList.size());
+            PreferenceManager.post("ignore_friend.php", params, response -> {
+                ((AppCompatActivity) v.getContext()).runOnUiThread(() -> {
+                    friendsList.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, friendsList.size());
+
+                    Toast.makeText(v.getContext(), "Ignored request", Toast.LENGTH_SHORT).show();
+                });
+            });
         }
     }
 

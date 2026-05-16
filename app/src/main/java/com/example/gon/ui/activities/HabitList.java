@@ -281,6 +281,7 @@ public class HabitList extends AppCompatActivity {
             Log.d("GON_DEBUG : HABIT_LIST", "Nav item clicked: " + item.getItemId());
             if (item.getItemId() == R.id.nav_home) startActivity(new Intent(this, GoalList.class));
             else if (item.getItemId() == R.id.nav_profile) startActivity(new Intent(this, Profile.class));
+            else if (item.getItemId() == R.id.nav_friends) startActivity(new Intent(this, FriendsList.class));
             else return true;
             finish();
             return true;

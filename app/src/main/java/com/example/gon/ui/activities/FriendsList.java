@@ -18,6 +18,10 @@ import com.example.gon.Entities.Friend;
 import com.example.gon.R;
 import com.example.gon.ui.adapters.FriendAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.gon.utils.PreferenceManager;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.*;
 public class FriendsList extends AppCompatActivity {
@@ -61,18 +65,18 @@ private EditText etFriendUsername;
 
 
     // Fake test data
-    friendsList.add(new Friend("Accepted", "1", "RayTest"));
-    friendsList.add(new Friend("Pending", "2", "DamoTest"));
-    friendsList.add(new Friend("Pending", "3", "NicksonTest"));
+    //friendsList.add(new Friend("Accepted", "1", "RayTest"));
+    //friendsList.add(new Friend("Pending", "2", "DamoTest"));
+    //friendsList.add(new Friend("Pending", "3", "NicksonTest"));
 
     // Split into accepted friends and pending requests
-    for (Friend friend : friendsList) {
+    /*for (Friend friend : friendsList) {
         if (friend.getStatus().equalsIgnoreCase("Accepted")) {
             acceptedFriendsList.add(friend);
         } else if (friend.getStatus().equalsIgnoreCase("Pending")) {
             pendingRequestsList.add(friend);
         }
-    }
+    }*/
 
     // Start by showing normal friends
     friendAdaptor = new FriendAdapter(acceptedFriendsList);
@@ -111,14 +115,17 @@ private EditText etFriendUsername;
 
         addFriend(friendUsername);
     });
+
+    loadFriends();
+    loadFriendRequests();
 }
 
 
     private void addFriend(String friendUsername) {   //FUNCTION TO ADD A FRIEND  TO DO
-        String currentUserId = PreferenceManager.getUUID(this);
+        String currentUserId = PreferenceManager.get_uuid(this);
 
         Map<String, String> params = new HashMap<>();
-        params.put("user_id", currentUserId);
+        params.put("uuid", currentUserId);
         params.put("friend_username", friendUsername);
 
         PreferenceManager.post("add_friend.php", params, responseData -> {
@@ -130,22 +137,32 @@ private EditText etFriendUsername;
     }
 
     private void loadFriends() {   // FUNCTION TO LOAD ACCEPTED FRIENDS - TO DO
-        String currentUserId = PreferenceManager.getUUID(this);
+        String currentUserId = PreferenceManager.get_uuid(this);
 
         Map<String, String> params = new HashMap<>();
-        params.put("user_id", currentUserId);
+        params.put("uuid", currentUserId);
 
         PreferenceManager.post("get_friends.php", params, responseData -> {
             runOnUiThread(() -> {
                 try {
                     acceptedFriendsList.clear();
 
-                    // TO DO:
                     // Parse JSON response from get_friends.php
+                    JSONObject json = new JSONObject(responseData);
+                    JSONArray array = json.getJSONArray("friends");
 
+                    for (int i = 0; i < array.length(); i++){
+                        JSONObject obj = array.getJSONObject(i);
+                        acceptedFriendsList.add(new Friend(
+                                obj.getString("status"),
+                                obj.getString("id"),
+                                obj.getString("username")
+                        ));
+                    }
                     // After adding friends:
-                    friendAdaptor = new FriendAdapter(acceptedFriendsList);
-                    rvFriends.setAdapter(friendAdaptor);
+                    if (!showReq) {
+                        friendAdaptor.notifyDataSetChanged();
+                    }
 
                 } catch (Exception e) {
                     Toast.makeText(this, "Error loading friends", Toast.LENGTH_SHORT).show();
@@ -154,24 +171,33 @@ private EditText etFriendUsername;
         });
     }
 
-
     private void loadFriendRequests() {   // FUNCTION TO LOAD FRIEND REQUESTS - TO DO
-        String currentUserId = PreferenceManager.getUUID(this);
+        String currentUserId = PreferenceManager.get_uuid(this);
 
         Map<String, String> params = new HashMap<>();
-        params.put("user_id", currentUserId);
+        params.put("uuid", currentUserId);
 
         PreferenceManager.post("get_friend_requests.php", params, responseData -> {
             runOnUiThread(() -> {
                 try {
                     pendingRequestsList.clear();
 
-                    // TO DO:
                     // Parse JSON response from get_friend_requests.php
+                    JSONObject json = new JSONObject(responseData);
+                    JSONArray array = json.getJSONArray("requests");
 
+                    for (int i = 0; i < array.length(); i++){
+                        JSONObject obj = array.getJSONObject(i);
+                        pendingRequestsList.add(new Friend(
+                                "pending",
+                                obj.getString("id"),
+                                obj.getString("username")
+                        ));
+                    }
                     // After adding pending requests:
-                    friendAdaptor = new FriendAdapter(pendingRequestsList);
-                    rvFriends.setAdapter(friendAdaptor);
+                    if (showReq) {
+                        friendAdaptor.notifyDataSetChanged();
+                    }
 
                 } catch (Exception e) {
                     Toast.makeText(this, "Error loading friend requests", Toast.LENGTH_SHORT).show();
@@ -188,7 +214,7 @@ private EditText etFriendUsername;
 
         // Setup Bottom Navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
-        PreferenceManager.updateNavIcon(this, bottomNav);
+        PreferenceManager.update_nav_icon(this, bottomNav);
         bottomNav.setItemIconTintList(null);
         bottomNav.setSelectedItemId(R.id.nav_friends);
         bottomNav.setOnItemSelectedListener(item -> {

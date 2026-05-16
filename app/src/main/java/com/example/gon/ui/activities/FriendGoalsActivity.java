@@ -9,6 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gon.R;
 
+import com.example.gon.ui.adapters.GoalAdapter;
+import com.example.gon.Entities.Goal;
+import com.example.gon.utils.PreferenceManager;
+// file structure change :/
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

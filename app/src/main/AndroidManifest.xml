@@ -51,7 +51,6 @@
         <activity
             android:name=".ui.activities.AddEditGoal" />
         <activity
-<<<<<<< HEAD
             android:name=".ui.activities.CreateAccount" />
         <activity
             android:name=".ui.activities.HabitList"
@@ -59,7 +58,7 @@
             android:theme="@style/Theme.Gon.NoActionBar" />
         <activity android:name=".ui.activities.AddEditHabit" />
 
-=======
+
             android:name=".CreateAccount" />
 
         <activity

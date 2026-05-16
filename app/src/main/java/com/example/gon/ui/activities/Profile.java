@@ -93,7 +93,9 @@ public class Profile extends AppCompatActivity {
                 finish();
                 return true;
             } else if (item_id == R.id.nav_friends) {
-                Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "friends", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, FriendsList.class));
+                finish();
                 return true;
             } else if (item_id == R.id.nav_habits) {
                 Intent intent = new Intent(this, HabitList.class);
