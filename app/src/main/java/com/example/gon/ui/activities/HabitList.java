@@ -55,7 +55,7 @@ public class HabitList extends AppCompatActivity {
         chip_group_habit_filters = findViewById(R.id.chipGroupHabitFilters);
         findViewById(R.id.btnAddHabitCategory).setOnClickListener(v -> {
             Log.d("GON_DEBUG : HABIT_LIST", "Add category button clicked");
-            CategoryUiHelper.show_add_category_dialog(this, new_category -> fetch_categories());
+            CategoryUiHelper.show_add_category_simple_dialog(this, this::fetch_categories);
         });
 
         ItemTouchHelper.SimpleCallback swipe = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -114,7 +114,7 @@ public class HabitList extends AppCompatActivity {
                     Log.d("GON_DEBUG : HABIT_LIST", "Filter changed to category_id: " + category_id);
                     selected_filter_category_id = category_id;
                     fetch_habits();
-                });
+                }, this::fetch_categories);
     }
 
     public void fetch_categories() {
@@ -239,9 +239,16 @@ public class HabitList extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (item.getItemId() == 102) {
-            habits.remove(position);
-            adapter.notifyItemRemoved(position);
-            delete_habit_on_server(selected_habit.get_id());
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Delete Habit")
+                    .setMessage("Are you sure you want to delete this habit?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        habits.remove(position);
+                        adapter.notifyItemRemoved(position);
+                        delete_habit_on_server(selected_habit.get_id());
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
             return true;
         }
         return super.onContextItemSelected(item);

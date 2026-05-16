@@ -36,6 +36,10 @@ public final class CategoryUiHelper {
         void on_filter_changed(String category_id_or_null);
     }
 
+    public interface CategoryChangeListener {
+        void on_categories_changed();
+    }
+
     public interface CategoryAddedListener {
         void on_category_added(Category new_category);
     }
@@ -55,34 +59,35 @@ public final class CategoryUiHelper {
                 .setView(input)
                 .setPositiveButton("Add", (dialog, which) -> {
                     String name = input.getText().toString().trim();
-                    Log.d("GON_DEBUG : CATEGORY_UI", "Dialog Add clicked. Name: " + name);
                     if (!name.isEmpty()) {
-                        post_category(context, name, listener);
+                        post_category_on_server(context, name, listener);
                     }
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> Log.d("GON_DEBUG : CATEGORY_UI", "Dialog Cancel clicked"))
+                .setNegativeButton("Cancel", null)
                 .show();
     }
 
-    private static void post_category(Context context, String name, CategoryAddedListener listener) {
+    public static void show_add_category_simple_dialog(Context context, CategoryChangeListener listener) {
+        show_add_category_dialog(context, new_category -> listener.on_categories_changed());
+    }
+
+    private static void post_category_on_server(Context context, String name, CategoryAddedListener listener) {
         Log.d("GON_DEBUG : CATEGORY_UI", "Posting new category: " + name);
         Map<String, String> params = new HashMap<>();
         params.put("uuid", PreferenceManager.get_uuid(context));
+        params.put("mode", "add");
         params.put("category_name", name);
 
-        PreferenceManager.post("add_category.php", params, response_data -> {
-            Log.d("GON_DEBUG : CATEGORY_UI", "Category post response: " + response_data);
+        PreferenceManager.post("mutate_category.php", params, response_data -> {
             try {
                 JSONObject json = new JSONObject(response_data);
                 if ("success".equals(json.optString("status"))) {
                     Category new_cat = Category.from_json(json.getJSONObject("category"));
-                    Log.d("GON_DEBUG : CATEGORY_UI", "Category added successfully: " + new_cat.get_name());
                     if (context instanceof AppCompatActivity) {
                         ((AppCompatActivity) context).runOnUiThread(() -> listener.on_category_added(new_cat));
                     }
                 } else {
                     String msg = json.optString("message", "Error adding category");
-                    Log.d("GON_DEBUG : CATEGORY_UI", "Category add failed: " + msg);
                     if (context instanceof AppCompatActivity) {
                         ((AppCompatActivity) context).runOnUiThread(() ->
                                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show());
@@ -90,6 +95,61 @@ public final class CategoryUiHelper {
                 }
             } catch (JSONException e) {
                 Log.e("GON_DEBUG : CATEGORY_UI", "post_category error", e);
+            }
+        });
+    }
+
+    public static void show_edit_category_dialog(Context context, Category category, CategoryChangeListener listener) {
+        Log.d("GON_DEBUG : CATEGORY_UI", "Showing edit category dialog for: " + category.get_name());
+        EditText input = new EditText(context);
+        input.setText(category.get_name());
+        int padding = (int) (24 * context.getResources().getDisplayMetrics().density);
+        input.setPadding(padding, padding, padding, padding);
+
+        new AlertDialog.Builder(context)
+                .setTitle("Edit Category")
+                .setView(input)
+                .setPositiveButton("Save", (dialog, which) -> {
+                    String name = input.getText().toString().trim();
+                    if (!name.isEmpty()) {
+                        mutate_category(context, "edit", category.get_id(), name, listener);
+                    }
+                })
+                .setNegativeButton("Delete", (dialog, which) -> {
+                    new AlertDialog.Builder(context)
+                            .setTitle("Delete Category?")
+                            .setMessage("This will remove the category from all items.")
+                            .setPositiveButton("Delete", (d, w) -> mutate_category(context, "delete", category.get_id(), null, listener))
+                            .setNegativeButton("Cancel", null)
+                            .show();
+                })
+                .show();
+    }
+
+    private static void mutate_category(Context context, String mode, String id, String name, CategoryChangeListener listener) {
+        Log.d("GON_DEBUG : CATEGORY_UI", "Mutating category: " + mode + ", name: " + name);
+        Map<String, String> params = new HashMap<>();
+        params.put("uuid", PreferenceManager.get_uuid(context));
+        params.put("mode", mode);
+        if (id != null) params.put("category_id", id);
+        if (name != null) params.put("category_name", name);
+
+        PreferenceManager.post("mutate_category.php", params, response_data -> {
+            try {
+                JSONObject json = new JSONObject(response_data);
+                if ("success".equals(json.optString("status"))) {
+                    if (context instanceof AppCompatActivity) {
+                        ((AppCompatActivity) context).runOnUiThread(listener::on_categories_changed);
+                    }
+                } else {
+                    String msg = json.optString("message", "Error");
+                    if (context instanceof AppCompatActivity) {
+                        ((AppCompatActivity) context).runOnUiThread(() ->
+                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show());
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e("GON_DEBUG : CATEGORY_UI", "mutate_category error", e);
             }
         });
     }
@@ -131,18 +191,18 @@ public final class CategoryUiHelper {
     }
 
     public static void bind_filter_chips(Context context, ChipGroup chip_group, List<Category> categories,
-                                       String selected_category_id, FilterListener listener) {
+                                       String selected_category_id, FilterListener listener, CategoryChangeListener change_listener) {
         chip_group.setSingleSelection(true);
         chip_group.setSelectionRequired(false);
         chip_group.removeAllViews();
         
         chip_group.addView(make_filter_chip(context, chip_group, "All", selected_category_id == null, null,
-                () -> listener.on_filter_changed(null)));
+                () -> listener.on_filter_changed(null), null, null));
 
         for (Category category : categories) {
             boolean selected = category.get_id().equals(selected_category_id);
             chip_group.addView(make_filter_chip(context, chip_group, category.get_name(), selected, category.get_id(),
-                    () -> listener.on_filter_changed(category.get_id())));
+                    () -> listener.on_filter_changed(category.get_id()), category, change_listener));
         }
     }
 
@@ -199,7 +259,7 @@ public final class CategoryUiHelper {
     }
 
     private static Chip make_filter_chip(Context context, ChipGroup group, String label, boolean selected,
-                                       String id, Runnable on_click) {
+                                       String id, Runnable on_click, Category category, CategoryChangeListener change_listener) {
         Chip chip = new Chip(context);
         chip.setText(label);
         chip.setCheckable(true);
@@ -215,6 +275,14 @@ public final class CategoryUiHelper {
             }
             on_click.run();
         });
+
+        if (category != null && change_listener != null) {
+            chip.setOnLongClickListener(v -> {
+                show_edit_category_dialog(context, category, change_listener);
+                return true;
+            });
+        }
+
         ViewGroup.MarginLayoutParams lp = new ViewGroup.MarginLayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT

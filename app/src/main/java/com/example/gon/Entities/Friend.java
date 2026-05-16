@@ -5,13 +5,14 @@ public class Friend {
     private String username;
 
     private String status;
-    public Friend(String status,String userID, String username){
+    private int profilePicIndex;
+
+    public Friend(String status, String userID, String username, int profilePicIndex){
         this.status = status;
         this.username = username;
         this.userID = userID;
-
+        this.profilePicIndex = profilePicIndex;
     }
-
 
     public String getStatus(){ return status;}
     public String getUsername(){
@@ -20,5 +21,9 @@ public class Friend {
 
     public String getUserID(){
         return userID;
+    }
+
+    public int getProfilePicIndex() {
+        return profilePicIndex;
     }
 }

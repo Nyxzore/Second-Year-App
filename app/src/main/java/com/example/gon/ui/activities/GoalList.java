@@ -132,7 +132,7 @@ public class GoalList extends AppCompatActivity {
         header.txtUserName.setText(PreferenceManager.get_username(this) + " 🌱");
         header.btnAddCategory.setOnClickListener(view -> {
             Log.d("GON_DEBUG : GOAL_LIST", "Header add category clicked");
-            CategoryUiHelper.show_add_category_dialog(this, new_category -> fetch_categories());
+            CategoryUiHelper.show_add_category_simple_dialog(this, this::fetch_categories);
         });
         bind_filter_chips(header);
     }
@@ -143,7 +143,7 @@ public class GoalList extends AppCompatActivity {
                     Log.d("GON_DEBUG : GOAL_LIST", "Filter changed to category_id: " + category_id);
                     selected_filter_category_id = category_id;
                     fetch_goals_from_server();
-                });
+                }, this::fetch_categories);
     }
 
     private void update_header_stats() {
@@ -244,10 +244,17 @@ public class GoalList extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (item.getItemId() == 102) {
-            my_goals.remove(position - 1);
-            adapter.notifyItemRemoved(position);
-            delete_goal_post(selected_goal.get_id());
-            update_header_stats();
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Delete Goal")
+                    .setMessage("Are you sure you want to delete this goal?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        my_goals.remove(position - 1);
+                        adapter.notifyItemRemoved(position);
+                        delete_goal_post(selected_goal.get_id());
+                        update_header_stats();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
             return true;
         }
         return super.onContextItemSelected(item);

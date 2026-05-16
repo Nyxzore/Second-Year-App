@@ -1,84 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#CCCCCC">
+    android:background="@drawable/gradient_bg">
 
-    <!-- Naive Header Bar -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#888888"
-        android:padding="10dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/textViewFriendsTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="FRIENDS LIST!!!"
-            android:textColor="#FF0000"
-            android:textSize="35sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnToggleRequests"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="GO TO REQS"
-            android:backgroundTint="#FFFF00"
-            android:textColor="#000000" />
-    </LinearLayout>
-
-    <!-- Very Basic Add Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:padding="5dp"
-        android:layout_margin="10dp"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomNavigationView"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Someone Here:"
-            android:textColor="#000000" />
-
-        <EditText
-            android:id="@+id/etFriendUsername"
+        <!-- Header -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Type name..."
-            android:background="@android:drawable/edit_text" />
+            android:orientation="horizontal"
+            android:padding="20dp"
+            android:gravity="center_vertical">
 
-        <Button
-            android:id="@+id/btnAddFriend"
+            <TextView
+                android:id="@+id/textViewFriendsTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Community"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                android:fontFamily="@font/poppins_bold" />
+
+            <Button
+                android:id="@+id/btnToggleRequests"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Requests"
+                android:textColor="@color/white"
+                app:strokeColor="@color/white"
+                app:cornerRadius="20dp" />
+        </LinearLayout>
+
+        <!-- Add Friend Card -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CLICK TO ADD FRIEND"
-            android:backgroundTint="#00FF00" />
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="#2D6A4F"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/etFriendUsername"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Search username..."
+                    android:textColorHint="#B7E4C7"
+                    android:textColor="@color/white"
+                    android:background="@android:color/transparent"
+                    android:paddingHorizontal="12dp"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/poppins_regular" />
+
+                <Button
+                    android:id="@+id/btnAddFriend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add"
+                    android:backgroundTint="#95D5B2"
+                    android:textColor="#1B4332"
+                    app:cornerRadius="12dp"
+                    android:fontFamily="@font/poppins_bold" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFriends"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="80dp" />
+
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFriends"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="5dp" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#0000FF"
-        app:itemIconTint="#FFFFFF"
-        app:itemTextColor="#FFFFFF"
+        android:layout_alignParentBottom="true"
+        android:background="?attr/colorSurface"
+        app:itemIconTint="@null"
         app:menu="@menu/bottom_nav_menu" />
 
-</LinearLayout>
+</RelativeLayout>

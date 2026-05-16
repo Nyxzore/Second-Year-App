@@ -9,12 +9,16 @@ $uuid = $_POST['uuid'] ?? null;
 $db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
 if (!$db) exit(json_encode(array("status" => "error")));
 
-$sql = "select a.userid, a.username from accounts a join friendships f on f.user_id1 = a.userid where f.user_id2 = $1 and f.status = 'pending'";
+$sql = "select a.userid, a.username, a.profile_picture from accounts a join friendships f on f.user_id1 = a.userid where f.user_id2 = $1 and f.status = 'pending'";
 $res = pg_query_params($db, $sql, array($uuid));
 
 $reqs = array();
 while ($row = pg_fetch_assoc($res)) {
-    $reqs[] = array("id" => $row['userid'], "username" => $row['username']);
+    $reqs[] = array(
+        "id" => $row['userid'],
+        "username" => $row['username'],
+        "profile_pic" => (int)($row['profile_picture'] ?? 0)
+    );
 }
 
 pg_close($db);

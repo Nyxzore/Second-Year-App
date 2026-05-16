@@ -1,41 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="2dp"
-    android:background="#00FFFF"
-    android:padding="5dp"
-    android:orientation="horizontal">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="#DDEFE0">
 
-    <ImageView
-        android:id="@+id/ivAvatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@android:drawable/ic_menu_myplaces" />
-
-    <TextView
-        android:id="@+id/tvFriendUsername"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="USERNAME"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        android:layout_marginLeft="10dp" />
+        android:padding="16dp">
 
-    <Button
-        android:id="@+id/btnViewGoals"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="GOALS"
-        android:backgroundTint="#FF00FF" />
+        <ImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/profile_circle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-    <Button
-        android:id="@+id/btnNudge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="!"
-        android:backgroundTint="#FF0000" />
+        <TextView
+            android:id="@+id/tvFriendUsername"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Username"
+            android:textColor="#1B4332"
+            android:textSize="18sp"
+            android:fontFamily="@font/poppins_bold"
+            app:layout_constraintEnd_toStartOf="@+id/btnViewGoals"
+            app:layout_constraintStart_toEndOf="@id/ivAvatar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btnNudge" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btnViewGoals"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Goals"
+            android:textColor="#2D6A4F"
+            android:fontFamily="@font/poppins_bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <Button
+            android:id="@+id/btnNudge"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nudge"
+            android:textColor="#52796F"
+            android:textSize="12sp"
+            android:fontFamily="@font/poppins_regular"
+            app:layout_constraintStart_toStartOf="@id/tvFriendUsername"
+            app:layout_constraintTop_toBottomOf="@id/tvFriendUsername"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

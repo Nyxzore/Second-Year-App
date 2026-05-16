@@ -1,10 +1,12 @@
 package com.example.gon.ui.adapters;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gon.Entities.Friend;
+import com.example.gon.ui.activities.FriendsList;
 import com.example.gon.ui.activities.FriendGoalsActivity;
 import com.example.gon.R;
 import com.example.gon.utils.PreferenceManager;
@@ -66,6 +69,14 @@ public class FriendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             FriendViewHolder friendHolder = (FriendViewHolder) holder;
 
             friendHolder.tvFriendUsername.setText(friend.getUsername());
+            
+            // Set friend's profile picture
+            int picIndex = friend.getProfilePicIndex();
+            if (picIndex >= 0 && picIndex < PreferenceManager.profile_photos.length) {
+                friendHolder.ivAvatar.setImageResource(PreferenceManager.profile_photos[picIndex]);
+            } else {
+                friendHolder.ivAvatar.setImageResource(R.drawable.pp0);
+            }
 
             friendHolder.btnViewGoals.setOnClickListener(v -> {
                 viewFriendGoals(v,friend);
@@ -81,6 +92,14 @@ public class FriendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             FriendReqViewHolder requestHolder = (FriendReqViewHolder) holder;
 
             requestHolder.tvUsername.setText(friend.getUsername());
+            
+            // Set friend's profile picture for request
+            int picIndex = friend.getProfilePicIndex();
+            if (picIndex >= 0 && picIndex < PreferenceManager.profile_photos.length) {
+                requestHolder.ivAvatarReq.setImageResource(PreferenceManager.profile_photos[picIndex]);
+            } else {
+                requestHolder.ivAvatarReq.setImageResource(R.drawable.pp0);
+            }
 
             requestHolder.btnAccept.setOnClickListener(v -> {
                 acceptFriendRequest(v,friend,holder.getAdapterPosition());  //send holder postition to change the recycler view
@@ -129,46 +148,68 @@ public class FriendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void acceptFriendRequest(View v, Friend friend, int position) {
-        // TO DO:
-        // Later this should call accept_friend.php
-        // and update the request's status to Accepted in the database.
-
-        if (position != RecyclerView.NO_POSITION) {
+        int curPos = position;
+        if (v.getContext() instanceof FriendsList) {
+            // refresh both lists to ensure data is in sync
+            FriendsList activity = (FriendsList) v.getContext();
+            
             Map<String, String> params = new HashMap<>();
             params.put("uuid", PreferenceManager.get_uuid(v.getContext()));
             params.put("friend_id", friend.getUserID());
 
             PreferenceManager.post("accept_friend.php", params, response -> {
-                ((AppCompatActivity) v.getContext()).runOnUiThread(() -> {
-                    friendsList.remove(position);
-                    notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, friendsList.size());
-
-                    Toast.makeText(v.getContext(), "Accepted " + friend.getUsername(), Toast.LENGTH_SHORT).show();
-                });
+                try {
+                    JSONObject json = new JSONObject(response);
+                    if ("success".equals(json.optString("status"))) {
+                        activity.runOnUiThread(() -> {
+                            if (curPos != RecyclerView.NO_POSITION && curPos < friendsList.size()) {
+                                friendsList.remove(curPos);
+                                notifyItemRemoved(curPos);
+                                notifyItemRangeChanged(curPos, friendsList.size());
+                            }
+                            Toast.makeText(v.getContext(), "Accepted " + friend.getUsername(), Toast.LENGTH_SHORT).show();
+                            activity.loadFriends(); // update active friends list in memory
+                        });
+                    } else {
+                        activity.runOnUiThread(() -> 
+                            Toast.makeText(v.getContext(), "Failed to accept", Toast.LENGTH_SHORT).show());
+                    }
+                } catch (Exception e) {
+                    Log.e("GON_DEBUG", "accept error", e);
+                }
             });
-            // For now, remove request locally from RecyclerView
         }
     }
 
     private void ignoreFriendRequest(View v, Friend friend, int position) {
-        // TO DO:
-        // Later this should call ignore_friend.php
-        // and either delete the request or mark it as Ignored in the database.
+        int curPos = position;
+        if (v.getContext() instanceof FriendsList) {
+            FriendsList activity = (FriendsList) v.getContext();
 
-        if (position != RecyclerView.NO_POSITION) {
             Map<String, String> params = new HashMap<>();
             params.put("uuid", PreferenceManager.get_uuid(v.getContext()));
             params.put("friend_id", friend.getUserID());
 
             PreferenceManager.post("ignore_friend.php", params, response -> {
-                ((AppCompatActivity) v.getContext()).runOnUiThread(() -> {
-                    friendsList.remove(position);
-                    notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, friendsList.size());
-
-                    Toast.makeText(v.getContext(), "Ignored request", Toast.LENGTH_SHORT).show();
-                });
+                try {
+                    JSONObject json = new JSONObject(response);
+                    if ("success".equals(json.optString("status"))) {
+                        activity.runOnUiThread(() -> {
+                            if (curPos != RecyclerView.NO_POSITION && curPos < friendsList.size()) {
+                                friendsList.remove(curPos);
+                                notifyItemRemoved(curPos);
+                                notifyItemRangeChanged(curPos, friendsList.size());
+                            }
+                            Toast.makeText(v.getContext(), "Ignored request", Toast.LENGTH_SHORT).show();
+                            activity.loadFriendRequests();
+                        });
+                    } else {
+                        activity.runOnUiThread(() ->
+                            Toast.makeText(v.getContext(), "Failed to ignore", Toast.LENGTH_SHORT).show());
+                    }
+                } catch (Exception e) {
+                    Log.e("GON_DEBUG", "ignore error", e);
+                }
             });
         }
     }
@@ -181,12 +222,14 @@ public class FriendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public static class FriendViewHolder extends RecyclerView.ViewHolder{  //FRIEND CARD SETUP
 
         TextView tvFriendUsername;
+        ImageView ivAvatar;
         Button btnViewGoals;
         Button btnNudge;
 
         public FriendViewHolder(@NonNull View itemView) {
             super(itemView);
            tvFriendUsername = itemView.findViewById(R.id.tvFriendUsername);
+           ivAvatar = itemView.findViewById(R.id.ivAvatar);
            btnNudge = itemView.findViewById(R.id.btnNudge);
            btnViewGoals = itemView.findViewById(R.id.btnViewGoals);
 
@@ -198,6 +241,7 @@ public class FriendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public static class FriendReqViewHolder extends RecyclerView.ViewHolder {  //FRIEND REQ CARD SETUP
 
         TextView tvUsername;
+        ImageView ivAvatarReq;
         Button btnAccept;
         Button btnIgnore;
 
@@ -205,6 +249,7 @@ public class FriendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             super(itemView);
 
             tvUsername = itemView.findViewById(R.id.tvUsername);
+            ivAvatarReq = itemView.findViewById(R.id.ivAvatarReq);
             btnAccept = itemView.findViewById(R.id.btnAccept);
             btnIgnore = itemView.findViewById(R.id.btnIgnore);
         }
