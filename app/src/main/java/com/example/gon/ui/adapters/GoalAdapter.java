@@ -4,6 +4,7 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.chip.ChipGroup;
@@ -29,6 +30,7 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<Goal> goal_list;
     private HeaderViewHolder header_view_holder;
     private HeaderBindListener header_bind_listener;
+    private boolean isFriendView = false;
 
     public interface HeaderBindListener {
         void on_bind_header(HeaderViewHolder holder);
@@ -36,6 +38,11 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public GoalAdapter(List<Goal> goal_list) {
         this.goal_list = goal_list;
+    }
+
+    public GoalAdapter(List<Goal> goal_list, boolean isFriendView) {
+        this.goal_list = goal_list;
+        this.isFriendView = isFriendView;
     }
 
     public void set_header_bind_listener(HeaderBindListener listener) {
@@ -69,12 +76,27 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HeaderViewHolder) {
             header_view_holder = (HeaderViewHolder) holder;
+            
+            if (isFriendView) {
+                header_view_holder.hideFriendDetails();
+            }
+
             if (header_bind_listener != null) {
                 header_bind_listener.on_bind_header((HeaderViewHolder) holder);
             }
         } else if (holder instanceof GoalViewHolder) {
             Goal current_goal = goal_list.get(position - 1);
             GoalViewHolder g_holder = (GoalViewHolder) holder;
+            
+            if (isFriendView) {
+                g_holder.isFriendView = true;
+                g_holder.textViewStatus.setVisibility(View.GONE);
+                g_holder.statusIndicator.setVisibility(View.GONE);
+            } else {
+                g_holder.textViewStatus.setVisibility(View.VISIBLE);
+                g_holder.statusIndicator.setVisibility(View.VISIBLE);
+            }
+
             g_holder.textViewGoalName.setText(current_goal.get_title());
             g_holder.textViewGoalDescription.setText(current_goal.get_description());
             g_holder.textViewGoalDate.setText(holder.itemView.getContext().getString(R.string.plan_to_do_by, current_goal.get_due_date()));
@@ -113,7 +135,9 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView textViewGoalDescription;
         TextView textViewGoalDate;
         TextView textViewStatus;
+        View statusIndicator;
         ChipGroup chipGroupGoalCategories;
+        public boolean isFriendView = false;
 
         public GoalViewHolder(@NonNull View item_view) {
             super(item_view);
@@ -121,6 +145,7 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             textViewGoalDescription = item_view.findViewById(R.id.textViewGoalDescription);
             textViewGoalDate = item_view.findViewById(R.id.textViewGoalDate);
             textViewStatus = item_view.findViewById(R.id.textViewStatus);
+            statusIndicator = item_view.findViewById(R.id.statusIndicator);
             chipGroupGoalCategories = item_view.findViewById(R.id.chipGroupGoalCategories);
 
             item_view.setOnCreateContextMenuListener(this);
@@ -128,8 +153,10 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menu_info) {
-            menu.add(this.getBindingAdapterPosition(), 101, 0, "Edit");
-            menu.add(this.getBindingAdapterPosition(), 102, 1, "Delete");
+            if (!isFriendView) {
+                menu.add(this.getBindingAdapterPosition(), 101, 0, "Edit");
+                menu.add(this.getBindingAdapterPosition(), 102, 1, "Delete");
+            }
         }
     }
 
@@ -138,6 +165,13 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView btnAddCategory;
         public TextView txtUserName;
         public ChipGroup chipGroupGoalFilters;
+        
+        // Views to hide in friend view
+        private View layoutGreeting;
+        private View layoutOverview;
+        private View layoutTopBar;
+        private TextView txtGreeting;
+        private TextView goalsTitle;
 
         public HeaderViewHolder(@NonNull View item_view) {
             super(item_view);
@@ -145,6 +179,37 @@ public class GoalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             btnAddCategory = item_view.findViewById(R.id.btnAddCategory);
             txtUserName = item_view.findViewById(R.id.txtUserName);
             chipGroupGoalFilters = item_view.findViewById(R.id.chipGroupGoalFilters);
+            
+            txtGreeting = item_view.findViewById(R.id.txtGreeting);
+            layoutGreeting = item_view.findViewById(R.id.txtGreeting);
+        }
+
+        public void hideFriendDetails() {
+            // Hide the big greetings and overview
+            if (txtGreeting != null) txtGreeting.setVisibility(View.GONE);
+            if (txtUserName != null) txtUserName.setVisibility(View.GONE);
+            
+            View v = itemView;
+            if (v instanceof LinearLayout) {
+                LinearLayout ll = (LinearLayout) v;
+                // Hide 1, 2, 3, 4, 5
+                if (ll.getChildCount() > 6) {
+                    ll.getChildAt(1).setVisibility(View.GONE);
+                    ll.getChildAt(2).setVisibility(View.GONE);
+                    ll.getChildAt(3).setVisibility(View.GONE);
+                    ll.getChildAt(4).setVisibility(View.GONE);
+                    ll.getChildAt(5).setVisibility(View.GONE);
+                    
+                    // Also hide the "+" button
+                    if (btnAddCategory != null) btnAddCategory.setVisibility(View.GONE);
+                    
+                    // Change "My Goals" to something generic
+                    View title = ll.getChildAt(6);
+                    if (title instanceof TextView) {
+                        ((TextView) title).setText("Friend's Goals");
+                    }
+                }
+            }
         }
     }
 

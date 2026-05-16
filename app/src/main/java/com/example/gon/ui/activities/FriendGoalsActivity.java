@@ -29,14 +29,12 @@ public class FriendGoalsActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        //links java code to xml
         setContentView(R.layout.activity_friend_goals);
 
         Intent intent = getIntent();
 
         String friendID = intent.getStringExtra("FRIEND_ID");
         String friendName = intent.getStringExtra("FRIEND_NAME");
-        //get intent and strings
         if (friendName != null){
             TextView tvTitle = findViewById(R.id.tvFriendGoalsTitle);
             tvTitle.setText(friendName + "'s Goals");
@@ -45,7 +43,7 @@ public class FriendGoalsActivity extends AppCompatActivity{
         recyclerView = findViewById(R.id.rvFriendGoals);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         friendGoalsList = new ArrayList<>();
-        adapter = new GoalAdapter(friendGoalsList);
+        adapter = new GoalAdapter(friendGoalsList, true);
         recyclerView.setAdapter(adapter);
 
         fetchFriendGoals(friendID);
