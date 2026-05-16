@@ -1,271 +1,382 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4FBF6">
+    android:background="@drawable/gradient_bg"
+    tools:context=".AddEditGoal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+    <!-- SCROLLABLE CONTENT -->
 
-        <!-- TITLE -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/txtTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/poppins_bold"
-            android:text="Add Goal"
-            android:textColor="#1E1B39"
-            android:textSize="40sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="30dp"
-            android:fontFamily="@font/poppins_light_italic"
-            android:text="Create a goal that matters to you"
-            android:textColor="#7E7E93"
-            android:textSize="15sp" />
-
-        <!-- GOAL TITLE -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Goal Title"
-            android:textColor="#1E1B39"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_regular"/>
-
-        <EditText
-            android:id="@+id/edtGoalTitle"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/edittext_background"
-            android:hint="e.g. Run 5KM in under 30 minutes"
-            android:padding="15dp"
-            android:textColor="#1E1B39"
-            android:textColorHint="#A0A0B2"
-            android:textSize="16sp"
-            android:textCursorDrawable="@null"
-            android:fontFamily="@font/poppins_extra_light"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="24dp"
-            android:text="Give your goal a clear and motivating title."
-            android:textColor="#8E8EA0"
-            android:textSize="13sp"
-            android:fontFamily="@font/poppins_regular"/>
-
-        <!-- CATEGORY -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Goal Category"
-            android:textColor="#1E1B39"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_regular"/>
-
-        <HorizontalScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:scrollbars="none">
+            android:orientation="vertical"
+            android:padding="24dp">
 
-            <LinearLayout
+            <!-- TITLE -->
+
+            <TextView
+                android:id="@+id/txtTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="New Goal"
+                android:textColor="#1B4332"
+                android:textSize="32sp" />
 
-                <!-- FITNESS -->
-                <LinearLayout
-                    android:id="@+id/layoutFitness"
-                    android:layout_width="100dp"
-                    android:layout_height="110dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/category_selected"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/poppins_regular"
+                android:text="Create goals and stay motivated."
+                android:textColor="#6B7C6F"
+                android:textSize="15sp" />
 
-                    <TextView
+            <!-- MAIN CARD -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/card_bg"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- GOAL NAME -->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Goal Title"
+                    android:textColor="#1B4332"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/edtGoalTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_bg"
+                    android:fontFamily="@font/poppins_regular"
+                    android:hint="e.g. Run 5KM"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="#1B4332"
+                    android:textColorHint="#9AA5A0"
+                    android:textSize="14sp" />
+
+                <!-- DESCRIPTION -->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Notes"
+                    android:textColor="#1B4332"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/edtGoalDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_bg"
+                    android:fontFamily="@font/poppins_regular"
+                    android:gravity="top"
+                    android:hint="Why is this goal important?"
+                    android:padding="16dp"
+                    android:textColor="#1B4332"
+                    android:textColorHint="#9AA5A0"
+                    android:textSize="14sp" />
+
+                <!-- CATEGORY -->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Goal Category"
+                    android:textColor="#1B4332"
+                    android:textSize="16sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:scrollbars="none">
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🏃"
-                        android:textSize="28sp" />
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Fitness"
-                        android:textColor="#1B5E20"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/poppins_light"/>
-                </LinearLayout>
+                        <!-- FITNESS -->
 
-                <!-- HEALTH -->
-                <LinearLayout
-                    android:id="@+id/layoutHealth"
-                    android:layout_width="100dp"
-                    android:layout_height="110dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/category_unselected"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                        <LinearLayout
+                            android:layout_width="100dp"
+                            android:layout_height="110dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/category_selected"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="10dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💚"
-                        android:textSize="28sp" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🏃"
+                                android:textSize="28sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Health"
-                        android:textColor="#1E1B39"
-                        android:fontFamily="@font/poppins_regular"/>
-                </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Fitness"
+                                android:textColor="#2D6A4F"
+                                android:textSize="14sp" />
 
-                <!-- LEARNING -->
-                <LinearLayout
-                    android:id="@+id/layoutLearning"
-                    android:layout_width="100dp"
-                    android:layout_height="110dp"
-                    android:background="@drawable/category_unselected"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                        </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📚"
-                        android:textSize="28sp" />
+                        <!-- HEALTH -->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Learning"
-                        android:textColor="#1E1B39"
-                        android:fontFamily="@font/poppins_regular"/>
-                </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="100dp"
+                            android:layout_height="110dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/card_bg"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="10dp">
 
-                <!-- OTHER -->
-                <LinearLayout
-                    android:id="@+id/layoutOther"
-                    android:layout_width="96dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="12dp"
-                    android:background="@drawable/category_unselected"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="💚"
+                                android:textSize="28sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="..."
-                        android:textSize="22sp" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Health"
+                                android:textColor="#7A8C7F"
+                                android:textSize="14sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Other"
-                        android:textColor="#1E1B39"
-                        android:fontFamily="@font/poppins_regular"/>
-                </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- LEARNING -->
+
+                        <LinearLayout
+                            android:layout_width="100dp"
+                            android:layout_height="110dp"
+                            android:background="@drawable/card_bg"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📚"
+                                android:textSize="28sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Learning"
+                                android:textColor="#7A8C7F"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+                <!-- TARGET DATE -->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Target Date"
+                    android:textColor="#1B4332"
+                    android:textSize="16sp" />
+
+                <CalendarView
+                    android:id="@+id/calendarView"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_bg" />
 
             </LinearLayout>
-        </HorizontalScrollView>
 
-        <!-- TARGET DATE -->
-        <TextView
+            <!-- BUTTON -->
+
+            <Button
+                android:id="@+id/btnAdd"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="30dp"
+                android:backgroundTint="#2D6A4F"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Create Goal"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- BOTTOM NAVIGATION -->
+
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:background="@drawable/card_bg"
+        android:elevation="12dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- HOME -->
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="Target Date"
-            android:textColor="#1E1B39"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_regular"/>
-        <TextView
-            android:id="@+id/lblDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="yyyy/mm//dd"
-            android:textColor="#1E1B39"
-            android:textSize="10sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_regular"/>
-        <CalendarView
-            android:id="@+id/calendarView"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/edittext_background"
-            android:fontFamily="@font/poppins_light" />
-
-        <!-- DESCRIPTION -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="Notes"
-            android:textColor="#1E1B39"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_regular"/>
-
-        <EditText
-            android:id="@+id/edtGoalDescription"
-            android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/edittext_background"
-            android:gravity="top"
-            android:hint="Why is this goal important to you?"
-            android:inputType="textMultiLine"
-            android:padding="15dp"
-            android:textColor="#1E1B39"
-            android:textColorHint="#A0A0B2"
-            android:textSize="15sp"
-            android:textCursorDrawable="@null"
-            android:fontFamily="@font/poppins_extra_light"
-            />
-
-        <!-- BUTTON -->
-        <Button
-            android:id="@+id/btnAdd"
-            android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginTop="35dp"
-            android:layout_marginBottom="40dp"
-            android:backgroundTint="#3CB371"
-            android:text="CREATE GOAL"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppins_bold"/>
+            android:layout_margin="6dp"
+            android:background="@drawable/nav_selected"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🏠"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home"
+                android:textColor="#2D6A4F"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_bold"/>
+
+        </LinearLayout>
+
+        <!-- GOALS -->
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="6dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎯"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Goals"
+                android:textColor="#7A8C7F"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+        <!-- HABITS -->
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="6dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔥"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Habits"
+                android:textColor="#7A8C7F"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+        <!-- PROFILE -->
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="6dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="👤"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Profile"
+                android:textColor="#7A8C7F"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
