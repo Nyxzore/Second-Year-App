@@ -140,11 +140,11 @@
                             android:orientation="vertical"
                             android:padding="10dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="🏃"
-                                android:textSize="28sp" />
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:src="@drawable/ic_fitness"
+                                app:tint="#2D6A4F" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -168,11 +168,11 @@
                             android:orientation="vertical"
                             android:padding="10dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="💚"
-                                android:textSize="28sp" />
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:src="@drawable/ic_health"
+                                app:tint="#2D6A4F" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -180,7 +180,7 @@
                                 android:layout_marginTop="8dp"
                                 android:fontFamily="@font/poppins_medium"
                                 android:text="Health"
-                                android:textColor="#7A8C7F"
+                                android:textColor="#2D6A4F"
                                 android:textSize="14sp" />
 
                         </LinearLayout>
@@ -195,11 +195,11 @@
                             android:orientation="vertical"
                             android:padding="10dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="📚"
-                                android:textSize="28sp" />
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:src="@drawable/ic_learning"
+                                app:tint="#2D6A4F" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -207,7 +207,7 @@
                                 android:layout_marginTop="8dp"
                                 android:fontFamily="@font/poppins_medium"
                                 android:text="Learning"
-                                android:textColor="#7A8C7F"
+                                android:textColor="#2D6A4F"
                                 android:textSize="14sp" />
 
                         </LinearLayout>
@@ -282,11 +282,11 @@
             android:paddingStart="20dp"
             android:paddingEnd="20dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🏠"
-                android:textSize="22sp" />
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_home"
+                app:tint="#2D6A4F" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -309,21 +309,22 @@
             android:paddingStart="20dp"
             android:paddingEnd="20dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🎯"
-                android:textSize="22sp" />
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_goal"
+                app:tint="#2D6A4F" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Goals"
-                android:textColor="#7A8C7F"
+                android:textColor="#2D6A4F"
                 android:textSize="12sp" />
 
         </LinearLayout>
+
         <!-- HABITS -->
 
         <LinearLayout
@@ -335,21 +336,22 @@
             android:paddingStart="20dp"
             android:paddingEnd="20dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🔥"
-                android:textSize="22sp" />
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_habit"
+                app:tint="#2D6A4F" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Habits"
-                android:textColor="#7A8C7F"
+                android:textColor="#2D6A4F"
                 android:textSize="12sp" />
 
         </LinearLayout>
+
         <!-- PROFILE -->
 
         <LinearLayout
@@ -361,18 +363,18 @@
             android:paddingStart="20dp"
             android:paddingEnd="20dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="👤"
-                android:textSize="22sp" />
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_profile"
+                app:tint="#2D6A4F" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Profile"
-                android:textColor="#7A8C7F"
+                android:textColor="#2D6A4F"
                 android:textSize="12sp" />
 
         </LinearLayout>
