@@ -9,7 +9,11 @@ $uuid = $_POST['uuid'] ?? null;
 $db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
 if (!$db) exit(json_encode(array("status" => "error")));
 
-$sql = "select distinct a.userid, a.username, a.profile_picture, f.status from accounts a join friendships f on (f.user_id1 = a.userid or f.user_id2 = a.userid) where (f.user_id1 = $1 or f.user_id2 = $1) and f.status = 'active' and a.userid != $1";
+$sql = "SELECT userid, username, profile_picture FROM accounts WHERE userid IN (
+    SELECT user_id2 FROM friendships WHERE user_id1 = $1 AND status = 'active'
+    UNION
+    SELECT user_id1 FROM friendships WHERE user_id2 = $1 AND status = 'active'
+) ORDER BY username ASC";
 $res = pg_query_params($db, $sql, array($uuid));
 
 $friends = array();

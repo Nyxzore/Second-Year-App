@@ -13,7 +13,7 @@ $adm = $_POST['is_admin'] ?? "0";
 
 $db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
 if (!$db) exit(json_encode(array("status" => "error", "message" => "Database connection failed")));
-    
+
 function login() {
     global $db, $user_in, $hash;
     if (!$user_in || !$hash) return array("status" => "failure", "message" => "empty fields");
@@ -37,22 +37,34 @@ function login() {
 
 function create() {
     global $db, $user_in, $hash, $mail, $adm;
-    if (!$user_in || !$hash || !$mail) return array("status" => "failure", "message" => "empty fields");
+    try {
+        if (!$user_in || !$hash || !$mail) {
+            throw new Exception("All fields are required");
+        }
 
-    $res = pg_query_params($db, "select 1 from accounts where username = $1", array($user_in));
-    if ($res && pg_fetch_assoc($res)) return array("status" => "failure", "message" => "Username already taken");
+        $res = pg_query_params($db, "select 1 from accounts where username = $1", array($user_in));
+        if ($res && pg_fetch_assoc($res)) {
+            throw new Exception("Username already taken");
+        }
 
-    $res = pg_query_params($db, "select 1 from accounts where email = $1", array($mail));
-    if ($res && pg_fetch_assoc($res)) return array("status" => "failure", "message" => "Email already registered");
+        $res = pg_query_params($db, "select 1 from accounts where email = $1", array($mail));
+        if ($res && pg_fetch_assoc($res)) {
+            throw new Exception("Email already registered");
+        }
 
-    $sql = "insert into accounts (username, password, email, admin) values ($1, $2, $3, $4) returning userid";
-    $res = pg_query_params($db, $sql, array($user_in, $hash, $mail, $adm));
-    
-    if ($res) {
+        $sql = "insert into accounts (username, password, email, admin) values ($1, $2, $3, $4) returning userid";
+        $res = pg_query_params($db, $sql, array($user_in, $hash, $mail, $adm));
+
+        if (!$res) {
+            throw new Exception("Database error: " . pg_last_error($db));
+        }
+
         $row = pg_fetch_assoc($res);
         return array("status" => "success", "uuid" => $row['userid'], "message" => "Account created");
+
+    } catch (Exception $e) {
+        return array("status" => "failure", "message" => $e->getMessage());
     }
-    return array("status" => "error", "message" => "Database error: " . pg_last_error($db));
 }
 
 if ($mode === "login") $resp = login();
