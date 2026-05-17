@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,273 +8,412 @@
     android:background="@drawable/gradient_bg"
     tools:context=".AddEditHabit">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+    <!-- SCROLL CONTENT -->
 
-        <!-- TITLE -->
-
-        <TextView
-            android:id="@+id/textViewAddHabitTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:fontFamily="@font/poppins_bold"
-            android:text="New Habit"
-            android:textColor="#1B4332"
-            android:textSize="32sp" />
-
-        <TextView
-            android:id="@+id/textViewSubtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:fontFamily="@font/poppins_regular"
-            android:text="Build habits, achieve your goals."
-            android:textColor="#6B7C6F"
-            android:textSize="15sp" />
-
-        <!-- MAIN CARD -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/card_bg"
-            android:elevation="4dp"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="24dp">
 
-            <!-- HABIT NAME -->
+            <!-- TITLE -->
 
             <TextView
-                android:id="@+id/txtHabitName"
+                android:id="@+id/textViewAddHabitTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:fontFamily="@font/poppins_bold"
-                android:text="Habit Name"
+                android:text="New Habit"
                 android:textColor="#1B4332"
-                android:textSize="16sp" />
-
-            <EditText
-                android:id="@+id/edtHabitTitle"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/edittext_bg"
-                android:fontFamily="@font/poppins_regular"
-                android:hint="e.g. Drink Water"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:textColor="#1B4332"
-                android:textColorHint="#9AA5A0"
-                android:textSize="14sp" />
-
-            <!-- DESCRIPTION -->
+                android:textSize="32sp" />
 
             <TextView
-                android:id="@+id/txtDescription"
+                android:id="@+id/textViewSubtitle"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/poppins_regular"
+                android:text="Build habits, achieve your goals."
+                android:textColor="#6B7C6F"
+                android:textSize="15sp" />
+
+            <!-- MAIN CARD -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:fontFamily="@font/poppins_bold"
-                android:text="Description"
-                android:textColor="#1B4332"
-                android:textSize="16sp" />
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/card_bg"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-            <EditText
-                android:id="@+id/edtHabitDescription"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/edittext_bg"
-                android:fontFamily="@font/poppins_regular"
-                android:gravity="top"
-                android:hint="Why is this habit important?"
-                android:padding="16dp"
-                android:textColor="#1B4332"
-                android:textColorHint="#9AA5A0"
-                android:textSize="14sp" />
+                <!-- HABIT NAME -->
 
-            <!-- CATEGORY -->
-
-            <TextView
-                android:id="@+id/txtCategory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:fontFamily="@font/poppins_bold"
-                android:text="Category"
-                android:textColor="#1B4332"
-                android:textSize="16sp" />
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:scrollbars="none">
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/txtHabitName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Habit Name"
+                    android:textColor="#1B4332"
+                    android:textSize="16sp" />
 
-                    <!-- HEALTH -->
+                <EditText
+                    android:id="@+id/edtHabitTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_bg"
+                    android:fontFamily="@font/poppins_regular"
+                    android:hint="e.g. Drink Water"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="#1B4332"
+                    android:textColorHint="#9AA5A0"
+                    android:textSize="14sp" />
+
+                <!-- DESCRIPTION -->
+
+                <TextView
+                    android:id="@+id/txtDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Description"
+                    android:textColor="#1B4332"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/edtHabitDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_bg"
+                    android:fontFamily="@font/poppins_regular"
+                    android:gravity="top"
+                    android:hint="Why is this habit important?"
+                    android:padding="16dp"
+                    android:textColor="#1B4332"
+                    android:textColorHint="#9AA5A0"
+                    android:textSize="14sp" />
+
+                <!-- CATEGORY -->
+
+                <TextView
+                    android:id="@+id/txtCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Category"
+                    android:textColor="#1B4332"
+                    android:textSize="16sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:scrollbars="none">
 
                     <LinearLayout
-                        android:layout_width="100dp"
-                        android:layout_height="110dp"
-                        android:layout_marginEnd="12dp"
-                        android:background="@drawable/category_selected"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="10dp">
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                        <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:src="@android:drawable/btn_star_big_on"
-                            app:tint="#2D6A4F" />
+                        <!-- HEALTH -->
 
-                        <TextView
-                            android:id="@+id/txtHealth"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Health"
-                            android:textColor="#2D6A4F"
-                            android:textSize="14sp" />
+                        <LinearLayout
+                            android:layout_width="100dp"
+                            android:layout_height="110dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/category_selected"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:src="@android:drawable/btn_star_big_on"
+                                app:tint="#2D6A4F" />
+
+                            <TextView
+                                android:id="@+id/txtHealth"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Health"
+                                android:textColor="#2D6A4F"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <!-- PRODUCTIVITY -->
+
+                        <LinearLayout
+                            android:layout_width="100dp"
+                            android:layout_height="110dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/card_bg"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:src="@android:drawable/ic_menu_manage"
+                                app:tint="#2D6A4F" />
+
+                            <TextView
+                                android:id="@+id/txtProductivity"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Productivity"
+                                android:textColor="#2D6A4F"
+                                android:textSize="13sp" />
+
+                        </LinearLayout>
+
+                        <!-- LIFESTYLE -->
+
+                        <LinearLayout
+                            android:layout_width="100dp"
+                            android:layout_height="110dp"
+                            android:background="@drawable/card_bg"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:src="@android:drawable/ic_menu_myplaces"
+                                app:tint="#2D6A4F" />
+
+                            <TextView
+                                android:id="@+id/txtLifestyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Lifestyle"
+                                android:textColor="#2D6A4F"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
-                    <!-- PRODUCTIVITY -->
+                </HorizontalScrollView>
 
-                    <LinearLayout
-                        android:layout_width="100dp"
-                        android:layout_height="110dp"
-                        android:layout_marginEnd="12dp"
-                        android:background="@drawable/card_bg"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="10dp">
+                <!-- FREQUENCY -->
 
-                        <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:src="@android:drawable/ic_menu_manage"
-                            app:tint="#7A8C7F" />
+                <TextView
+                    android:id="@+id/txtFrequency"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Frequency"
+                    android:textColor="#1B4332"
+                    android:textSize="16sp" />
 
-                        <TextView
-                            android:id="@+id/txtProductivity"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Productivity"
-                            android:textColor="#7A8C7F"
-                            android:textSize="13sp" />
+                <Spinner
+                    android:id="@+id/spinnerFrequency"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_bg"
+                    android:padding="10dp" />
 
-                    </LinearLayout>
+                <!-- REMINDER -->
 
-                    <!-- LIFESTYLE -->
+                <TextView
+                    android:id="@+id/txtReminderTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Reminder Time"
+                    android:textColor="#1B4332"
+                    android:textSize="16sp" />
 
-                    <LinearLayout
-                        android:layout_width="100dp"
-                        android:layout_height="110dp"
-                        android:background="@drawable/card_bg"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="10dp">
+                <EditText
+                    android:id="@+id/edtReminderTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_bg"
+                    android:fontFamily="@font/poppins_regular"
+                    android:hint="Pick a time"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="#1B4332"
+                    android:textColorHint="#9AA5A0"
+                    android:textSize="14sp" />
 
-                        <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:src="@android:drawable/ic_menu_myplaces"
-                            app:tint="#7A8C7F" />
+            </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/txtLifestyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Lifestyle"
-                            android:textColor="#7A8C7F"
-                            android:textSize="14sp" />
+            <!-- SAVE BUTTON -->
 
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </HorizontalScrollView>
-
-            <!-- FREQUENCY -->
-
-            <TextView
-                android:id="@+id/txtFrequency"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:fontFamily="@font/poppins_bold"
-                android:text="Frequency"
-                android:textColor="#1B4332"
-                android:textSize="16sp" />
-
-            <Spinner
-                android:id="@+id/spinnerFrequency"
+            <Button
+                android:id="@+id/btnSaveHabit"
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/edittext_bg"
-                android:padding="10dp" />
-
-            <!-- REMINDER -->
-
-            <TextView
-                android:id="@+id/txtReminderTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="30dp"
+                android:backgroundTint="#2D6A4F"
                 android:fontFamily="@font/poppins_bold"
-                android:text="Reminder Time"
-                android:textColor="#1B4332"
-                android:textSize="16sp" />
-
-            <EditText
-                android:id="@+id/edtReminderTime"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/edittext_bg"
-                android:fontFamily="@font/poppins_regular"
-                android:hint="Pick a time"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:textColor="#1B4332"
-                android:textColorHint="#9AA5A0"
-                android:textSize="14sp" />
+                android:text="Save Habit"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
-        <!-- SAVE BUTTON -->
+    </ScrollView>
 
-        <Button
-            android:id="@+id/btnSaveHabit"
-            android:layout_width="match_parent"
+    <!-- BOTTOM NAVIGATION -->
+
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="82dp"
+        android:background="#FFFFFF"
+        android:elevation="12dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- HOME -->
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="60dp"
-            android:layout_marginBottom="30dp"
-            android:backgroundTint="#2D6A4F"
-            android:fontFamily="@font/poppins_bold"
-            android:text="Save Habit"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp" />
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_home"
+                app:tint="#A5B5AA" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Home"
+                android:textColor="#A5B5AA"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- GOALS -->
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_goal"
+                app:tint="#A5B5AA" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Goals"
+                android:textColor="#A5B5AA"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- HABITS SELECTED -->
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/nav_selected"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_habit"
+                app:tint="#3FAE6A" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Habits"
+                android:textColor="#3FAE6A"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- PROFILE -->
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_profile"
+                app:tint="#A5B5AA" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Profile"
+                android:textColor="#A5B5AA"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</ScrollView>
-
+</androidx.constraintlayout.widget.ConstraintLayout>
