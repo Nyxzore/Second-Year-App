@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . '/category_helpers.php';
 
 $host = "localhost";
@@ -22,7 +21,6 @@ if ($cid) {
     $sql = "select * from goals where user_uuid = $1 and completed = false order by due_date asc";
     $p = array($uuid);
 }
-
 
 $res = pg_query_params($db, $sql, $p);
 $goals = array();

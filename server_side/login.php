@@ -14,6 +14,40 @@ $adm = $_POST['is_admin'] ?? "0";
 $db = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pass");
 if (!$db) exit(json_encode(array("status" => "error", "message" => "Database connection failed")));
 
+function is_profane($text) {
+    // 1. Normalize characters to catch bypass attempts
+    $normalized = strtolower(str_replace(
+        ['0', '1', '3', '4', '5', '7', '8', '@', '$', '!', '|'],
+        ['o', 'i', 'e', 'a', 's', 't', 'b', 'a', 's', 'i', 'l'],
+        $text
+    ));
+
+    $data = json_encode(array("message" => $normalized));
+    $ctx = stream_context_create(array(
+        'http' => array(
+            'method'  => 'POST',
+            'header'  => "Content-Type: application/json\r\n",
+            'content' => $data,
+            'timeout' => 4
+        )
+    ));
+
+    $response = @file_get_contents("https://vector.profanity.dev", false, $ctx);
+
+    if ($response === false) {
+        // If API fails, fallback to PurgoMalum as a second layer
+        $url = "https://www.purgomalum.com/service/containsprofanity?text=" . urlencode($normalized);
+        $response = @file_get_contents($url);
+        return trim($response) === "true";
+    }
+
+    $res_json = json_decode($response, true);
+
+    return (isset($res_json['isProfanity']) && $res_json['isProfanity'] === true) ||
+           (isset($res_json['isProfane']) && $res_json['isProfane'] === true) ||
+           (isset($res_json['score']) && $res_json['score'] > 0.9);
+}
+
 function login() {
     global $db, $user_in, $hash;
     if (!$user_in || !$hash) return array("status" => "failure", "message" => "empty fields");
@@ -40,6 +74,10 @@ function create() {
     try {
         if (!$user_in || !$hash || !$mail) {
             throw new Exception("All fields are required");
+        }
+
+        if (is_profane($user_in)) {
+            throw new Exception("Inappropriate username detected");
         }
 
         $res = pg_query_params($db, "select 1 from accounts where username = $1", array($user_in));
