@@ -16,6 +16,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -30,13 +31,16 @@ import com.example.gon.R;
 import com.example.gon.utils.PreferenceManager;
 import com.example.gon.utils.NotificationHelper;
 import com.example.gon.utils.ReminderScheduler;
+import com.example.gon.ui.activities.FriendsList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import android.widget.LinearLayout;
 
 public class Profile extends AppCompatActivity {
 
@@ -113,7 +117,64 @@ public class Profile extends AppCompatActivity {
         txt_completed.setText(String.valueOf(PreferenceManager.get_completed_goal_count(this)));
         txt_active.setText(String.valueOf(PreferenceManager.get_active_goal_count(this)));
 
+        setup_friends_section();
         setup_reminder_ui();
+    }
+
+    private void setup_friends_section() {
+        View layout_add_friend = findViewById(R.id.layoutAddFriend);
+        layout_add_friend.setOnClickListener(v -> {
+            Intent intent = new Intent(this, FriendsList.class);
+            intent.putExtra("FOCUS_SEARCH", true);
+            startActivity(intent);
+        });
+
+        findViewById(R.id.txtSeeAllFriends).setOnClickListener(v -> {
+            startActivity(new Intent(this, FriendsList.class));
+        });
+
+        load_friends_list();
+    }
+
+    private void load_friends_list() {
+        String current_user_id = PreferenceManager.get_uuid(this);
+        Map<String, String> params = new HashMap<>();
+        params.put("uuid", current_user_id);
+        
+        PreferenceManager.post("get_friends.php", params, response_data -> {
+            runOnUiThread(() -> {
+                try {
+                    JSONObject json = new JSONObject(response_data);
+                    JSONArray array = json.getJSONArray("friends");
+                    
+                    LinearLayout layout_friends_list = findViewById(R.id.layoutFriendsList);
+                    // Keep only the "Add Friend" button
+                    View add_button = findViewById(R.id.layoutAddFriend);
+                    layout_friends_list.removeAllViews();
+                    
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject obj = array.getJSONObject(i);
+                        String username = obj.getString("username");
+                        int pic_index = obj.optInt("profile_pic", 0);
+                        
+                        View friend_view = LayoutInflater.from(this).inflate(R.layout.item_profile_friend, layout_friends_list, false);
+                        ImageView img = friend_view.findViewById(R.id.imgFriendProfile);
+                        TextView txt = friend_view.findViewById(R.id.txtFriendName);
+                        
+                        img.setImageResource(profile_photos[pic_index]);
+                        txt.setText(username);
+                        
+                        layout_friends_list.addView(friend_view);
+                    }
+                    
+                    // Add back the "Add Friend" button at the end
+                    layout_friends_list.addView(add_button);
+                    
+                } catch (Exception e) {
+                    Log.e("GON_DEBUG : PROFILE", "Error loading friends", e);
+                }
+            });
+        });
     }
 
     private void setup_reminder_ui() {

@@ -81,6 +81,16 @@ private EditText etFriendUsername;
 
         loadFriends();
         loadFriendRequests();
+
+        if (getIntent().getBooleanExtra("FOCUS_SEARCH", false)) {
+            etFriendUsername.post(() -> {
+                etFriendUsername.requestFocus();
+                android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.showSoftInput(etFriendUsername, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+                }
+            });
+        }
     }
 
     private void setup_navigation() {
@@ -115,6 +125,16 @@ private EditText etFriendUsername;
         PreferenceManager.update_nav_icon(this, findViewById(R.id.bottomNavigationView));
         loadFriends();
         loadFriendRequests();
+
+        if (getIntent().getBooleanExtra("FOCUS_SEARCH", false)) {
+            etFriendUsername.post(() -> {
+                etFriendUsername.requestFocus();
+                android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.showSoftInput(etFriendUsername, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+                }
+            });
+        }
     }
 
     private void addFriend(String friendUsername) {
